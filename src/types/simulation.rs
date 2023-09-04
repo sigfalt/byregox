@@ -12,11 +12,9 @@ use super::{
 #[derive(Builder)]
 pub struct Simulation {
 	pub recipe: Craft,
-	// actions: CraftingAction[]
 	pub actions: Vec<Box<dyn CraftingAction>>,
 	pub crafter_stats: CrafterStats,
 	// private hqIngredients: {id: number; amount: number}[] = []
-	// private stepStates: { [index: number]: StepState } = {},
 	#[builder(default = "vec![]")]
 	step_states: Vec<StepState>,
 	// private fails: number[] = [],
