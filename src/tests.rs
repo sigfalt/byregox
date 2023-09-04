@@ -2,7 +2,11 @@ pub mod tests {
 
 	use std::error::Error;
 
-	use crate::types::{structs::{Craft, CrafterStats, CrafterLevels}, SimulationBuilder, actions};
+	use crate::types::{
+		actions,
+		structs::{Craft, CrafterLevels, CrafterStats},
+		SimulationBuilder,
+	};
 
 	#[test]
 	fn test_simulation_construction() -> Result<(), Box<dyn Error>> {
@@ -62,7 +66,7 @@ pub mod tests {
 			.recipe(recipe)
 			.actions(vec![
 				Box::new(actions::MuscleMemory),
-				Box::new(actions::BasicSynthesis)
+				Box::new(actions::BasicSynthesis),
 			])
 			.crafter_stats(stats)
 			.build()?;
