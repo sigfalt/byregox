@@ -40,7 +40,7 @@ impl CraftingAction for IntensiveSynthesis {
 			|| simulation_state.state() == StepState::Excellent
 	}
 
-	fn get_base_cp_cost(&self, simulation_state: &Simulation) -> u32 {
+	fn get_base_cp_cost(&self, _simulation_state: &Simulation) -> u32 {
 		6
 	}
 
@@ -89,15 +89,15 @@ impl CraftingAction for IntensiveSynthesis {
 }
 
 impl GeneralAction for IntensiveSynthesis {
-	fn get_potency(&self, simulation_state: &Simulation) -> u32 {
+	fn get_potency(&self, _simulation_state: &Simulation) -> u32 {
 		400
 	}
 
-	fn get_base_durability_cost(&self, simulation_state: &Simulation) -> u32 {
+	fn get_base_durability_cost(&self, _simulation_state: &Simulation) -> u32 {
 		10
 	}
 
-	fn get_base_success_rate(&self, simulation_state: &Simulation) -> u32 {
+	fn get_base_success_rate(&self, _simulation_state: &Simulation) -> u32 {
 		100
 	}
 }

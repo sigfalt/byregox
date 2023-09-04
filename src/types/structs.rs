@@ -113,7 +113,7 @@ pub trait EffectiveBuffT {
 	fn tick(&self, simulation_state: &Simulation);
 }
 impl EffectiveBuffT for EffectiveBuff {
-	fn tick(&self, simulation_state: &Simulation) {}
+	fn tick(&self, _simulation_state: &Simulation) {}
 }
 
 #[derive(Clone, Default)]

@@ -16,11 +16,11 @@ impl GeneralAction for BasicSynthesis {
 		}
 	}
 
-	fn get_base_durability_cost(&self, simulation_state: &Simulation) -> u32 {
+	fn get_base_durability_cost(&self, _simulation_state: &Simulation) -> u32 {
 		10
 	}
 
-	fn get_base_success_rate(&self, simulation_state: &Simulation) -> u32 {
+	fn get_base_success_rate(&self, _simulation_state: &Simulation) -> u32 {
 		100
 	}
 }
@@ -38,11 +38,11 @@ impl CraftingAction for BasicSynthesis {
 		self.get_base_success_rate(simulation_state)
 	}
 
-	fn _can_be_used(&self, simulation_state: &Simulation) -> bool {
+	fn _can_be_used(&self, _simulation_state: &Simulation) -> bool {
 		true
 	}
 
-	fn get_base_cp_cost(&self, simulation_state: &Simulation) -> u32 {
+	fn get_base_cp_cost(&self, _simulation_state: &Simulation) -> u32 {
 		0
 	}
 

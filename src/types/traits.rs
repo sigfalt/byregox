@@ -1,13 +1,9 @@
 use dyn_clone::DynClone;
-use enum_dispatch::enum_dispatch;
 
 use super::{enums::*, Simulation};
 
-use crate::types::actions::*;
-
-// #[enum_dispatch(CraftingActionEnum)]
 pub trait CraftingAction: DynClone {
-	fn can_be_moved(&self, current_index: u32) -> bool {
+	fn can_be_moved(&self, _current_index: u32) -> bool {
 		true
 	}
 
@@ -27,7 +23,7 @@ pub trait CraftingAction: DynClone {
 		false
 	}
 
-	fn has_combo(&self, simulation_state: &Simulation) -> bool {
+	fn has_combo(&self, _simulation_state: &Simulation) -> bool {
 		false
 	}
 
@@ -99,7 +95,7 @@ pub trait CraftingAction: DynClone {
 
 	fn execute(&self, simulation_state: &mut Simulation);
 
-	fn on_fail(&self, simulation_state: &Simulation) {}
+	fn on_fail(&self, _simulation_state: &Simulation) {}
 
 	fn skips_buff_ticks(&self) -> bool {
 		false
@@ -137,11 +133,11 @@ pub trait CraftingAction: DynClone {
 dyn_clone::clone_trait_object!(CraftingAction);
 
 pub trait GeneralAction: CraftingAction {
-	fn get_base_bonus(&self, simulation_state: &Simulation) -> f64 {
+	fn get_base_bonus(&self, _simulation_state: &Simulation) -> f64 {
 		1.0
 	}
 
-	fn get_base_condition(&self, simulation_state: &Simulation) -> f64 {
+	fn get_base_condition(&self, _simulation_state: &Simulation) -> f64 {
 		1.0
 	}
 

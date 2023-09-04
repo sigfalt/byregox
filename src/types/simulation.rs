@@ -127,7 +127,6 @@ impl Simulation {
 				// };
 			}
 
-			use crate::types::enums::CraftingActionEnum as Action;
 			// if (!linear && action != Action::FinalAppraisal && action != Action::RemoveFinalAppraisal) {
 			if !linear {
 				// self.tick_state();
@@ -167,12 +166,8 @@ impl Simulation {
 	}
 
 	pub fn run_action(&mut self, action: &Box<dyn CraftingAction>, linear: bool) -> ActionResult {
-		let probability_roll: u32 = if linear {
-			0
-		} else {
-			rand::thread_rng().gen_range(0..100)
-		};
-		// if self.fails.includes(index) {
+		// TODO: if (linear) { 999 } ...
+		// check this against teamcraft again
 		let probability_roll: u32 = if false {
 			999
 		} else if linear {

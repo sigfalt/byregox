@@ -26,7 +26,7 @@ impl CraftingAction for PrudentSynthesis {
 		!simulation_state.has_buff(Buff::WasteNot) && !simulation_state.has_buff(Buff::WasteNotII)
 	}
 
-	fn get_base_cp_cost(&self, simulation_state: &Simulation) -> u32 {
+	fn get_base_cp_cost(&self, _simulation_state: &Simulation) -> u32 {
 		18
 	}
 
@@ -75,15 +75,15 @@ impl CraftingAction for PrudentSynthesis {
 }
 
 impl GeneralAction for PrudentSynthesis {
-	fn get_potency(&self, simulation_state: &Simulation) -> u32 {
+	fn get_potency(&self, _simulation_state: &Simulation) -> u32 {
 		180
 	}
 
-	fn get_base_durability_cost(&self, simulation_state: &Simulation) -> u32 {
+	fn get_base_durability_cost(&self, _simulation_state: &Simulation) -> u32 {
 		5
 	}
 
-	fn get_base_success_rate(&self, simulation_state: &Simulation) -> u32 {
+	fn get_base_success_rate(&self, _simulation_state: &Simulation) -> u32 {
 		// [sic], TODO: shouldn't this be 100?
 		180
 	}
