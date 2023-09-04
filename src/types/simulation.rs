@@ -246,8 +246,15 @@ impl Simulation {
 		self.buffs.iter_mut().find(|x| x.buff == buff)
 	}
 
-	pub fn remove_buff(&self, buff: Buff) {
-		// TODO: impl
+	pub fn add_buff(&mut self, buff: EffectiveBuff) {
+		self.buffs.push(buff);
+	}
+
+	pub fn remove_buff(&mut self, buff: Buff) {
+		let ix = self.buffs.iter().position(|b| b.buff == buff);
+		if let Some(ix) = ix {
+			self.buffs.swap_remove(ix);
+		}
 	}
 
 	pub fn get_hq_percent(&self) -> u32 {
