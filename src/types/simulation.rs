@@ -52,7 +52,7 @@ pub struct Simulation {
 	last_possible_reclaim_step: Option<u32>,
 
 	#[builder(setter(skip), default = "false")]
-	safe: bool,
+	pub safe: bool,
 }
 
 impl Simulation {
