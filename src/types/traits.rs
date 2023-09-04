@@ -67,11 +67,10 @@ pub trait CraftingAction: DynClone {
 		let craftsmanship_requirement = simulation_state.recipe.craftsmanship_req;
 		let control_requirement = simulation_state.recipe.control_req;
 
-		if level_requirement.0 != CraftingJob::Any
-			&& simulation_state.crafter_stats.levels[level_requirement.0] < level_requirement.1
+		if (level_requirement.0 != CraftingJob::Any
+			&& simulation_state.crafter_stats.levels[level_requirement.0] < level_requirement.1)
+			|| simulation_state.crafter_stats.level < level_requirement.1
 		{
-			Some("Missing level requirement")
-		} else if simulation_state.crafter_stats.level < level_requirement.1 {
 			Some("Missing level requirement")
 		} else if craftsmanship_requirement
 			.is_some_and(|x| x > simulation_state.crafter_stats.craftsmanship)

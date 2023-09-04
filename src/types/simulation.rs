@@ -80,7 +80,6 @@ impl Simulation {
 		self.last_possible_reclaim_step = None;
 		self.actions.clone().iter().for_each(|action| {
 			self.state = StepState::Normal; // TODO: this.step_states[index] || Normal;
-			let result: ActionResult;
 			let mut fail_cause: Option<&str> = None;
 
 			let can_use_action = action.can_be_used(&self);
@@ -92,14 +91,14 @@ impl Simulation {
 				fail_cause = Some("Not enough CP");
 			}
 			// we can use the action
-			if self.success == None
+			let result = if self.success.is_none()
                     && has_enough_cp
                     // TODO: && self.steps.len() < max_turns
                     && can_use_action
 			{
-				result = self.run_action(action, linear);
+				self.run_action(action, linear)
 			} else {
-				result = ActionResult {
+				ActionResult {
 					action: action.clone(),
 					success: None,
 					fail_cause: fail_cause.map(|x| x.to_string()),
@@ -111,7 +110,7 @@ impl Simulation {
 					combo: None,
 					state: self.state,
 				}
-			}
+			};
 
 			// TODO: if self.steps.len() < max_turns
 			if self.steps.len() < usize::MAX {
@@ -151,7 +150,7 @@ impl Simulation {
 		let mut res = SimulationResult {
 			steps: self.steps.clone(),
 			hq_percent: self.get_hq_percent(),
-			success: success,
+			success,
 			simulation: self,
 			fail_cause: if has_required_quality && !success {
 				Some("Quality too low".to_string())
@@ -176,12 +175,10 @@ impl Simulation {
 		// if self.fails.includes(index) {
 		let probability_roll: u32 = if false {
 			999
+		} else if linear {
+			0
 		} else {
-			if linear {
-				0
-			} else {
-				rand::thread_rng().gen_range(0..100)
-			}
+			rand::thread_rng().gen_range(0..100)
 		};
 		let quality_before = self.quality;
 		let progression_before = self.progression;
@@ -193,19 +190,17 @@ impl Simulation {
 		let mut success = false;
 
 		// if safe_mode &&
-		if (action.get_success_rate(self) < 100
-			|| (action.requires_good() && !self.has_buff(Buff::HeartAndSoul)))
+		if action.get_success_rate(self) < 100
+			|| (action.requires_good() && !self.has_buff(Buff::HeartAndSoul))
 		{
 			fail_cause = Some("Unsafe action");
 			action.on_fail(self);
 			self.safe = false;
+		} else if action.get_success_rate(self) >= probability_roll {
+			action.execute(self);
+			success = true;
 		} else {
-			if action.get_success_rate(self) >= probability_roll {
-				action.execute(self);
-				success = true;
-			} else {
-				action.on_fail(self);
-			}
+			action.on_fail(self);
 		}
 
 		// even if failed, remove durability cost and CP
