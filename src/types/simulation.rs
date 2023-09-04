@@ -29,7 +29,7 @@ pub struct Simulation {
 	#[builder(setter(skip), default = "self.build_starting_quality()?")]
 	starting_quality: u32,
 	#[builder(setter(skip), default = "self.build_durability()?")]
-	durability: u32,
+	pub durability: u32,
 
 	#[builder(setter(skip), default = "StepState::Normal")]
 	state: StepState,
