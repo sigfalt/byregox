@@ -112,6 +112,45 @@ pub mod tests {
 		Ok(())
 	}
 
+	#[test]
+	fn test_groundwork() -> Result<(), Box<dyn Error>> {
+		let recipe = Craft {
+			id: "3997".to_string(),
+			job: 14,
+			rlvl: 395,
+			durability: 80,
+			quality: 3800,
+			progress: 1220,
+			lvl: 72,
+			hq: Some(true),
+			quick_synth: Some(true),
+			ingredients: vec![],
+			progress_divider: 102,
+			quality_divider: 82,
+			..Default::default()
+		};
+		let stats = generate_stats(90, 1208, 698, 187, false);
+		let sim = SimulationBuilder::default()
+			.recipe(recipe)
+			.actions(vec![
+				Box::new(actions::Groundwork),
+				Box::new(actions::Groundwork),
+				Box::new(actions::CarefulSynthesis),
+				Box::new(actions::BasicTouch),
+				Box::new(actions::BasicTouch),
+				Box::new(actions::Groundwork),
+			])
+			.crafter_stats(stats)
+			.build()?;
+		let result = sim.run(true);
+		assert!(result.simulation.success.is_some_and(|x| x));
+		assert_eq!(result.simulation.steps[0].added_progression, 432);
+		assert_eq!(result.simulation.steps[1].added_progression, 432);
+		assert_eq!(result.simulation.steps[5].added_progression, 216);
+
+		Ok(())
+	}
+
 	fn generate_recipe(
 		rlvl: u32,
 		progress: u32,
