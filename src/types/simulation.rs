@@ -27,7 +27,7 @@ pub struct Simulation {
 	#[builder(setter(skip), default = "self.build_starting_quality()?")]
 	starting_quality: u32,
 	#[builder(setter(skip), default = "self.build_durability()?")]
-	pub durability: u32,
+	pub durability: i32,
 
 	#[builder(setter(skip), default = "StepState::Normal")]
 	state: StepState,
@@ -209,7 +209,7 @@ impl Simulation {
 		}
 
 		// even if failed, remove durability cost and CP
-		self.durability -= action.get_durability_cost(self);
+		self.durability -= action.get_durability_cost(self) as i32;
 		self.available_cp -= action.get_cp_cost(self);
 		if self.progression >= self.recipe.progress {
 			self.success = Some(true);
@@ -227,9 +227,7 @@ impl Simulation {
 			cp_difference: 0i32
 				.saturating_add_unsigned(self.available_cp)
 				.saturating_sub_unsigned(cp_before),
-			solidity_difference: 0i32
-				.saturating_add_unsigned(self.durability)
-				.saturating_sub_unsigned(durability_before),
+			solidity_difference: self.durability - durability_before,
 			skipped: false,
 			combo: Some(combo),
 			state: self.state,
@@ -274,9 +272,9 @@ impl SimulationBuilder {
 		Ok(0)
 	}
 
-	fn build_durability(&self) -> Result<u32, SimulationBuilderError> {
+	fn build_durability(&self) -> Result<i32, SimulationBuilderError> {
 		match &self.recipe {
-			Some(craft) => Ok(craft.durability),
+			Some(craft) => Ok(craft.durability as i32),
 			_ => Err(SimulationBuilderError::from(UninitializedFieldError::new(
 				"durability",
 			))),

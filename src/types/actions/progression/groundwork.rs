@@ -60,7 +60,7 @@ impl CraftingAction for Groundwork {
 impl GeneralAction for Groundwork {
 	fn get_potency(&self, simulation_state: &Simulation) -> u32 {
 		let base_potency = if simulation_state.crafter_stats.level >= 86 { 360 } else { 300 };
-		if simulation_state.durability >= self.get_durability_cost(simulation_state) { base_potency } else { base_potency / 2 }
+		if simulation_state.durability >= self.get_durability_cost(simulation_state) as i32 { base_potency } else { base_potency / 2 }
 	}
 
 	fn get_base_durability_cost(&self, simulation_state: &Simulation) -> u32 {
