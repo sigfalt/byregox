@@ -21,7 +21,7 @@ impl CraftingAction for StandardTouch {
 		self.get_base_success_rate(simulation_state)
 	}
 
-	fn _can_be_used(&self, simulation_state: &Simulation) -> bool {
+	fn _can_be_used(&self, _simulation_state: &Simulation) -> bool {
 		true
 	}
 
@@ -77,15 +77,15 @@ impl CraftingAction for StandardTouch {
 }
 
 impl GeneralAction for StandardTouch {
-	fn get_potency(&self, simulation_state: &Simulation) -> u32 {
+	fn get_potency(&self, _simulation_state: &Simulation) -> u32 {
 		125
 	}
 
-	fn get_base_durability_cost(&self, simulation_state: &Simulation) -> u32 {
+	fn get_base_durability_cost(&self, _simulation_state: &Simulation) -> u32 {
 		10
 	}
 
-	fn get_base_success_rate(&self, simulation_state: &Simulation) -> u32 {
+	fn get_base_success_rate(&self, _simulation_state: &Simulation) -> u32 {
 		100
 	}
 }
