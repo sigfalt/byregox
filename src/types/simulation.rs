@@ -59,20 +59,15 @@ impl Simulation {
 	}
 
 	pub fn add_inner_quiet_stacks(&mut self, stacks: u32) {
-		if !self.has_buff(Buff::InnerQuiet) {
+		if let Some(buff) = self.get_mut_buff(Buff::InnerQuiet) {
+			buff.stacks = (buff.stacks + stacks).min(10);
+		} else {
 			self.buffs.push(EffectiveBuff {
 				duration: u32::MAX,
 				stacks: stacks.min(10),
 				buff: Buff::InnerQuiet,
 				applied_step: self.step_states.len() as u32,
 			});
-		} else {
-			/*
-			let iq = self.get_buff(Buff::InnerQuiet);
-			iq.stacks = (iq.stacks + stacks).min(10);
-			*/
-			let iq = self.get_buff(Buff::InnerQuiet).unwrap();
-			iq.stacks = (iq.stacks + stacks).min(10);
 		}
 	}
 
