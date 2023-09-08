@@ -285,16 +285,20 @@ impl CraftingAction for Class {
 		let mut buff_mod = self.get_base_bonus(simulation_state);
 		let mut condition_mod = self.get_base_condition(simulation_state);
 		let potency = self.get_potency(simulation_state);
-		let quality_increase = self.get_base_quality(simulation_state).floor(); // TODO: convert get_base_quality return type for f64?
+		let quality_increase = self.get_base_quality(simulation_state) as f64;
 
 		match simulation_state.state() {
-			StepState::Excellent => condition_mod *= 4,
+			StepState::Excellent => condition_mod *= 4.0,
 			StepState::Poor => condition_mod *= 0.5,
 			StepState::Good => condition_mod *= if simulation_state.crafter_stats.splendorous { 1.75 } else { 1.5 },
 			_ => ()
 		};
 
-		buff_mod += simulation_state.get_buff(Buff::InnerQuiet).map(|b| b.stacks).unwrap_or_default();
+		buff_mod += simulation_state
+			.get_buff(Buff::InnerQuiet)
+			.map(|b| b.stacks)
+			.unwrap_or_default() as f64
+			/ 10.0;
 
 		let mut buff_mult = 1.0;
 		if simulation_state.has_buff(Buff::GreatStrides) {
@@ -305,8 +309,8 @@ impl CraftingAction for Class {
 			buff_mult += 0.5;
 		}
 
-		let buff_mod: f64 = (buff_mod as f32) * (buff_mult as f32);
-		let efficiency = (potency * buff_mod) as f32;
+		let buff_mod: f64 = ((buff_mod as f32) * (buff_mult as f32)) as f64;
+		let efficiency = ((potency as f64 * buff_mod) as f32) as f64;
 		simulation_state.quality += (quality_increase * condition_mod * efficiency / 100.0).floor() as u32;
 
 		// if !skipStackAddition { // argument to function, defaults to false
