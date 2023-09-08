@@ -228,7 +228,11 @@ impl Simulation {
 		self.buffs.iter().any(|x| x.buff == buff)
 	}
 
-	pub fn get_buff(&mut self, buff: Buff) -> Option<&mut EffectiveBuff> {
+	pub fn get_buff(&self, buff: Buff) -> Option<&EffectiveBuff> {
+		self.buffs.iter().find(|x| x.buff == buff)
+	}
+
+	pub fn get_mut_buff(&mut self, buff: Buff) -> Option<&mut EffectiveBuff> {
 		self.buffs.iter_mut().find(|x| x.buff == buff)
 	}
 
