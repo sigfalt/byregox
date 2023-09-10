@@ -113,10 +113,7 @@ pub struct EffectiveBuff {
 	pub buff: Buff,
 	pub applied_step: u32,
 }
-pub trait EffectiveBuffT {
-	fn tick(&self, simulation_state: &Simulation);
-}
-impl EffectiveBuffT for EffectiveBuff {
+impl EffectiveBuff  {
 	fn tick(&self, _simulation_state: &Simulation) {}
 }
 
