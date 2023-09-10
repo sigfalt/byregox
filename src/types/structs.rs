@@ -112,9 +112,21 @@ pub struct EffectiveBuff {
 	pub stacks: u32,
 	pub buff: Buff,
 	pub applied_step: u32,
+	pub tick: Option<Box<dyn Fn(&Simulation) -> ()>>,
+	pub on_expire: Option<Box<dyn Fn(&Simulation) -> ()>>,
 }
-impl EffectiveBuff  {
-	fn tick(&self, _simulation_state: &Simulation) {}
+impl EffectiveBuff {
+	pub fn tick(&self, simulation_state: &Simulation) {
+		if let Some(f) = &self.tick {
+			f(simulation_state);
+		}
+	}
+
+	pub fn on_expire(&self, simulation_state: &Simulation) {
+		if let Some(f) = &self.on_expire {
+			f(simulation_state);
+		}
+	}
 }
 
 #[derive(Clone, Default)]

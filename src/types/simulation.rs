@@ -67,6 +67,8 @@ impl Simulation {
 				stacks: stacks.min(10),
 				buff: Buff::InnerQuiet,
 				applied_step: self.step_states.len() as u32,
+				tick: None,
+				on_expire: None
 			});
 		}
 	}

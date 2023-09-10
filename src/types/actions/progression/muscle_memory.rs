@@ -90,6 +90,8 @@ impl CraftingAction for MuscleMemory {
 			stacks: 0,
 			buff: Buff::MuscleMemory,
 			applied_step: simulation_state.steps.len() as u32,
+			tick: None,
+			on_expire: None
 		});
 	}
 }
