@@ -89,4 +89,8 @@ impl CraftingAction for BasicSynthesis {
 			simulation_state.remove_buff(Buff::FinalAppraisal);
 		}
 	}
+
+	fn get_enum(&self) -> CraftingActionEnum {
+		CraftingActionEnum::BasicSynthesis
+	}
 }

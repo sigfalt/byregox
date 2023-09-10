@@ -1,5 +1,5 @@
 use crate::types::{
-	enums::{ActionType, Buff, CraftingJob, StepState},
+	enums::{ActionType, Buff, CraftingJob, StepState, CraftingActionEnum},
 	structs::{CraftingLevel, EffectiveBuff},
 	traits::{CraftingAction, GeneralAction, ProgressAction},
 	Simulation,
@@ -93,6 +93,10 @@ impl CraftingAction for MuscleMemory {
 			tick: None,
 			on_expire: None
 		});
+	}
+
+	fn get_enum(&self) -> CraftingActionEnum {
+		CraftingActionEnum::MuscleMemory
 	}
 }
 

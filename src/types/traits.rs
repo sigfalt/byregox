@@ -1,6 +1,10 @@
 use dyn_clone::DynClone;
 
-use super::{enums::*, structs::CraftingLevel, Simulation};
+use super::{
+	enums::*,
+	structs::{CraftingLevel, EffectiveBuff},
+	Simulation,
+};
 
 pub trait CraftingAction: DynClone {
 	fn can_be_moved(&self, _current_index: u32) -> bool {
@@ -129,6 +133,8 @@ pub trait CraftingAction: DynClone {
 			base_value.floor() as u32
 		}
 	}
+
+	fn get_enum(&self) -> CraftingActionEnum;
 }
 dyn_clone::clone_trait_object!(CraftingAction);
 

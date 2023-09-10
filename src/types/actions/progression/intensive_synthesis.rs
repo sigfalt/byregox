@@ -1,5 +1,5 @@
 use crate::types::{
-	enums::{ActionType, Buff, CraftingJob, StepState},
+	enums::{ActionType, Buff, CraftingJob, StepState, CraftingActionEnum},
 	structs::CraftingLevel,
 	traits::{CraftingAction, GeneralAction, ProgressAction},
 	Simulation,
@@ -86,6 +86,10 @@ impl CraftingAction for IntensiveSynthesis {
 				.min(simulation_state.recipe.progress - 1);
 			simulation_state.remove_buff(Buff::FinalAppraisal);
 		}
+	}
+
+	fn get_enum(&self) -> CraftingActionEnum {
+		CraftingActionEnum::IntensiveSynthesis
 	}
 }
 

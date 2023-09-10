@@ -28,53 +28,53 @@ pub enum ActionType {
 	Other,
 }
 
-// #[derive(Clone)]
+#[derive(Clone, Copy, PartialEq)]
 // #[enum_dispatch]
 pub enum CraftingActionEnum {
 	// Progress actions
 	BasicSynthesis,
-	// CarefulSynthesis,
-	// PrudentSynthesis,
-	// RapidSynthesis,
-	// Groundwork,
-	// FocusedSynthesis,
-	// MuscleMemory,
-	// IntensiveSynthesis,
+	CarefulSynthesis,
+	PrudentSynthesis,
+	RapidSynthesis,
+	Groundwork,
+	FocusedSynthesis,
+	MuscleMemory,
+	IntensiveSynthesis,
 
 	// Quality actions
 	BasicTouch,
-	// StandardTouch,
-	// AdvancedTouch,
-	// HastyTouch,
-	// ByregotsBlessing,
-	// PreciseTouch,
-	// FocusedTouch,
-	// PrudentTouch,
-	// TrainedEye,
-	// PreparatoryTouch,
-	// Reflect,
-	// TrainedFinesse,
+	StandardTouch,
+	AdvancedTouch,
+	HastyTouch,
+	ByregotsBlessing,
+	PreciseTouch,
+	FocusedTouch,
+	PrudentTouch,
+	TrainedEye,
+	PreparatoryTouch,
+	Reflect,
+	TrainedFinesse,
 
 	// CP recovery
-	// TricksOfTheTrade,
+	TricksOfTheTrade,
 
 	// Repair
-	// MastersMend,
-	// Manipulation,
+	MastersMend,
+	Manipulation,
 
 	// Buffs
-	// WasteNot,
-	// WasteNotII,
-	// GreatStrides,
-	// Innovation,
-	// Veneration,
+	WasteNot,
+	WasteNotII,
+	GreatStrides,
+	Innovation,
+	Veneration,
 	FinalAppraisal,
 
 	// Other
-	// Observe,
-	// HeartAndSoul,
-	// CarefulObservation,
-	// DelicateSynthesis,
+	Observe,
+	HeartAndSoul,
+	CarefulObservation,
+	DelicateSynthesis,
 	RemoveFinalAppraisal,
 }
 
