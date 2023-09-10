@@ -1,6 +1,7 @@
 use crate::types::{
 	enums::{ActionType, Buff, CraftingJob, StepState},
 	traits::{CraftingAction, GeneralAction, ProgressAction},
+	structs::CraftingLevel,
 	Simulation,
 };
 
@@ -10,8 +11,8 @@ pub struct Groundwork;
 impl ProgressAction for Groundwork {}
 
 impl CraftingAction for Groundwork {
-	fn get_level_requirement(&self) -> (CraftingJob, u32) {
-		(CraftingJob::Any, 72)
+	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
+		(CraftingJob::Any, CraftingLevel::new(72).unwrap())
 	}
 
 	fn get_type(&self) -> ActionType {

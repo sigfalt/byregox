@@ -1,4 +1,4 @@
-use crate::types::{traits::{QualityAction, CraftingAction, GeneralAction}, enums::{CraftingJob, ActionType, Buff, StepState}, Simulation};
+use crate::types::{structs::CraftingLevel, traits::{QualityAction, CraftingAction, GeneralAction}, enums::{CraftingJob, ActionType, Buff, StepState}, Simulation};
 
 #[derive(Clone)]
 pub struct StandardTouch;
@@ -6,8 +6,8 @@ pub struct StandardTouch;
 impl QualityAction for StandardTouch {}
 
 impl CraftingAction for StandardTouch {
-	fn get_level_requirement(&self) -> (CraftingJob, u32) {
-		(CraftingJob::Any, 18)
+	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
+		(CraftingJob::Any, CraftingLevel::new(18).unwrap())
 	}
 
 	fn has_combo(&self, simulation_state: &Simulation) -> bool {

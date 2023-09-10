@@ -2,7 +2,7 @@ use std::error::Error;
 
 use crate::types::{
 	actions,
-	structs::{Craft, CrafterLevels, CrafterStats},
+	structs::{Craft, CrafterLevels, CrafterStats, CraftingLevel},
 	SimulationBuilder,
 };
 
@@ -15,7 +15,7 @@ fn test_simulation_construction() -> Result<(), Box<dyn Error>> {
 		durability: 70,
 		quality: 360,
 		progress: 55,
-		lvl: 15,
+		lvl: CraftingLevel::new(15).unwrap(),
 		hq: Some(true),
 		quick_synth: Some(true),
 		ingredients: vec![],
@@ -51,7 +51,7 @@ fn test_muscle_memory() -> Result<(), Box<dyn Error>> {
 		durability: 80,
 		quality: 2790,
 		progress: 630,
-		lvl: 61,
+		lvl: CraftingLevel::new(61).unwrap(),
 		hq: Some(true),
 		quick_synth: Some(true),
 		ingredients: vec![],
@@ -85,7 +85,7 @@ fn test_careful_synthesis() -> Result<(), Box<dyn Error>> {
 		durability: 80,
 		quality: 3800,
 		progress: 1220,
-		lvl: 72,
+		lvl: CraftingLevel::new(72).unwrap(),
 		hq: Some(true),
 		quick_synth: Some(true),
 		ingredients: vec![],
@@ -123,7 +123,7 @@ fn test_groundwork() -> Result<(), Box<dyn Error>> {
 		durability: 80,
 		quality: 3800,
 		progress: 1220,
-		lvl: 72,
+		lvl: CraftingLevel::new(72).unwrap(),
 		hq: Some(true),
 		quick_synth: Some(true),
 		ingredients: vec![],
@@ -167,7 +167,7 @@ fn generate_recipe(
 		durability: 80,
 		quality: if quality != 0 { quality } else { 20287 },
 		progress: if progress != 0 { progress } else { 3943 },
-		lvl: 80,
+		lvl: CraftingLevel::new(80).unwrap(),
 		hq: Some(true),
 		quick_synth: Some(true),
 		ingredients: vec![],
@@ -179,7 +179,7 @@ fn generate_recipe(
 }
 
 fn generate_stats(
-	level: u32,
+	level: u8,
 	craftsmanship: u32,
 	control: u32,
 	cp: u32,
@@ -192,16 +192,16 @@ fn generate_stats(
 		cp,
 		specialist: false,
 		splendorous,
-		level,
+		level: CraftingLevel::new(level).unwrap(),
 		levels: CrafterLevels {
-			crp: level,
-			bsm: level,
-			arm: level,
-			gsm: level,
-			ltw: level,
-			wvr: level,
-			alc: level,
-			cul: level,
+			crp: CraftingLevel::new(level).unwrap(),
+			bsm: CraftingLevel::new(level).unwrap(),
+			arm: CraftingLevel::new(level).unwrap(),
+			gsm: CraftingLevel::new(level).unwrap(),
+			ltw: CraftingLevel::new(level).unwrap(),
+			wvr: CraftingLevel::new(level).unwrap(),
+			alc: CraftingLevel::new(level).unwrap(),
+			cul: CraftingLevel::new(level).unwrap(),
 		},
 	}
 }

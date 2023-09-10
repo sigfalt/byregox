@@ -1,12 +1,12 @@
-use crate::types::{traits::CraftingAction, enums::{CraftingJob, ActionType}, Simulation};
+use crate::types::{structs::CraftingLevel, traits::CraftingAction, enums::{CraftingJob, ActionType}, Simulation};
 
 
 #[derive(Clone)]
 pub struct TrainedEye;
 
 impl CraftingAction for TrainedEye {
-    fn get_level_requirement(&self) -> (CraftingJob, u32) {
-        (CraftingJob::Any, 80)
+    fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
+        (CraftingJob::Any, CraftingLevel::new(80).unwrap())
     }
 
     fn get_type(&self) -> crate::types::enums::ActionType {

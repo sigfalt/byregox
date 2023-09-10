@@ -1,5 +1,6 @@
 use crate::types::{
 	enums::{ActionType, Buff, CraftingJob, StepState},
+	structs::CraftingLevel,
 	traits::{CraftingAction, GeneralAction, ProgressAction},
 	Simulation,
 };
@@ -10,8 +11,8 @@ pub struct RapidSynthesis;
 impl ProgressAction for RapidSynthesis {}
 
 impl CraftingAction for RapidSynthesis {
-	fn get_level_requirement(&self) -> (CraftingJob, u32) {
-		(CraftingJob::Any, 9)
+	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
+		(CraftingJob::Any, CraftingLevel::new(9).unwrap())
 	}
 
 	fn get_type(&self) -> ActionType {

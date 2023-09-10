@@ -2,6 +2,7 @@ use crate::types::{
 	enums::{ActionType, Buff, CraftingJob, StepState},
 	traits::{CraftingAction, GeneralAction, ProgressAction},
 	Simulation,
+	structs::CraftingLevel
 };
 
 #[derive(Clone)]
@@ -10,8 +11,8 @@ pub struct CarefulSynthesis;
 impl ProgressAction for CarefulSynthesis {}
 
 impl CraftingAction for CarefulSynthesis {
-	fn get_level_requirement(&self) -> (CraftingJob, u32) {
-		(CraftingJob::Any, 62)
+	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
+		(CraftingJob::Any, CraftingLevel::new(62).unwrap())
 	}
 
 	fn get_type(&self) -> ActionType {

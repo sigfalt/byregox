@@ -1,6 +1,6 @@
 use crate::types::{
 	enums::{ActionType, Buff, CraftingJob, StepState},
-	structs::EffectiveBuff,
+	structs::{CraftingLevel, EffectiveBuff},
 	traits::{CraftingAction, GeneralAction, ProgressAction},
 	Simulation,
 };
@@ -15,8 +15,8 @@ impl CraftingAction for MuscleMemory {
 		current_index > 0
 	}
 
-	fn get_level_requirement(&self) -> (CraftingJob, u32) {
-		(CraftingJob::Any, 54)
+	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
+		(CraftingJob::Any, CraftingLevel::new(54).unwrap())
 	}
 
 	fn get_type(&self) -> ActionType {

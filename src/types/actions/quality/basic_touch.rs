@@ -1,4 +1,4 @@
-use crate::types::{enums::*, traits::*, Simulation};
+use crate::types::{structs::CraftingLevel, enums::*, traits::*, Simulation};
 
 #[derive(Clone)]
 pub struct BasicTouch;
@@ -6,8 +6,8 @@ pub struct BasicTouch;
 impl QualityAction for BasicTouch {}
 
 impl CraftingAction for BasicTouch {
-	fn get_level_requirement(&self) -> (CraftingJob, u32) {
-		(CraftingJob::Any, 5)
+	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
+		(CraftingJob::Any, CraftingLevel::new(5).unwrap())
 	}
 
 	fn get_type(&self) -> ActionType {

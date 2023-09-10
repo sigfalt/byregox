@@ -1,6 +1,7 @@
 use crate::types::{
 	enums::{ActionType, Buff, CraftingJob, StepState},
 	traits::{CraftingAction, GeneralAction, ProgressAction},
+	structs::CraftingLevel,
 	Simulation,
 };
 
@@ -10,8 +11,8 @@ pub struct FocusedSynthesis;
 impl ProgressAction for FocusedSynthesis {}
 
 impl CraftingAction for FocusedSynthesis {
-	fn get_level_requirement(&self) -> (CraftingJob, u32) {
-		(CraftingJob::Any, 67)
+	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
+		(CraftingJob::Any, CraftingLevel::new(67).unwrap())
 	}
 
 	fn get_type(&self) -> ActionType {

@@ -1,4 +1,4 @@
-use crate::types::{traits::{QualityAction, GeneralAction, CraftingAction}, enums::{CraftingJob, ActionType, Buff, StepState}, Simulation};
+use crate::types::{structs::CraftingLevel, traits::{QualityAction, GeneralAction, CraftingAction}, enums::{CraftingJob, ActionType, Buff, StepState}, Simulation};
 
 
 #[derive(Clone)]
@@ -15,8 +15,8 @@ impl CraftingAction for Reflect {
 		true
 	}
 
-	fn get_level_requirement(&self) -> (CraftingJob, u32) {
-		(CraftingJob::Any, 69)
+	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
+		(CraftingJob::Any, CraftingLevel::new(69).unwrap())
 	}
 
 	fn get_type(&self) -> ActionType { ActionType::Quality }

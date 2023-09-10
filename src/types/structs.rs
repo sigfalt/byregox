@@ -28,7 +28,7 @@ pub struct Craft {
 	pub durability: u32,
 	pub quality: u32,
 	pub progress: u32,
-	pub lvl: u32,
+	pub lvl: CraftingLevel,
 	pub suggested_craftsmanship: Option<u32>,
 	pub suggested_control: Option<u32>,
 	pub stars: Option<u32>,
@@ -56,38 +56,38 @@ pub struct CrafterStats {
 	pub cp: u32,
 	pub specialist: bool,
 	pub splendorous: bool,
-	pub level: u32,
+	pub level: CraftingLevel,
 	pub levels: CrafterLevels,
 }
 
 #[derive(Clone)]
 pub struct CrafterLevels {
-	pub crp: u32,
-	pub bsm: u32,
-	pub arm: u32,
-	pub gsm: u32,
-	pub ltw: u32,
-	pub wvr: u32,
-	pub alc: u32,
-	pub cul: u32,
+	pub crp: CraftingLevel,
+	pub bsm: CraftingLevel,
+	pub arm: CraftingLevel,
+	pub gsm: CraftingLevel,
+	pub ltw: CraftingLevel,
+	pub wvr: CraftingLevel,
+	pub alc: CraftingLevel,
+	pub cul: CraftingLevel,
 }
 
-impl From<[u32; 8]> for CrafterLevels {
-	fn from(value: [u32; 8]) -> Self {
+impl From<[u8; 8]> for CrafterLevels {
+	fn from(value: [u8; 8]) -> Self {
 		CrafterLevels {
-			crp: value[0],
-			bsm: value[1],
-			arm: value[2],
-			gsm: value[3],
-			ltw: value[4],
-			wvr: value[5],
-			alc: value[6],
-			cul: value[7],
+			crp: CraftingLevel::new(value[0]).unwrap(),
+			bsm: CraftingLevel::new(value[1]).unwrap(),
+			arm: CraftingLevel::new(value[2]).unwrap(),
+			gsm: CraftingLevel::new(value[3]).unwrap(),
+			ltw: CraftingLevel::new(value[4]).unwrap(),
+			wvr: CraftingLevel::new(value[5]).unwrap(),
+			alc: CraftingLevel::new(value[6]).unwrap(),
+			cul: CraftingLevel::new(value[7]).unwrap(),
 		}
 	}
 }
 impl std::ops::Index<CraftingJob> for CrafterLevels {
-	type Output = u32;
+	type Output = CraftingLevel;
 	fn index(&self, index: CraftingJob) -> &Self::Output {
 		match index {
 			CraftingJob::Any => panic!("Crafting job 'ANY' specified as index argument"),
@@ -101,6 +101,10 @@ impl std::ops::Index<CraftingJob> for CrafterLevels {
 			CraftingJob::Culinarian => &self.cul,
 		}
 	}
+}
+
+bounded_integer::bounded_integer! {
+	pub struct CraftingLevel { 0..=90 }
 }
 
 pub struct EffectiveBuff {

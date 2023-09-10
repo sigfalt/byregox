@@ -1,5 +1,6 @@
 use crate::types::{
 	enums::{ActionType, Buff, CraftingJob, StepState},
+	structs::CraftingLevel,
 	traits::{CraftingAction, GeneralAction, ProgressAction},
 	Simulation,
 };
@@ -10,8 +11,8 @@ pub struct IntensiveSynthesis;
 impl ProgressAction for IntensiveSynthesis {}
 
 impl CraftingAction for IntensiveSynthesis {
-	fn get_level_requirement(&self) -> (CraftingJob, u32) {
-		(CraftingJob::Any, 78)
+	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
+		(CraftingJob::Any, CraftingLevel::new(78).unwrap())
 	}
 
 	fn requires_good(&self) -> bool {

@@ -1,6 +1,6 @@
 use dyn_clone::DynClone;
 
-use super::{enums::*, Simulation};
+use super::{enums::*, Simulation, structs::CraftingLevel};
 
 pub trait CraftingAction: DynClone {
 	fn can_be_moved(&self, _current_index: u32) -> bool {
@@ -27,7 +27,7 @@ pub trait CraftingAction: DynClone {
 		false
 	}
 
-	fn get_level_requirement(&self) -> (CraftingJob, u32);
+	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel);
 
 	fn get_type(&self) -> ActionType;
 
