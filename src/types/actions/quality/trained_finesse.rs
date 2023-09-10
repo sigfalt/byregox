@@ -1,5 +1,9 @@
-use crate::types::{structs::CraftingLevel, traits::{QualityAction, GeneralAction, CraftingAction}, enums::{CraftingJob, ActionType, Buff, StepState}, Simulation};
-
+use crate::types::{
+	enums::{ActionType, Buff, CraftingJob, StepState},
+	structs::CraftingLevel,
+	traits::{CraftingAction, GeneralAction, QualityAction},
+	Simulation,
+};
 
 #[derive(Clone)]
 pub struct TrainedFinesse;
@@ -11,14 +15,18 @@ impl CraftingAction for TrainedFinesse {
 		(CraftingJob::Any, CraftingLevel::new(90).unwrap())
 	}
 
-	fn get_type(&self) -> ActionType { ActionType::Quality }
+	fn get_type(&self) -> ActionType {
+		ActionType::Quality
+	}
 
 	fn _get_success_rate(&self, simulation_state: &Simulation) -> u32 {
 		self.get_base_success_rate(simulation_state)
 	}
 
 	fn _can_be_used(&self, simulation_state: &Simulation) -> bool {
-		simulation_state.get_buff(Buff::InnerQuiet).is_some_and(|b| b.stacks == 10)
+		simulation_state
+			.get_buff(Buff::InnerQuiet)
+			.is_some_and(|b| b.stacks == 10)
 	}
 
 	fn get_base_cp_cost(&self, _simulation_state: &Simulation) -> u32 {
@@ -27,8 +35,13 @@ impl CraftingAction for TrainedFinesse {
 
 	fn get_durability_cost(&self, simulation_state: &Simulation) -> u32 {
 		let mut divider = 1.0;
-		if simulation_state.has_buff(Buff::WasteNot) || simulation_state.has_buff(Buff::WasteNotII) { divider *= 2.0 }
-		if simulation_state.state() == StepState::Sturdy { divider *= 2.0 }
+		if simulation_state.has_buff(Buff::WasteNot) || simulation_state.has_buff(Buff::WasteNotII)
+		{
+			divider *= 2.0
+		}
+		if simulation_state.state() == StepState::Sturdy {
+			divider *= 2.0
+		}
 		(self.get_base_durability_cost(simulation_state) as f64 / divider).ceil() as u32
 	}
 
@@ -41,8 +54,14 @@ impl CraftingAction for TrainedFinesse {
 		match simulation_state.state() {
 			StepState::Excellent => condition_mod *= 4.0,
 			StepState::Poor => condition_mod *= 0.5,
-			StepState::Good => condition_mod *= if simulation_state.crafter_stats.splendorous { 1.75 } else { 1.5 },
-			_ => ()
+			StepState::Good => {
+				condition_mod *= if simulation_state.crafter_stats.splendorous {
+					1.75
+				} else {
+					1.5
+				}
+			}
+			_ => (),
 		};
 
 		buff_mod += simulation_state
@@ -62,7 +81,8 @@ impl CraftingAction for TrainedFinesse {
 
 		let buff_mod: f64 = ((buff_mod as f32) * (buff_mult as f32)) as f64;
 		let efficiency = ((potency as f64 * buff_mod) as f32) as f64;
-		simulation_state.quality += (quality_increase * condition_mod * efficiency / 100.0).floor() as u32;
+		simulation_state.quality +=
+			(quality_increase * condition_mod * efficiency / 100.0).floor() as u32;
 
 		// if !skipStackAddition { // argument to function, defaults to false
 		if true {

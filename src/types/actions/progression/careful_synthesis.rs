@@ -1,8 +1,8 @@
 use crate::types::{
 	enums::{ActionType, Buff, CraftingJob, StepState},
+	structs::CraftingLevel,
 	traits::{CraftingAction, GeneralAction, ProgressAction},
 	Simulation,
-	structs::CraftingLevel
 };
 
 #[derive(Clone)]

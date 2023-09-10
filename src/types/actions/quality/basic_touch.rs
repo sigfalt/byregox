@@ -1,4 +1,4 @@
-use crate::types::{structs::CraftingLevel, enums::*, traits::*, Simulation};
+use crate::types::{enums::*, structs::CraftingLevel, traits::*, Simulation};
 
 #[derive(Clone)]
 pub struct BasicTouch;

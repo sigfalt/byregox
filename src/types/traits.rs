@@ -1,6 +1,6 @@
 use dyn_clone::DynClone;
 
-use super::{enums::*, Simulation, structs::CraftingLevel};
+use super::{enums::*, structs::CraftingLevel, Simulation};
 
 pub trait CraftingAction: DynClone {
 	fn can_be_moved(&self, _current_index: u32) -> bool {
