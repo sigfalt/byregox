@@ -97,6 +97,51 @@ fn test_groundwork() -> Result<(), Box<dyn Error>> {
 	Ok(())
 }
 
+#[test]
+fn test_quality_and_buffs() -> Result<(), Box<dyn Error>> {
+	let recipe = generate_recipe(3997, 72, 80, 1220, 3800, 102, 82);
+	let stats = generate_stats(90, 1208, 698, 534, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.actions(vec![
+			Box::new(actions::MuscleMemory),
+			Box::new(actions::Manipulation),
+			Box::new(actions::Veneration),
+			Box::new(actions::CarefulSynthesis),
+			Box::new(actions::PrudentTouch),
+			Box::new(actions::WasteNot),
+			Box::new(actions::AdvancedTouch),
+			Box::new(actions::StandardTouch),
+			Box::new(actions::PreparatoryTouch),
+			Box::new(actions::PreparatoryTouch),
+			Box::new(actions::Innovation),
+			Box::new(actions::PreparatoryTouch),
+			Box::new(actions::PreparatoryTouch),
+			Box::new(actions::GreatStrides),
+			Box::new(actions::ByregotsBlessing),
+			Box::new(actions::CarefulSynthesis),
+			Box::new(actions::CarefulSynthesis),
+		])
+		.crafter_stats(stats)
+		.build()?;
+	let result = sim.run(true);
+	assert!(result.simulation.success.is_some_and(|x| x));
+	assert_eq!(result.simulation.steps[0].added_progression, 360);
+	assert_eq!(result.simulation.steps[3].added_progression, 540);
+	assert_eq!(result.simulation.steps[15].added_progression, 216);
+	assert_eq!(result.simulation.steps[16].added_progression, 216);
+	assert_eq!(result.simulation.steps[4].added_quality, 120);
+	assert_eq!(result.simulation.steps[6].added_quality, 198);
+	assert_eq!(result.simulation.steps[7].added_quality, 180);
+	assert_eq!(result.simulation.steps[8].added_quality, 312);
+	assert_eq!(result.simulation.steps[9].added_quality, 360);
+	assert_eq!(result.simulation.steps[11].added_quality, 612);
+	assert_eq!(result.simulation.steps[12].added_quality, 684);
+	assert_eq!(result.simulation.steps[14].added_quality, 1800);
+
+	Ok(())
+}
+
 fn generate_recipe(id: u32, lvl: u8, durability: u32, progress: u32, quality: u32, progress_divider: u32, quality_divider: u32) -> Craft {
 	Craft {
 		id: id.to_string(),
