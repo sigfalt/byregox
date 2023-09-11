@@ -153,31 +153,6 @@ fn test_groundwork() -> Result<(), Box<dyn Error>> {
 	Ok(())
 }
 
-fn generate_recipe(
-	rlvl: u32,
-	progress: u32,
-	quality: u32,
-	progress_divider: u32,
-	quality_divider: u32,
-) -> Craft {
-	Craft {
-		id: "3864".to_string(),
-		job: 14,
-		rlvl,
-		durability: 80,
-		quality: if quality != 0 { quality } else { 20287 },
-		progress: if progress != 0 { progress } else { 3943 },
-		lvl: CraftingLevel::new(80).unwrap(),
-		hq: Some(true),
-		quick_synth: Some(true),
-		ingredients: vec![],
-		conditions_flag: 15,
-		progress_divider,
-		quality_divider,
-		..Default::default()
-	}
-}
-
 fn generate_stats(
 	level: u8,
 	craftsmanship: u32,
