@@ -340,3 +340,83 @@ impl GeneralAction for Class {
 	}
 }
 */
+
+pub trait BuffAction: CraftingAction {
+	fn get_duration(&self, simulation_state: &Simulation) -> u32;
+
+	fn can_be_clipped(&self) -> bool {
+		false
+	}
+
+	fn get_overrides(&self) -> Vec<Buff> {
+		vec![self.get_buff()]
+	}
+
+	fn get_buff(&self) -> Buff;
+
+	fn get_initial_stacks(&self) -> u32;
+
+	fn get_tick(&self) -> Option<fn(&mut Simulation, &dyn CraftingAction) -> ()> {
+		None
+	}
+
+	fn get_on_expire(&self) -> Option<fn(&mut Simulation, &dyn CraftingAction) -> ()> {
+		None
+	}
+
+	fn get_applied_buff(&self, simulation_state: &Simulation) -> EffectiveBuff {
+		EffectiveBuff {
+			duration: if simulation_state.state() == StepState::Primed {
+				self.get_duration(simulation_state) + 2
+			} else {
+				self.get_duration(simulation_state)
+			},
+			stacks: self.get_initial_stacks(),
+			buff: self.get_buff(),
+			applied_step: simulation_state.steps.len() as u32,
+			tick: self.get_tick(),
+			on_expire: self.get_on_expire()
+		}
+	}
+}
+// any class that implements BuffAction should inherit the following defaults
+/*
+impl CraftingAction for Class {
+	fn skip_on_fail(&self) -> bool {
+		true
+	}
+
+	fn get_type(&self) -> ActionType {
+		ActionType::Buff
+	}
+
+	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
+		todo!()
+	}
+
+	fn _get_success_rate(&self, simulation_state: &Simulation) -> u32 {
+		100
+	}
+
+	fn _can_be_used(&self, simulation_state: &Simulation) -> bool {
+		if self.can_be_clipped() {
+			true
+		} else {
+			!simulation_state.has_buff(self.get_buff())
+		}
+	}
+
+	fn get_base_cp_cost(&self, simulation_state: &Simulation) -> u32 {
+		todo!()
+	}
+
+	fn get_durability_cost(&self, simulation_state: &Simulation) -> u32 {
+		0
+	}
+
+	fn execute(&self, simulation_state: &mut Simulation) {
+		self.get_overrides().into_iter().for_each(|b| simulation_state.remove_buff(b));
+		simulation_state.add_buff(self.get_applied_buff(simulation_state));
+	}
+}
+*/
