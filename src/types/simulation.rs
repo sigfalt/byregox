@@ -117,7 +117,7 @@ impl Simulation {
 				let cp_before = self.available_cp;
 				let skip_ticks_on_fail = !result.success.unwrap_or(false) && action.skip_on_fail();
 				if self.success.is_none() && !action.skips_buff_ticks() && !skip_ticks_on_fail {
-					// self.tick_buffs(linear, action);
+					self.tick_buffs(action.as_ref());
 				}
 				// result.after_buff_tick = {
 				//     added_progression: self.progression - progression_before,
@@ -244,6 +244,10 @@ impl Simulation {
 		}
 	}
 
+	pub fn repair(&mut self, amt: u32) {
+		self.durability = (self.recipe.durability as i32).min(self.durability + (amt as i32));
+	}
+
 	pub fn get_hq_percent(&self) -> u32 {
 		let quality_percent =
 			(((self.quality as f64 / self.recipe.quality as f64) * 100.0).floor() as u32).min(100);
@@ -254,6 +258,18 @@ impl Simulation {
 		} else {
 			*tables::HQ_TABLE.get(quality_percent as usize).unwrap()
 		}
+	}
+
+	fn tick_buffs(&mut self, action: &dyn CraftingAction) {
+		let mut curr_buffs = self.buffs.clone();
+		curr_buffs.iter_mut().for_each(|b| {
+			if b.applied_step < self.steps.len() as u32 {
+				b.tick(self, action);
+			}
+			b.duration -= 1;
+		});
+		curr_buffs.iter().filter(|b| b.duration <= 0 && b.on_expire.is_some()).for_each(|b| b.on_expire(self, action));
+		self.buffs = curr_buffs.into_iter().filter(|b| b.duration > 0).collect();
 	}
 }
 

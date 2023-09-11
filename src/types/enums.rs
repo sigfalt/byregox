@@ -17,7 +17,7 @@ pub enum StepState {
 	GoodOmen,  // Next step is GOOD condition
 }
 
-#[derive(PartialEq)]
+#[derive(Clone, Copy, PartialEq)]
 pub enum ActionType {
 	Progression,
 	Quality,
@@ -78,7 +78,7 @@ pub enum CraftingActionEnum {
 	RemoveFinalAppraisal,
 }
 
-#[derive(PartialEq)]
+#[derive(Clone, Copy, PartialEq)]
 pub enum Buff {
 	InnerQuiet,
 
@@ -102,7 +102,7 @@ pub enum Buff {
 	HeartAndSoul,
 }
 
-#[derive(PartialEq)]
+#[derive(Clone, Copy, PartialEq)]
 pub enum CraftingJob {
 	Any,
 	Carpenter,

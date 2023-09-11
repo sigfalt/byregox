@@ -82,6 +82,10 @@ impl CraftingAction for BasicTouch {
 			simulation_state.add_inner_quiet_stacks(1);
 		}
 	}
+
+	fn get_enum(&self) -> CraftingActionEnum {
+		CraftingActionEnum::BasicTouch
+	}
 }
 
 impl GeneralAction for BasicTouch {

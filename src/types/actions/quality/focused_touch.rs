@@ -1,5 +1,5 @@
 use crate::types::{
-	enums::{ActionType, Buff, CraftingJob, StepState},
+	enums::{ActionType, Buff, CraftingJob, StepState, CraftingActionEnum},
 	structs::CraftingLevel,
 	traits::{CraftingAction, GeneralAction, QualityAction},
 	Simulation,
@@ -86,6 +86,10 @@ impl CraftingAction for FocusedTouch {
 		if true {
 			simulation_state.add_inner_quiet_stacks(1);
 		}
+	}
+
+	fn get_enum(&self) -> CraftingActionEnum {
+		CraftingActionEnum::FocusedTouch
 	}
 }
 

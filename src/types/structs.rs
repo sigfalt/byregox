@@ -107,24 +107,25 @@ bounded_integer::bounded_integer! {
 	pub struct CraftingLevel { 0..=90 }
 }
 
+#[derive(Clone)]
 pub struct EffectiveBuff {
 	pub duration: u32,
 	pub stacks: u32,
 	pub buff: Buff,
 	pub applied_step: u32,
-	pub tick: Option<Box<dyn Fn(&mut Simulation) -> ()>>,
-	pub on_expire: Option<Box<dyn Fn(&mut Simulation) -> ()>>,
+	pub tick: Option<fn(&mut Simulation, &dyn CraftingAction) -> ()>,
+	pub on_expire: Option<fn(&mut Simulation, &dyn CraftingAction) -> ()>,
 }
 impl EffectiveBuff {
-	pub fn tick(&self, simulation_state: &mut Simulation) {
+	pub fn tick(&self, simulation_state: &mut Simulation, action: &dyn CraftingAction) {
 		if let Some(f) = &self.tick {
-			f(simulation_state);
+			f(simulation_state, action);
 		}
 	}
 
-	pub fn on_expire(&self, simulation_state: &mut Simulation) {
+	pub fn on_expire(&self, simulation_state: &mut Simulation, action: &dyn CraftingAction) {
 		if let Some(f) = &self.on_expire {
-			f(simulation_state);
+			f(simulation_state, action);
 		}
 	}
 }

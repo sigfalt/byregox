@@ -1,5 +1,5 @@
 use crate::types::{
-	enums::{ActionType, Buff, CraftingJob, StepState},
+	enums::{ActionType, Buff, CraftingJob, StepState, CraftingActionEnum},
 	structs::CraftingLevel,
 	traits::{CraftingAction, GeneralAction, QualityAction},
 	Simulation,
@@ -103,6 +103,10 @@ impl CraftingAction for PreciseTouch {
 		// Precise Touch specific addition to blanket `execute` impl
 		simulation_state.add_inner_quiet_stacks(1);
 		// TODO: any reason to do this separately in Rust? since we reimpl execute anyway
+	}
+
+	fn get_enum(&self) -> CraftingActionEnum {
+		CraftingActionEnum::PreciseTouch
 	}
 }
 

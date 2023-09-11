@@ -1,5 +1,5 @@
 use crate::types::{
-	enums::{ActionType, CraftingJob},
+	enums::{ActionType, CraftingJob, CraftingActionEnum},
 	structs::CraftingLevel,
 	traits::CraftingAction,
 	Simulation,
@@ -37,5 +37,9 @@ impl CraftingAction for TrainedEye {
 
 	fn execute(&self, simulation_state: &mut Simulation) {
 		simulation_state.quality = simulation_state.recipe.quality;
+	}
+
+	fn get_enum(&self) -> CraftingActionEnum {
+		CraftingActionEnum::TrainedEye
 	}
 }
