@@ -265,8 +265,8 @@ impl Simulation {
 		curr_buffs.iter_mut().for_each(|b| {
 			if b.applied_step < self.steps.len() as u32 {
 				b.tick(self, action);
+				b.duration -= 1;
 			}
-			b.duration -= 1;
 		});
 		curr_buffs
 			.iter()

@@ -128,7 +128,7 @@ impl CraftingAction for ByregotsBlessing {
 
 impl GeneralAction for ByregotsBlessing {
 	fn get_potency(&self, simulation_state: &Simulation) -> u32 {
-		300.min((simulation_state.get_buff(Buff::InnerQuiet).unwrap().stacks * 20) + 10)
+		300.min((simulation_state.get_buff(Buff::InnerQuiet).unwrap().stacks * 20) + 100)
 	}
 
 	fn get_base_durability_cost(&self, _simulation_state: &Simulation) -> u32 {
