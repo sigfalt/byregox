@@ -1,5 +1,5 @@
 use crate::types::{
-	enums::{ActionType, Buff, CraftingJob, StepState, CraftingActionEnum},
+	enums::{ActionType, Buff, CraftingActionEnum, CraftingJob, StepState},
 	structs::{CraftingLevel, EffectiveBuff},
 	traits::{CraftingAction, GeneralAction, ProgressAction},
 	Simulation,
@@ -91,7 +91,7 @@ impl CraftingAction for MuscleMemory {
 			buff: Buff::MuscleMemory,
 			applied_step: simulation_state.steps.len() as u32,
 			tick: None,
-			on_expire: None
+			on_expire: None,
 		});
 	}
 

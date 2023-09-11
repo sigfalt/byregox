@@ -1,12 +1,17 @@
-use crate::types::{structs::CraftingLevel, traits::{BuffAction, CraftingAction}, enums::*, Simulation};
+use crate::types::{
+	enums::*,
+	structs::CraftingLevel,
+	traits::{BuffAction, CraftingAction},
+	Simulation,
+};
 
 #[derive(Clone)]
 pub struct WasteNotII;
 
 impl BuffAction for WasteNotII {
-    fn get_duration(&self, _simulation_state: &Simulation) -> u32 {
-        8
-    }
+	fn get_duration(&self, _simulation_state: &Simulation) -> u32 {
+		8
+	}
 
 	fn can_be_clipped(&self) -> bool {
 		true
@@ -16,13 +21,13 @@ impl BuffAction for WasteNotII {
 		vec![self.get_buff(), Buff::WasteNot]
 	}
 
-    fn get_buff(&self) -> Buff {
-        Buff::WasteNotII
-    }
+	fn get_buff(&self) -> Buff {
+		Buff::WasteNotII
+	}
 
-    fn get_initial_stacks(&self) -> u32 {
-        0
-    }
+	fn get_initial_stacks(&self) -> u32 {
+		0
+	}
 }
 
 impl CraftingAction for WasteNotII {
@@ -59,7 +64,9 @@ impl CraftingAction for WasteNotII {
 	}
 
 	fn execute(&self, simulation_state: &mut Simulation) {
-		self.get_overrides().into_iter().for_each(|b| simulation_state.remove_buff(b));
+		self.get_overrides()
+			.into_iter()
+			.for_each(|b| simulation_state.remove_buff(b));
 		simulation_state.add_buff(self.get_applied_buff(simulation_state));
 	}
 

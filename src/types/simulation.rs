@@ -68,7 +68,7 @@ impl Simulation {
 				buff: Buff::InnerQuiet,
 				applied_step: self.step_states.len() as u32,
 				tick: None,
-				on_expire: None
+				on_expire: None,
 			});
 		}
 	}
@@ -268,7 +268,10 @@ impl Simulation {
 			}
 			b.duration -= 1;
 		});
-		curr_buffs.iter().filter(|b| b.duration <= 0 && b.on_expire.is_some()).for_each(|b| b.on_expire(self, action));
+		curr_buffs
+			.iter()
+			.filter(|b| b.duration <= 0 && b.on_expire.is_some())
+			.for_each(|b| b.on_expire(self, action));
 		self.buffs = curr_buffs.into_iter().filter(|b| b.duration > 0).collect();
 	}
 }

@@ -1,5 +1,5 @@
 use crate::types::{
-	enums::{ActionType, Buff, CraftingJob, StepState, CraftingActionEnum},
+	enums::{ActionType, Buff, CraftingActionEnum, CraftingJob, StepState},
 	structs::CraftingLevel,
 	traits::{CraftingAction, GeneralAction, ProgressAction},
 	Simulation,

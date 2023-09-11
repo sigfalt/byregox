@@ -1,24 +1,29 @@
-use crate::types::{structs::CraftingLevel, traits::{BuffAction, CraftingAction}, enums::*, Simulation};
+use crate::types::{
+	enums::*,
+	structs::CraftingLevel,
+	traits::{BuffAction, CraftingAction},
+	Simulation,
+};
 
 #[derive(Clone)]
 pub struct FinalAppraisal;
 
 impl BuffAction for FinalAppraisal {
-    fn get_duration(&self, _simulation_state: &Simulation) -> u32 {
-        5
-    }
+	fn get_duration(&self, _simulation_state: &Simulation) -> u32 {
+		5
+	}
 
 	fn can_be_clipped(&self) -> bool {
 		true
 	}
 
-    fn get_buff(&self) -> Buff {
-        Buff::FinalAppraisal
-    }
+	fn get_buff(&self) -> Buff {
+		Buff::FinalAppraisal
+	}
 
-    fn get_initial_stacks(&self) -> u32 {
-        0
-    }
+	fn get_initial_stacks(&self) -> u32 {
+		0
+	}
 }
 
 impl CraftingAction for FinalAppraisal {
@@ -55,7 +60,9 @@ impl CraftingAction for FinalAppraisal {
 	}
 
 	fn execute(&self, simulation_state: &mut Simulation) {
-		self.get_overrides().into_iter().for_each(|b| simulation_state.remove_buff(b));
+		self.get_overrides()
+			.into_iter()
+			.for_each(|b| simulation_state.remove_buff(b));
 		simulation_state.add_buff(self.get_applied_buff(simulation_state));
 	}
 

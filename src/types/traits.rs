@@ -375,7 +375,7 @@ pub trait BuffAction: CraftingAction {
 			buff: self.get_buff(),
 			applied_step: simulation_state.steps.len() as u32,
 			tick: self.get_tick(),
-			on_expire: self.get_on_expire()
+			on_expire: self.get_on_expire(),
 		}
 	}
 }

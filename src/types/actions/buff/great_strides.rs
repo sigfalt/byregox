@@ -1,24 +1,29 @@
-use crate::types::{structs::CraftingLevel, traits::{BuffAction, CraftingAction}, enums::*, Simulation};
+use crate::types::{
+	enums::*,
+	structs::CraftingLevel,
+	traits::{BuffAction, CraftingAction},
+	Simulation,
+};
 
 #[derive(Clone)]
 pub struct GreatStrides;
 
 impl BuffAction for GreatStrides {
-    fn get_duration(&self, _simulation_state: &Simulation) -> u32 {
-        3
-    }
+	fn get_duration(&self, _simulation_state: &Simulation) -> u32 {
+		3
+	}
 
 	fn can_be_clipped(&self) -> bool {
 		true
 	}
 
-    fn get_buff(&self) -> Buff {
-        Buff::GreatStrides
-    }
+	fn get_buff(&self) -> Buff {
+		Buff::GreatStrides
+	}
 
-    fn get_initial_stacks(&self) -> u32 {
-        0
-    }
+	fn get_initial_stacks(&self) -> u32 {
+		0
+	}
 }
 
 impl CraftingAction for GreatStrides {
@@ -55,7 +60,9 @@ impl CraftingAction for GreatStrides {
 	}
 
 	fn execute(&self, simulation_state: &mut Simulation) {
-		self.get_overrides().into_iter().for_each(|b| simulation_state.remove_buff(b));
+		self.get_overrides()
+			.into_iter()
+			.for_each(|b| simulation_state.remove_buff(b));
 		simulation_state.add_buff(self.get_applied_buff(simulation_state));
 	}
 

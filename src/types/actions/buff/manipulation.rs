@@ -1,12 +1,17 @@
-use crate::types::{structs::CraftingLevel, traits::{BuffAction, CraftingAction}, enums::*, Simulation};
+use crate::types::{
+	enums::*,
+	structs::CraftingLevel,
+	traits::{BuffAction, CraftingAction},
+	Simulation,
+};
 
 #[derive(Clone)]
 pub struct Manipulation;
 
 impl BuffAction for Manipulation {
-    fn get_duration(&self, _simulation_state: &Simulation) -> u32 {
-        8
-    }
+	fn get_duration(&self, _simulation_state: &Simulation) -> u32 {
+		8
+	}
 
 	fn can_be_clipped(&self) -> bool {
 		true
@@ -17,13 +22,13 @@ impl BuffAction for Manipulation {
 		vec![self.get_buff(), Buff::Manipulation]
 	}
 
-    fn get_buff(&self) -> Buff {
-        Buff::Manipulation
-    }
+	fn get_buff(&self) -> Buff {
+		Buff::Manipulation
+	}
 
-    fn get_initial_stacks(&self) -> u32 {
-        0
-    }
+	fn get_initial_stacks(&self) -> u32 {
+		0
+	}
 
 	fn get_tick(&self) -> Option<fn(&mut Simulation, &dyn CraftingAction) -> ()> {
 		Some(|simulation_state, _action| {
@@ -70,7 +75,9 @@ impl CraftingAction for Manipulation {
 	}
 
 	fn execute(&self, simulation_state: &mut Simulation) {
-		self.get_overrides().into_iter().for_each(|b| simulation_state.remove_buff(b));
+		self.get_overrides()
+			.into_iter()
+			.for_each(|b| simulation_state.remove_buff(b));
 		simulation_state.add_buff(self.get_applied_buff(simulation_state));
 	}
 
