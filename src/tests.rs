@@ -3,26 +3,12 @@ use std::error::Error;
 use crate::types::{
 	actions,
 	structs::{Craft, CrafterLevels, CrafterStats, CraftingLevel},
-	SimulationBuilder,
+	SimulationBuilder, tables,
 };
 
 #[test]
-fn test_simulation_construction() -> Result<(), Box<dyn Error>> {
-	let recipe = Craft {
-		id: "1035".to_string(),
-		job: 14,
-		rlvl: 15,
-		durability: 70,
-		quality: 360,
-		progress: 55,
-		lvl: CraftingLevel::new(15).unwrap(),
-		hq: Some(true),
-		quick_synth: Some(true),
-		ingredients: vec![],
-		progress_divider: 50,
-		quality_divider: 30,
-		..Default::default()
-	};
+fn test_basics() -> Result<(), Box<dyn Error>> {
+	let recipe = generate_recipe(1035, 15, 70, 55, 360, 50, 30);
 	let stats = generate_stats(90, 1208, 698, 187, false);
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
@@ -44,21 +30,7 @@ fn test_simulation_construction() -> Result<(), Box<dyn Error>> {
 
 #[test]
 fn test_muscle_memory() -> Result<(), Box<dyn Error>> {
-	let recipe = Craft {
-		id: "1960".to_string(),
-		job: 14,
-		rlvl: 255,
-		durability: 80,
-		quality: 2790,
-		progress: 630,
-		lvl: CraftingLevel::new(61).unwrap(),
-		hq: Some(true),
-		quick_synth: Some(true),
-		ingredients: vec![],
-		progress_divider: 81,
-		quality_divider: 58,
-		..Default::default()
-	};
+	let recipe = generate_recipe(1960, 61, 80, 630, 2790, 81, 58);
 	let stats = generate_stats(90, 1208, 698, 187, false);
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
@@ -78,21 +50,7 @@ fn test_muscle_memory() -> Result<(), Box<dyn Error>> {
 
 #[test]
 fn test_careful_synthesis() -> Result<(), Box<dyn Error>> {
-	let recipe = Craft {
-		id: "3997".to_string(),
-		job: 14,
-		rlvl: 395,
-		durability: 80,
-		quality: 3800,
-		progress: 1220,
-		lvl: CraftingLevel::new(72).unwrap(),
-		hq: Some(true),
-		quick_synth: Some(true),
-		ingredients: vec![],
-		progress_divider: 102,
-		quality_divider: 82,
-		..Default::default()
-	};
+	let recipe = generate_recipe(3997, 72, 80, 1220, 3800, 102, 82);
 	let stats = generate_stats(90, 1208, 698, 187, false);
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
@@ -116,21 +74,7 @@ fn test_careful_synthesis() -> Result<(), Box<dyn Error>> {
 
 #[test]
 fn test_groundwork() -> Result<(), Box<dyn Error>> {
-	let recipe = Craft {
-		id: "3997".to_string(),
-		job: 14,
-		rlvl: 395,
-		durability: 80,
-		quality: 3800,
-		progress: 1220,
-		lvl: CraftingLevel::new(72).unwrap(),
-		hq: Some(true),
-		quick_synth: Some(true),
-		ingredients: vec![],
-		progress_divider: 102,
-		quality_divider: 82,
-		..Default::default()
-	};
+	let recipe = generate_recipe(3997, 72, 80, 1220, 3800, 102, 82);
 	let stats = generate_stats(90, 1208, 698, 187, false);
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
@@ -151,6 +95,24 @@ fn test_groundwork() -> Result<(), Box<dyn Error>> {
 	assert_eq!(result.simulation.steps[5].added_progression, 216);
 
 	Ok(())
+}
+
+fn generate_recipe(id: u32, lvl: u8, durability: u32, progress: u32, quality: u32, progress_divider: u32, quality_divider: u32) -> Craft {
+	Craft {
+		id: id.to_string(),
+		job: 14, // CRP
+		lvl: CraftingLevel::new(lvl).unwrap(),
+		rlvl: tables::level_to_ilevel(CraftingLevel::new(lvl).unwrap()),
+		durability,
+		progress,
+		quality,
+		progress_divider,
+		quality_divider,
+		hq: Some(true),
+		quick_synth: Some(true),
+		ingredients: vec![],
+		..Default::default()
+	}
 }
 
 fn generate_stats(
