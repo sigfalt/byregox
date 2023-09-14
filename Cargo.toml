@@ -7,7 +7,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bounded-integer = { version = "0.5", features = ['macro'] }
 derive_builder = "0.12"
 dotenvy = "0.15"
 dyn-clone = "1.0"

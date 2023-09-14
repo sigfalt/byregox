@@ -103,8 +103,40 @@ impl std::ops::Index<CraftingJob> for CrafterLevels {
 	}
 }
 
-bounded_integer::bounded_integer! {
-	pub struct CraftingLevel { 0..=90 }
+#[derive(Clone, Copy, Default, Eq, PartialEq, PartialOrd)]
+pub struct CraftingLevel {
+	val: u8
+}
+impl CraftingLevel {
+	pub fn new(val: u8) -> Option<CraftingLevel> {
+		if (0..=90).contains(&val) {
+			Some(CraftingLevel { val })
+		} else {
+			None
+		}
+	}
+}
+impl Into<u8> for CraftingLevel {
+    fn into(self) -> u8 {
+        self.val
+    }
+}
+impl std::ops::Sub for CraftingLevel {
+    type Output = u8;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        self.val - rhs.val
+    }
+}
+impl PartialEq<u8> for CraftingLevel {
+    fn eq(&self, other: &u8) -> bool {
+        self.val == *other
+    }
+}
+impl PartialOrd<u8> for CraftingLevel {
+    fn partial_cmp(&self, other: &u8) -> Option<std::cmp::Ordering> {
+        self.val.partial_cmp(other)
+    }
 }
 
 #[derive(Clone)]
