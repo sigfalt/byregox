@@ -105,7 +105,7 @@ impl std::ops::Index<CraftingJob> for CrafterLevels {
 
 #[derive(Clone, Copy, Default, Eq, PartialEq, PartialOrd)]
 pub struct CraftingLevel {
-	val: u8
+	val: u8,
 }
 impl CraftingLevel {
 	pub fn new(val: u8) -> Option<CraftingLevel> {
@@ -117,26 +117,26 @@ impl CraftingLevel {
 	}
 }
 impl Into<u8> for CraftingLevel {
-    fn into(self) -> u8 {
-        self.val
-    }
+	fn into(self) -> u8 {
+		self.val
+	}
 }
 impl std::ops::Sub for CraftingLevel {
-    type Output = u8;
+	type Output = u8;
 
-    fn sub(self, rhs: Self) -> Self::Output {
-        self.val - rhs.val
-    }
+	fn sub(self, rhs: Self) -> Self::Output {
+		self.val - rhs.val
+	}
 }
 impl PartialEq<u8> for CraftingLevel {
-    fn eq(&self, other: &u8) -> bool {
-        self.val == *other
-    }
+	fn eq(&self, other: &u8) -> bool {
+		self.val == *other
+	}
 }
 impl PartialOrd<u8> for CraftingLevel {
-    fn partial_cmp(&self, other: &u8) -> Option<std::cmp::Ordering> {
-        self.val.partial_cmp(other)
-    }
+	fn partial_cmp(&self, other: &u8) -> Option<std::cmp::Ordering> {
+		self.val.partial_cmp(other)
+	}
 }
 
 #[derive(Clone)]

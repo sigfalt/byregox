@@ -1,4 +1,5 @@
 use crate::types::{
+	actions,
 	enums::{ActionType, Buff, CraftingActionEnum, CraftingJob, StepState},
 	structs::CraftingLevel,
 	traits::{CraftingAction, GeneralAction, QualityAction},
@@ -16,8 +17,7 @@ impl CraftingAction for StandardTouch {
 	}
 
 	fn has_combo(&self, simulation_state: &Simulation) -> bool {
-		// TODO: simulation_state.has_combo_available(BasicTouch.getIds()[0])
-		false
+		simulation_state.has_combo_available(&actions::BasicTouch)
 	}
 
 	fn get_type(&self) -> ActionType {
@@ -33,8 +33,11 @@ impl CraftingAction for StandardTouch {
 	}
 
 	fn get_base_cp_cost(&self, simulation_state: &Simulation) -> u32 {
-		// TODO: if simulation_state.has_combo_available(BasicTouch.getIds()[0]) { 18 } else { 32 }
-		32
+		if simulation_state.has_combo_available(&actions::BasicTouch) {
+			18
+		} else {
+			32
+		}
 	}
 
 	fn get_durability_cost(&self, simulation_state: &Simulation) -> u32 {

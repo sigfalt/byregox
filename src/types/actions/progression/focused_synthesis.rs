@@ -1,4 +1,5 @@
 use crate::types::{
+	actions,
 	enums::{ActionType, Buff, CraftingActionEnum, CraftingJob, StepState},
 	structs::CraftingLevel,
 	traits::{CraftingAction, GeneralAction, ProgressAction},
@@ -89,8 +90,10 @@ impl GeneralAction for FocusedSynthesis {
 	}
 
 	fn get_base_success_rate(&self, simulation_state: &Simulation) -> u32 {
-		// TODO: add check for Observe
-		// if simulation_state.has_combo_available(Observe.getIds()[0]) { 100 } else { 50 }
-		50
+		if simulation_state.has_combo_available(&actions::Observe) {
+			100
+		} else {
+			50
+		}
 	}
 }

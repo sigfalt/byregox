@@ -1,38 +1,34 @@
 use crate::types::{
 	enums::{ActionType, Buff, CraftingActionEnum, CraftingJob, StepState},
 	structs::CraftingLevel,
-	traits::{CraftingAction, GeneralAction, QualityAction},
+	traits::{CraftingAction, GeneralAction},
 	Simulation,
 };
 
 #[derive(Clone)]
-pub struct AdvancedTouch;
+pub struct DelicateSynthesis;
 
-impl QualityAction for AdvancedTouch {}
-
-impl CraftingAction for AdvancedTouch {
-	fn has_combo(&self, simulation_state: &Simulation) -> bool {
-		// need to check not only for StandardTouch, but that it was also combo'd
-		for step in simulation_state.steps.iter().rev() {
-			if step.action.get_enum() == CraftingActionEnum::StandardTouch
-				&& step.success.is_some_and(|x| x)
-				&& step.combo.is_some_and(|x| x)
-			{
-				return true;
-			}
-			if !step.skipped {
-				return false;
-			}
-		}
-		false
+impl GeneralAction for DelicateSynthesis {
+	fn get_potency(&self, _simulation_state: &Simulation) -> u32 {
+		100
 	}
 
+	fn get_base_durability_cost(&self, _simulation_state: &Simulation) -> u32 {
+		10
+	}
+
+	fn get_base_success_rate(&self, _simulation_state: &Simulation) -> u32 {
+		100
+	}
+}
+
+impl CraftingAction for DelicateSynthesis {
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::new(84).unwrap())
+		(CraftingJob::Any, CraftingLevel::new(76).unwrap())
 	}
 
 	fn get_type(&self) -> ActionType {
-		ActionType::Quality
+		ActionType::Other
 	}
 
 	fn _get_success_rate(&self, simulation_state: &Simulation) -> u32 {
@@ -43,12 +39,8 @@ impl CraftingAction for AdvancedTouch {
 		true
 	}
 
-	fn get_base_cp_cost(&self, simulation_state: &Simulation) -> u32 {
-		if self.has_combo(simulation_state) {
-			18
-		} else {
-			46
-		}
+	fn get_base_cp_cost(&self, _simulation_state: &Simulation) -> u32 {
+		32
 	}
 
 	fn get_durability_cost(&self, simulation_state: &Simulation) -> u32 {
@@ -64,6 +56,39 @@ impl CraftingAction for AdvancedTouch {
 	}
 
 	fn execute(&self, simulation_state: &mut Simulation) {
+		// progress
+		let progression_increase = self.get_base_progression(simulation_state);
+		let progress_potency = self.get_potency(simulation_state);
+		let mut progress_buff_mod = self.get_base_bonus(simulation_state);
+		let mut progress_condition_mod = self.get_base_condition(simulation_state);
+
+		if simulation_state.state() == StepState::Malleable {
+			progress_condition_mod *= 1.5;
+		}
+
+		if simulation_state.has_buff(Buff::MuscleMemory) {
+			progress_buff_mod += 1.0;
+			simulation_state.remove_buff(Buff::MuscleMemory);
+		}
+		if simulation_state.has_buff(Buff::Veneration) {
+			progress_buff_mod += 0.5;
+		}
+
+		let progress_efficiency = progress_potency as f64 * progress_buff_mod;
+		simulation_state.progression +=
+			(progression_increase as f64 * progress_condition_mod * progress_efficiency / 100.0)
+				.floor() as u32;
+
+		if simulation_state.has_buff(Buff::FinalAppraisal)
+			&& simulation_state.progression >= simulation_state.recipe.progress
+		{
+			simulation_state.progression = simulation_state
+				.progression
+				.min(simulation_state.recipe.progress - 1);
+			simulation_state.remove_buff(Buff::FinalAppraisal);
+		}
+
+		// quality
 		let mut buff_mod = self.get_base_bonus(simulation_state);
 		let mut condition_mod = self.get_base_condition(simulation_state);
 		let potency = self.get_potency(simulation_state);
@@ -102,27 +127,10 @@ impl CraftingAction for AdvancedTouch {
 		simulation_state.quality +=
 			(quality_increase * condition_mod * efficiency / 100.0).floor() as u32;
 
-		// if !skipStackAddition { // argument to function, defaults to false
-		if true {
-			simulation_state.add_inner_quiet_stacks(1);
-		}
+		simulation_state.add_inner_quiet_stacks(1);
 	}
 
 	fn get_enum(&self) -> CraftingActionEnum {
-		CraftingActionEnum::AdvancedTouch
-	}
-}
-
-impl GeneralAction for AdvancedTouch {
-	fn get_potency(&self, _simulation_state: &Simulation) -> u32 {
-		150
-	}
-
-	fn get_base_durability_cost(&self, _simulation_state: &Simulation) -> u32 {
-		10
-	}
-
-	fn get_base_success_rate(&self, _simulation_state: &Simulation) -> u32 {
-		100
+		CraftingActionEnum::DelicateSynthesis
 	}
 }

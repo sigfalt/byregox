@@ -4,7 +4,7 @@ use rand::Rng;
 use crate::types::tables;
 
 use super::{
-	enums::{Buff, StepState},
+	enums::{Buff, CraftingActionEnum, StepState},
 	structs::*,
 	traits::CraftingAction,
 };
@@ -33,9 +33,9 @@ pub struct Simulation {
 	state: StepState,
 
 	#[builder(setter(skip), default = "self.build_available_cp()?")]
-	available_cp: u32,
+	pub available_cp: u32,
 	#[builder(setter(skip), default = "self.build_max_cp()?")]
-	max_cp: u32,
+	pub max_cp: u32,
 
 	#[builder(setter(skip), default = "vec![]")]
 	buffs: Vec<EffectiveBuff>,
@@ -56,6 +56,21 @@ pub struct Simulation {
 impl Simulation {
 	pub fn state(&self) -> StepState {
 		self.state
+	}
+
+	pub fn has_combo_available(&self, action: &dyn CraftingAction) -> bool {
+		// starting from the most recent action
+		for step in self.steps.iter().rev() {
+			// if we find the action that we're looking for and it was successful, we can combo
+			if step.action.get_enum() == action.get_enum() && step.success.is_some_and(|x| x) {
+				return true;
+			}
+			// if any previous action that isn't what we're looking for wasn't skipped, combo is broken
+			if !step.skipped {
+				return false;
+			}
+		}
+		false
 	}
 
 	pub fn add_inner_quiet_stacks(&mut self, stacks: u32) {
