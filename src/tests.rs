@@ -156,6 +156,8 @@ fn test_combos() -> Result<(), Box<dyn Error>> {
 			Box::new(actions::BasicTouch),
 			Box::new(actions::StandardTouch),
 			Box::new(actions::AdvancedTouch),
+			Box::new(actions::StandardTouch),
+			Box::new(actions::AdvancedTouch),
 			Box::new(actions::Observe),
 			Box::new(actions::FocusedTouch),
 			Box::new(actions::Observe),
@@ -168,11 +170,13 @@ fn test_combos() -> Result<(), Box<dyn Error>> {
 	assert_eq!(result.simulation.steps[0].added_progression, 360);
 	assert_eq!(result.simulation.steps[2].added_progression, 432);
 	assert_eq!(result.simulation.steps[3].added_progression, 216);
-	assert_eq!(result.simulation.steps[10].added_progression, 240);
+	assert_eq!(result.simulation.steps[12].added_progression, 240);
 	assert_eq!(result.simulation.steps[4].added_quality, 120);
 	assert_eq!(result.simulation.steps[5].added_quality, 165);
 	assert_eq!(result.simulation.steps[6].added_quality, 216);
-	assert_eq!(result.simulation.steps[8].added_quality, 234);
+	assert_eq!(result.simulation.steps[7].added_quality, 195);
+	assert_eq!(result.simulation.steps[8].added_quality, 252);
+	assert_eq!(result.simulation.steps[10].added_quality, 270);
 
 	Ok(())
 }
