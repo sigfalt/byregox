@@ -1,4 +1,4 @@
-use std::error::Error;
+use anyhow::Result;
 
 use crate::types::{
 	actions,
@@ -7,7 +7,7 @@ use crate::types::{
 };
 
 #[test]
-fn test_basics() -> Result<(), Box<dyn Error>> {
+fn test_basics() -> Result<()> {
 	let recipe = generate_recipe(1035, 15, 70, 55, 360, 50, 30);
 	let stats = generate_stats(90, 1208, 698, 187, false);
 	let sim = SimulationBuilder::default()
@@ -29,7 +29,7 @@ fn test_basics() -> Result<(), Box<dyn Error>> {
 }
 
 #[test]
-fn test_muscle_memory() -> Result<(), Box<dyn Error>> {
+fn test_muscle_memory() -> Result<()> {
 	let recipe = generate_recipe(1960, 61, 80, 630, 2790, 81, 58);
 	let stats = generate_stats(90, 1208, 698, 187, false);
 	let sim = SimulationBuilder::default()
@@ -49,7 +49,7 @@ fn test_muscle_memory() -> Result<(), Box<dyn Error>> {
 }
 
 #[test]
-fn test_careful_synthesis() -> Result<(), Box<dyn Error>> {
+fn test_careful_synthesis() -> Result<()> {
 	let recipe = generate_recipe(3997, 72, 80, 1220, 3800, 102, 82);
 	let stats = generate_stats(90, 1208, 698, 187, false);
 	let sim = SimulationBuilder::default()
@@ -73,7 +73,7 @@ fn test_careful_synthesis() -> Result<(), Box<dyn Error>> {
 }
 
 #[test]
-fn test_groundwork() -> Result<(), Box<dyn Error>> {
+fn test_groundwork() -> Result<()> {
 	let recipe = generate_recipe(3997, 72, 80, 1220, 3800, 102, 82);
 	let stats = generate_stats(90, 1208, 698, 187, false);
 	let sim = SimulationBuilder::default()
@@ -98,7 +98,7 @@ fn test_groundwork() -> Result<(), Box<dyn Error>> {
 }
 
 #[test]
-fn test_quality_and_buffs() -> Result<(), Box<dyn Error>> {
+fn test_quality_and_buffs() -> Result<()> {
 	let recipe = generate_recipe(3997, 72, 80, 1220, 3800, 102, 82);
 	let stats = generate_stats(90, 1208, 698, 534, false);
 	let sim = SimulationBuilder::default()
@@ -143,7 +143,7 @@ fn test_quality_and_buffs() -> Result<(), Box<dyn Error>> {
 }
 
 #[test]
-fn test_combos() -> Result<(), Box<dyn Error>> {
+fn test_combos() -> Result<()> {
 	let recipe = generate_recipe(3997, 72, 80, 1220, 3800, 102, 82);
 	let stats = generate_stats(90, 1208, 698, 534, false);
 	let sim = SimulationBuilder::default()
