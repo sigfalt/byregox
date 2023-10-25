@@ -393,6 +393,115 @@ fn test_innovation_great_strides_interaction() -> Result<()> {
 	Ok(())
 }
 
+#[test]
+fn test_lv80_2star_craft() -> Result<()> {
+	// generateStarRecipe(450, 2050, 9000, 110, 90, 80, 70)
+	let recipe = generate_star_recipe(56450, 2050, 9000, 110, 90, 80, 70);
+	// generateStats(80, 2626, 2477, 522)
+	let stats = generate_stats(80, 2626, 2477, 522, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.actions(vec![
+			Box::new(actions::BasicSynthesis),
+			Box::new(actions::BasicTouch),
+		])
+		.crafter_stats(stats)
+		.build()?;
+	let result = sim.run(true);
+	assert_eq!(result.simulation.steps[0].added_progression, 230);
+	assert_eq!(result.simulation.steps[1].added_quality, 217);
+
+	Ok(())
+}
+
+#[test]
+fn test_high_byregots_stacks() -> Result<()> {
+	// generateRecipe(16, 31, 866, 50, 30)
+	let recipe = generate_recipe(3864, 16, 80, 31, 866, 50, 30);
+	// generateStats(80, 2278, 2348, 10000)
+	let stats = generate_stats(80, 2278, 2348, 10000, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.actions(vec![
+			Box::new(actions::Reflect),
+			Box::new(actions::BasicTouch),
+			Box::new(actions::BasicTouch),
+			Box::new(actions::MastersMend),
+			Box::new(actions::BasicTouch),
+			Box::new(actions::BasicTouch),
+			Box::new(actions::BasicTouch),
+			Box::new(actions::MastersMend),
+			Box::new(actions::BasicTouch),
+			Box::new(actions::BasicTouch),
+			Box::new(actions::BasicTouch),
+			Box::new(actions::ByregotsBlessing),
+			Box::new(actions::CarefulSynthesis),
+		])
+		.crafter_stats(stats)
+		.build()?;
+	let result = sim.run(true);
+	assert!(result.simulation.success.is_some_and(|x| x));
+	assert_eq!(result.simulation.steps[11].added_quality, 4902);
+
+	Ok(())
+}
+
+// skip tests with input conditions for now
+
+// should reduce CP cost with PLIANT step state
+// should reduce durability cost with STURDY step state
+// should not tick buffs if a buff is set to fail
+
+#[test]
+fn test_not_ticking_buffs_with_certain_abilities() -> Result<()> {
+	// generateRecipe(480, 6178, 36208, 110, 90)
+	let mut recipe = generate_recipe(3864, 80, 80, 6178, 36208, 110, 90);
+	recipe.rlvl = 480;
+	// generateStats(80, 2486, 2318, 613)
+	let stats = generate_stats(80, 2486, 2318, 613, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.actions(vec![
+			Box::new(actions::GreatStrides),
+			Box::new(actions::FinalAppraisal),
+			Box::new(actions::CarefulObservation),
+			Box::new(actions::RemoveFinalAppraisal),
+		])
+		.crafter_stats(stats)
+		.build()?;
+	let result = sim.run(true);
+	assert_eq!(
+		result
+			.simulation
+			.get_buff(Buff::GreatStrides)
+			.map(|b| b.duration),
+		Some(3)
+	);
+
+	Ok(())
+}
+
+#[test]
+fn test_5point4_standard_touch_combo_bonus() -> Result<()> {
+	// generateRecipe(480, 6178, 36208, 110, 90)
+	let mut recipe = generate_recipe(3864, 80, 80, 6178, 36208, 110, 90);
+	recipe.rlvl = 480;
+	// generateStats(80, 2486, 2318, 613)
+	let stats = generate_stats(80, 2486, 2318, 613, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe.clone())
+		.actions(vec![
+			Box::new(actions::BasicTouch),
+			Box::new(actions::StandardTouch),
+		])
+		.crafter_stats(stats.clone())
+		.build()?;
+	let result = sim.run(true);
+	assert_eq!(result.simulation.steps[1].cp_difference, -18);
+
+	Ok(())
+}
+
 fn generate_recipe(
 	id: u32,
 	lvl: u8,
