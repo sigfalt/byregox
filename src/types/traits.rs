@@ -193,7 +193,7 @@ impl CraftingAction for Class {
 		self.get_base_success_rate(simulation_state)
 	}
 
-	fn _can_be_used(&self, simulation_state: &Simulation) -> bool {
+	fn _can_be_used(&self, simulation_state: &Simulation, linear: Option<bool>) -> bool {
 		todo!()
 	}
 
@@ -208,7 +208,12 @@ impl CraftingAction for Class {
 		(self.get_base_durability_cost(simulation_state) as f64 / divider).ceil() as u32
 	}
 
-	fn execute(&self, simulation_state: &mut Simulation) {
+	fn execute_with_flags(
+		&self,
+		simulation_state: &mut Simulation,
+		safe: bool,
+		skip_stack_addition: bool,
+	) {
 		todo!()
 	}
 }
@@ -228,7 +233,7 @@ impl CraftingAction for Class {
 		self.get_base_success_rate(simulation_state)
 	}
 
-	fn _can_be_used(&self, simulation_state: &Simulation) -> bool {
+	fn _can_be_used(&self, simulation_state: &Simulation, linear: Option<bool>) -> bool {
 		todo!()
 	}
 
@@ -243,7 +248,12 @@ impl CraftingAction for Class {
 		(self.get_base_durability_cost(simulation_state) as f64 / divider).ceil() as u32
 	}
 
-	fn execute(&self, simulation_state: &mut Simulation) {
+	fn execute_with_flags(
+		&self,
+		simulation_state: &mut Simulation,
+		_safe: bool,
+		_skip_stack_addition: bool,
+	) {
 		let mut buff_mod = self.get_base_bonus(simulation_state);
 		let mut condition_mod = self.get_base_condition(simulation_state);
 		let potency = self.get_potency(simulation_state);
@@ -297,7 +307,7 @@ impl CraftingAction for Class {
 		self.get_base_success_rate(simulation_state)
 	}
 
-	fn _can_be_used(&self, simulation_state: &Simulation) -> bool {
+	fn _can_be_used(&self, simulation_state: &Simulation, linear: Option<bool>) -> bool {
 		todo!()
 	}
 
@@ -312,7 +322,12 @@ impl CraftingAction for Class {
 		(self.get_base_durability_cost(simulation_state) as f64 / divider).ceil() as u32
 	}
 
-	fn execute(&self, simulation_state: &mut Simulation) {
+	fn execute_with_flags(
+		&self,
+		simulation_state: &mut Simulation,
+		_safe: bool,
+		_skip_stack_addition: bool,
+	) {
 		let mut buff_mod = self.get_base_bonus(simulation_state);
 		let mut condition_mod = self.get_base_condition(simulation_state);
 		let potency = self.get_potency(simulation_state);
@@ -423,7 +438,7 @@ impl CraftingAction for Class {
 		100
 	}
 
-	fn _can_be_used(&self, simulation_state: &Simulation) -> bool {
+	fn _can_be_used(&self, simulation_state: &Simulation, _linear: Option<bool>) -> bool {
 		if self.can_be_clipped() {
 			true
 		} else {
@@ -439,7 +454,12 @@ impl CraftingAction for Class {
 		0
 	}
 
-	fn execute(&self, simulation_state: &mut Simulation) {
+	fn execute_with_flags(
+		&self,
+		simulation_state: &mut Simulation,
+		_safe: bool,
+		_skip_stack_addition: bool,
+	) {
 		self.get_overrides().into_iter().for_each(|b| simulation_state.remove_buff(b));
 		simulation_state.add_buff(self.get_applied_buff(simulation_state));
 	}
