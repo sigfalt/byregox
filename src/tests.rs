@@ -2,7 +2,7 @@ use anyhow::Result;
 
 use crate::types::{
 	actions,
-	enums::Buff,
+	enums::{Buff, StepState},
 	structs::{Craft, CrafterLevels, CrafterStats, CraftingLevel},
 	tables, SimulationBuilder,
 };
@@ -448,8 +448,81 @@ fn test_high_byregots_stacks() -> Result<()> {
 
 // skip tests with input conditions for now
 
-// should reduce CP cost with PLIANT step state
-// should reduce durability cost with STURDY step state
+#[test]
+fn test_pliant_step_state_reducing_cp_cost() -> Result<()> {
+	// generateStarRecipe(480, 4943, 32328, 2480, 2195, 80, 70, true)
+	let mut recipe = generate_star_recipe(480, 4943, 32328, 2480, 2195, 80, 70);
+	recipe.expert = Some(true);
+	// generateStats(80, 2800, 2500, 541)
+	let stats = generate_stats(80, 2800, 2500, 541, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.actions(vec![Box::new(actions::PrudentTouch)])
+		.crafter_stats(stats)
+		.step_states(vec![StepState::Pliant])
+		.build()?;
+	let result = sim.run(true);
+	assert_eq!(result.simulation.available_cp, 541 - 13);
+
+	Ok(())
+}
+
+#[test]
+fn test_pliant_step_state_reducing_cp_cost_two() -> Result<()> {
+	// generateStarRecipe(480, 4943, 32328, 2480, 2195, 80, 70, true)
+	let mut recipe = generate_star_recipe(480, 4943, 32328, 2480, 2195, 80, 70);
+	recipe.expert = Some(true);
+	// generateStats(80, 2800, 2500, 541)
+	let stats = generate_stats(80, 2800, 2500, 541, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.actions(vec![
+			Box::new(actions::MuscleMemory),
+			Box::new(actions::WasteNot),
+		])
+		.crafter_stats(stats)
+		.step_states(vec![StepState::Normal, StepState::Pliant])
+		.build()?;
+	let result = sim.run(true);
+	assert_eq!(
+		result.simulation.available_cp,
+		541 - 6 - (56f64 / 2f64).floor() as u32
+	);
+
+	Ok(())
+}
+
+#[test]
+fn test_sturdy_step_state_reducing_durability_cost() -> Result<()> {
+	// generateStarRecipe(480, 4943, 32328, 2480, 2195, 80, 70, true)
+	let mut recipe = generate_star_recipe(480, 4943, 32328, 2480, 2195, 80, 70);
+	recipe.expert = Some(true);
+	// generateStats(80, 2800, 2500, 541)
+	let stats = generate_stats(80, 2800, 2500, 541, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe.clone())
+		.actions(vec![Box::new(actions::PrudentTouch)])
+		.crafter_stats(stats.clone())
+		.step_states(vec![StepState::Sturdy])
+		.build()?;
+	let result = sim.run(true);
+	assert_eq!(result.simulation.durability, 70 - 3);
+
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.actions(vec![
+			Box::new(actions::WasteNot),
+			Box::new(actions::CarefulSynthesis),
+		])
+		.crafter_stats(stats)
+		.step_states(vec![StepState::Normal, StepState::Sturdy])
+		.build()?;
+	let result = sim.run(true);
+	assert_eq!(result.simulation.durability, 70 - 3);
+
+	Ok(())
+}
+
 // should not tick buffs if a buff is set to fail
 
 #[test]
