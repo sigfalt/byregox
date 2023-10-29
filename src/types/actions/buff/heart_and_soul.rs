@@ -79,7 +79,12 @@ impl CraftingAction for HeartAndSoul {
 		0
 	}
 
-	fn execute(&self, simulation_state: &mut Simulation) {
+	fn execute_with_flags(
+		&self,
+		simulation_state: &mut Simulation,
+		_safe: bool,
+		_skip_stack_addition: bool,
+	) {
 		self.get_overrides()
 			.into_iter()
 			.for_each(|b| simulation_state.remove_buff(b));

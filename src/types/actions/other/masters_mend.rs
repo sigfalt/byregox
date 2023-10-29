@@ -37,7 +37,12 @@ impl CraftingAction for MastersMend {
 		0
 	}
 
-	fn execute(&self, simulation_state: &mut Simulation) {
+	fn execute_with_flags(
+		&self,
+		simulation_state: &mut Simulation,
+		_safe: bool,
+		_skip_stack_addition: bool,
+	) {
 		simulation_state.repair(30);
 	}
 

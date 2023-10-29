@@ -97,7 +97,20 @@ pub trait CraftingAction: DynClone {
 
 	fn get_durability_cost(&self, simulation_state: &Simulation) -> u32;
 
-	fn execute(&self, simulation_state: &mut Simulation);
+	fn execute(&self, simulation_state: &mut Simulation) {
+		self.execute_with_safe_flag(simulation_state, false)
+	}
+
+	fn execute_with_safe_flag(&self, simulation_state: &mut Simulation, safe: bool) {
+		self.execute_with_flags(simulation_state, safe, false)
+	}
+
+	fn execute_with_flags(
+		&self,
+		simulation_state: &mut Simulation,
+		safe: bool,
+		skip_stack_addition: bool,
+	);
 
 	fn on_fail(&self, _simulation_state: &Simulation) {}
 

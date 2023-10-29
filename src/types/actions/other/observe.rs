@@ -37,7 +37,12 @@ impl CraftingAction for Observe {
 		0
 	}
 
-	fn execute(&self, _simulation_state: &mut Simulation) {
+	fn execute_with_flags(
+		&self,
+		simulation_state: &mut Simulation,
+		_safe: bool,
+		_skip_stack_addition: bool,
+	) {
 		// nothing
 	}
 
