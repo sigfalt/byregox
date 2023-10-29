@@ -9,7 +9,7 @@ use crate::types::{
 
 #[test]
 fn test_basics() -> Result<()> {
-	let recipe = generate_recipe(1035, 15, 70, 55, 360, 50, 30);
+	let recipe = generate_recipe_lvl(1035, 15, 70, 55, 360, 50, 30);
 	let stats = generate_stats(90, 1208, 698, 187, false);
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
@@ -31,7 +31,7 @@ fn test_basics() -> Result<()> {
 
 #[test]
 fn test_muscle_memory() -> Result<()> {
-	let recipe = generate_recipe(1960, 61, 80, 630, 2790, 81, 58);
+	let recipe = generate_recipe_lvl(1960, 61, 80, 630, 2790, 81, 58);
 	let stats = generate_stats(90, 1208, 698, 187, false);
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
@@ -51,7 +51,7 @@ fn test_muscle_memory() -> Result<()> {
 
 #[test]
 fn test_careful_synthesis() -> Result<()> {
-	let recipe = generate_recipe(3997, 72, 80, 1220, 3800, 102, 82);
+	let recipe = generate_recipe_lvl(3997, 72, 80, 1220, 3800, 102, 82);
 	let stats = generate_stats(90, 1208, 698, 187, false);
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
@@ -75,7 +75,7 @@ fn test_careful_synthesis() -> Result<()> {
 
 #[test]
 fn test_groundwork() -> Result<()> {
-	let recipe = generate_recipe(3997, 72, 80, 1220, 3800, 102, 82);
+	let recipe = generate_recipe_lvl(3997, 72, 80, 1220, 3800, 102, 82);
 	let stats = generate_stats(90, 1208, 698, 187, false);
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
@@ -100,7 +100,7 @@ fn test_groundwork() -> Result<()> {
 
 #[test]
 fn test_quality_and_buffs() -> Result<()> {
-	let recipe = generate_recipe(3997, 72, 80, 1220, 3800, 102, 82);
+	let recipe = generate_recipe_lvl(3997, 72, 80, 1220, 3800, 102, 82);
 	let stats = generate_stats(90, 1208, 698, 534, false);
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
@@ -145,7 +145,7 @@ fn test_quality_and_buffs() -> Result<()> {
 
 #[test]
 fn test_combos() -> Result<()> {
-	let recipe = generate_recipe(3997, 72, 80, 1220, 3800, 102, 82);
+	let recipe = generate_recipe_lvl(3997, 72, 80, 1220, 3800, 102, 82);
 	let stats = generate_stats(90, 1208, 698, 534, false);
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
@@ -187,7 +187,7 @@ fn test_combos() -> Result<()> {
 #[test]
 fn test_reflect() -> Result<()> {
 	// generateRecipe(16, 31, 866, 50, 30)
-	let recipe = generate_recipe(3864, 16, 80, 31, 866, 50, 30);
+	let recipe = generate_recipe_lvl(3864, 16, 80, 31, 866, 50, 30);
 	// generateStats(80, 2278, 2348, 532)
 	let stats = generate_stats(80, 2278, 2348, 532, false);
 	let sim = SimulationBuilder::default()
@@ -214,7 +214,7 @@ fn test_reflect() -> Result<()> {
 #[test]
 fn test_low_level() -> Result<()> {
 	// generateRecipe(16, 31, 866, 50, 30)
-	let recipe = generate_recipe(3864, 16, 80, 31, 866, 50, 30);
+	let recipe = generate_recipe_lvl(3864, 16, 80, 31, 866, 50, 30);
 	// generateStats(80, 2278, 2348, 532)
 	let stats = generate_stats(80, 2278, 2348, 532, false);
 	let sim = SimulationBuilder::default()
@@ -240,8 +240,7 @@ fn test_low_level() -> Result<()> {
 #[test]
 fn test_innovation() -> Result<()> {
 	// generateRecipe(517, 2000, 5200, 121, 105)
-	let mut recipe = generate_recipe(3864, 81, 80, 2000, 5200, 121, 105);
-	recipe.lvl = CraftingLevel::new(80).unwrap();
+	let recipe = generate_recipe_rlvl(3864, 80, 517, 80, 2000, 5200, 121, 105);
 	// generateStats(80, 2763, 2780, 545)
 	let stats = generate_stats(80, 2763, 2780, 545, false);
 	let sim = SimulationBuilder::default()
@@ -274,8 +273,7 @@ fn test_innovation() -> Result<()> {
 #[test]
 fn test_flooring() -> Result<()> {
 	// generateRecipe(517, 2000, 5200, 121, 105)
-	let mut recipe = generate_recipe(3864, 81, 80, 2000, 5200, 121, 105);
-	recipe.lvl = CraftingLevel::new(80).unwrap();
+	let recipe = generate_recipe_rlvl(3864, 80, 517, 80, 2000, 5200, 121, 105);
 	// generateStats(80, 1645, 1532, 400)
 	let stats = generate_stats(80, 1645, 1532, 400, false);
 	let sim = SimulationBuilder::default()
@@ -318,7 +316,7 @@ fn test_flooring() -> Result<()> {
 #[test]
 fn test_advanced_touch_combo() -> Result<()> {
 	// generateRecipe(517, 1000, 5200, 121, 105)
-	let recipe = generate_recipe(3864, 81, 80, 1000, 5200, 121, 105);
+	let recipe = generate_recipe_lvl(3864, 81, 80, 1000, 5200, 121, 105);
 	// generateStats(90, 2763, 2780, 545)
 	let stats = generate_stats(90, 2763, 2780, 545, false);
 	let sim = SimulationBuilder::default()
@@ -373,7 +371,7 @@ fn test_level_90_accuracy() -> Result<()> {
 #[test]
 fn test_innovation_great_strides_interaction() -> Result<()> {
 	// generateRecipe(16, 31, 866, 50, 30)
-	let recipe = generate_recipe(3864, 16, 80, 31, 866, 50, 30);
+	let recipe = generate_recipe_lvl(3864, 16, 80, 31, 866, 50, 30);
 	// generateStats(80, 2278, 2348, 532)
 	let stats = generate_stats(80, 2278, 2348, 532, false);
 	let sim = SimulationBuilder::default()
@@ -417,7 +415,7 @@ fn test_lv80_2star_craft() -> Result<()> {
 #[test]
 fn test_high_byregots_stacks() -> Result<()> {
 	// generateRecipe(16, 31, 866, 50, 30)
-	let recipe = generate_recipe(3864, 16, 80, 31, 866, 50, 30);
+	let recipe = generate_recipe_lvl(3864, 16, 80, 31, 866, 50, 30);
 	// generateStats(80, 2278, 2348, 10000)
 	let stats = generate_stats(80, 2278, 2348, 10000, false);
 	let sim = SimulationBuilder::default()
@@ -528,7 +526,7 @@ fn test_sturdy_step_state_reducing_durability_cost() -> Result<()> {
 #[test]
 fn test_not_ticking_buffs_with_certain_abilities() -> Result<()> {
 	// generateRecipe(480, 6178, 36208, 110, 90)
-	let mut recipe = generate_recipe(3864, 80, 80, 6178, 36208, 110, 90);
+	let mut recipe = generate_recipe_lvl(3864, 80, 80, 6178, 36208, 110, 90);
 	recipe.rlvl = 480;
 	// generateStats(80, 2486, 2318, 613)
 	let stats = generate_stats(80, 2486, 2318, 613, false);
@@ -557,7 +555,7 @@ fn test_not_ticking_buffs_with_certain_abilities() -> Result<()> {
 #[test]
 fn test_5point4_standard_touch_combo_bonus() -> Result<()> {
 	// generateRecipe(480, 6178, 36208, 110, 90)
-	let mut recipe = generate_recipe(3864, 80, 80, 6178, 36208, 110, 90);
+	let mut recipe = generate_recipe_lvl(3864, 80, 80, 6178, 36208, 110, 90);
 	recipe.rlvl = 480;
 	// generateStats(80, 2486, 2318, 613)
 	let stats = generate_stats(80, 2486, 2318, 613, false);
@@ -575,9 +573,31 @@ fn test_5point4_standard_touch_combo_bonus() -> Result<()> {
 	Ok(())
 }
 
-fn generate_recipe(
+fn generate_recipe_lvl(
 	id: u32,
 	lvl: u8,
+	durability: u32,
+	progress: u32,
+	quality: u32,
+	progress_divider: u32,
+	quality_divider: u32,
+) -> Craft {
+	generate_recipe_rlvl(
+		id,
+		lvl,
+		tables::level_to_ilevel(CraftingLevel::new(lvl).unwrap()),
+		durability,
+		progress,
+		quality,
+		progress_divider,
+		quality_divider,
+	)
+}
+
+fn generate_recipe_rlvl(
+	id: u32,
+	lvl: u8,
+	rlvl: u32,
 	durability: u32,
 	progress: u32,
 	quality: u32,
@@ -588,7 +608,7 @@ fn generate_recipe(
 		id: id.to_string(),
 		job: 14, // CRP
 		lvl: CraftingLevel::new(lvl).unwrap(),
-		rlvl: tables::level_to_ilevel(CraftingLevel::new(lvl).unwrap()),
+		rlvl,
 		durability,
 		progress,
 		quality,
