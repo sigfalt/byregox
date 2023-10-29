@@ -88,65 +88,85 @@ impl Simulation {
 		}
 	}
 
-	pub fn run(mut self, linear: bool) -> SimulationResult {
-		self.last_possible_reclaim_step = None;
-		self.actions.clone().iter().for_each(|action| {
-			self.state = StepState::Normal; // TODO: this.step_states[index] || Normal;
-			let mut fail_cause: Option<&str> = None;
+	pub fn run(self) -> SimulationResult {
+		self.run_linear(false)
+	}
 
-			let can_use_action = action.can_be_used(&self);
-			if !can_use_action {
-				fail_cause = action.get_fail_cause(&self);
-			}
-			let has_enough_cp = action.get_base_cp_cost(&self) <= self.available_cp;
-			if !has_enough_cp {
-				fail_cause = Some("Not enough CP");
-			}
-			// we can use the action
-			let result = if self.success.is_none()
+	pub fn run_linear(self, linear: bool) -> SimulationResult {
+		self.run_with_flags(linear, false)
+	}
+
+	pub fn run_with_flags(mut self, linear: bool, safe: bool) -> SimulationResult {
+		self.last_possible_reclaim_step = None;
+		self.actions
+			.clone()
+			.iter()
+			.enumerate()
+			.for_each(|(i, action)| {
+				self.state = self
+					.step_states
+					.get(i)
+					.map_or_else(|| StepState::Normal, |s| s.clone());
+				let mut fail_cause: Option<&str> = None;
+
+				let can_use_action = action.can_be_used(&self);
+				if !can_use_action {
+					fail_cause = action.get_fail_cause(&self);
+				}
+				let has_enough_cp = action.get_base_cp_cost(&self) <= self.available_cp;
+				if !has_enough_cp {
+					fail_cause = Some("Not enough CP");
+				}
+				// we can use the action
+				let mut result = if self.success.is_none()
                     && has_enough_cp
                     // TODO: && self.steps.len() < max_turns
                     && can_use_action
-			{
-				self.run_action(action, linear)
-			} else {
-				ActionResult {
-					action: action.clone(),
-					success: None,
-					fail_cause: fail_cause.map(|x| x.to_string()),
-					added_progression: 0,
-					added_quality: 0,
-					cp_difference: 0,
-					solidity_difference: 0,
-					skipped: true,
-					combo: None,
-					state: self.state,
-				}
-			};
+				{
+					self.run_action_with_flags(action, linear, safe)
+				} else {
+					ActionResult {
+						action: action.clone(),
+						success: None,
+						fail_cause: fail_cause.map(|x| x.to_string()),
+						added_progression: 0,
+						added_quality: 0,
+						cp_difference: 0,
+						solidity_difference: 0,
+						skipped: true,
+						combo: None,
+						state: self.state,
+						after_buff_tick: None,
+					}
+				};
 
-			// TODO: if self.steps.len() < max_turns
-			if self.steps.len() < usize::MAX {
-				let quality_before = self.quality;
-				let progression_before = self.progression;
-				let durability_before = self.durability;
-				let cp_before = self.available_cp;
-				let skip_ticks_on_fail = !result.success.unwrap_or(false) && action.skip_on_fail();
-				if self.success.is_none() && !action.skips_buff_ticks() && !skip_ticks_on_fail {
-					self.tick_buffs(action.as_ref());
+				// TODO: if self.steps.len() < max_turns
+				if self.steps.len() < usize::MAX {
+					let quality_before = self.quality;
+					let progression_before = self.progression;
+					let durability_before = self.durability;
+					let cp_before = self.available_cp as i32;
+					let skip_ticks_on_fail =
+						!result.success.unwrap_or(false) && action.skip_on_fail();
+					if self.success.is_none() && !action.skips_buff_ticks() && !skip_ticks_on_fail {
+						self.tick_buffs(action.as_ref());
+					}
+					result.after_buff_tick = Some(BuffTickResult {
+						added_progression: self.progression - progression_before,
+						added_quality: self.quality - quality_before,
+						cp_difference: self.available_cp as i32 - cp_before,
+						solidity_difference: self.durability - durability_before,
+					});
 				}
-				// TODO: result.after_buff_tick = {
-				//     added_progression: self.progression - progression_before,
-				// };
-			}
 
-			if !linear
-				&& action.get_enum() != CraftingActionEnum::FinalAppraisal
-				&& action.get_enum() != CraftingActionEnum::RemoveFinalAppraisal
-			{
-				self.tick_state();
-			}
-			self.steps.push(result);
-		});
+				if !linear
+					&& action.get_enum() != CraftingActionEnum::FinalAppraisal
+					&& action.get_enum() != CraftingActionEnum::RemoveFinalAppraisal
+				{
+					self.tick_state();
+				}
+				self.steps.push(result);
+			});
 
 		let failed_action = self
 			.steps
@@ -179,9 +199,25 @@ impl Simulation {
 		res
 	}
 
-	pub fn run_action(&mut self, action: &Box<dyn CraftingAction>, linear: bool) -> ActionResult {
-		// TODO: if (safe_mode) { 999 } ...
-		let probability_roll: u32 = if false {
+	pub fn run_action(&mut self, action: &Box<dyn CraftingAction>) -> ActionResult {
+		self.run_action_linear(action, false)
+	}
+
+	pub fn run_action_linear(
+		&mut self,
+		action: &Box<dyn CraftingAction>,
+		linear: bool,
+	) -> ActionResult {
+		self.run_action_with_flags(action, linear, false)
+	}
+
+	pub fn run_action_with_flags(
+		&mut self,
+		action: &Box<dyn CraftingAction>,
+		linear: bool,
+		safe: bool,
+	) -> ActionResult {
+		let probability_roll: u32 = if safe {
 			999
 		} else if linear {
 			0
@@ -234,6 +270,7 @@ impl Simulation {
 			skipped: false,
 			combo: Some(combo),
 			state: self.state,
+			after_buff_tick: None,
 		}
 	}
 
