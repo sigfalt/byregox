@@ -88,7 +88,15 @@ impl Simulation {
 		}
 	}
 
-	pub fn run(mut self, linear: bool) -> SimulationResult {
+	pub fn run(self) -> SimulationResult {
+		self.run_linear(false)
+	}
+
+	pub fn run_linear(self, linear: bool) -> SimulationResult {
+		self.run_with_flags(linear, false)
+	}
+
+	pub fn run_with_flags(mut self, linear: bool, safe: bool) -> SimulationResult {
 		self.last_possible_reclaim_step = None;
 		self.actions
 			.clone()
@@ -115,7 +123,7 @@ impl Simulation {
                     // TODO: && self.steps.len() < max_turns
                     && can_use_action
 				{
-					self.run_action(action, linear)
+					self.run_action_with_flags(action, linear, safe)
 				} else {
 					ActionResult {
 						action: action.clone(),
@@ -187,9 +195,25 @@ impl Simulation {
 		res
 	}
 
-	pub fn run_action(&mut self, action: &Box<dyn CraftingAction>, linear: bool) -> ActionResult {
-		// TODO: if (safe_mode) { 999 } ...
-		let probability_roll: u32 = if false {
+	pub fn run_action(&mut self, action: &Box<dyn CraftingAction>) -> ActionResult {
+		self.run_action_linear(action, false)
+	}
+
+	pub fn run_action_linear(
+		&mut self,
+		action: &Box<dyn CraftingAction>,
+		linear: bool,
+	) -> ActionResult {
+		self.run_action_with_flags(action, linear, false)
+	}
+
+	pub fn run_action_with_flags(
+		&mut self,
+		action: &Box<dyn CraftingAction>,
+		linear: bool,
+		safe: bool,
+	) -> ActionResult {
+		let probability_roll: u32 = if safe {
 			999
 		} else if linear {
 			0

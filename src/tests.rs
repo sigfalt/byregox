@@ -20,7 +20,7 @@ fn test_basics() -> Result<()> {
 		])
 		.crafter_stats(stats)
 		.build()?;
-	let result = sim.run(true);
+	let result = sim.run_linear(true);
 	assert!(result.simulation.success.is_some_and(|x| x));
 	assert_eq!(result.simulation.steps[0].added_quality, 267);
 	assert_eq!(result.simulation.steps[1].added_quality, 293);
@@ -41,7 +41,7 @@ fn test_muscle_memory() -> Result<()> {
 		])
 		.crafter_stats(stats)
 		.build()?;
-	let result = sim.run(true);
+	let result = sim.run_linear(true);
 	assert!(result.simulation.success.is_some_and(|x| x));
 	assert_eq!(result.simulation.steps[0].added_progression, 453);
 	assert_eq!(result.simulation.steps[1].added_progression, 362);
@@ -63,7 +63,7 @@ fn test_careful_synthesis() -> Result<()> {
 		])
 		.crafter_stats(stats)
 		.build()?;
-	let result = sim.run(true);
+	let result = sim.run_linear(true);
 	assert!(result.simulation.success.is_some_and(|x| x));
 	assert_eq!(result.simulation.steps[0].added_progression, 360);
 	assert_eq!(result.simulation.steps[1].added_progression, 432);
@@ -89,7 +89,7 @@ fn test_groundwork() -> Result<()> {
 		])
 		.crafter_stats(stats)
 		.build()?;
-	let result = sim.run(true);
+	let result = sim.run_linear(true);
 	assert!(result.simulation.success.is_some_and(|x| x));
 	assert_eq!(result.simulation.steps[0].added_progression, 432);
 	assert_eq!(result.simulation.steps[1].added_progression, 432);
@@ -125,7 +125,7 @@ fn test_quality_and_buffs() -> Result<()> {
 		])
 		.crafter_stats(stats)
 		.build()?;
-	let result = sim.run(true);
+	let result = sim.run_linear(true);
 	assert!(result.simulation.success.is_some_and(|x| x));
 	assert_eq!(result.simulation.steps[0].added_progression, 360);
 	assert_eq!(result.simulation.steps[3].added_progression, 540);
@@ -166,7 +166,7 @@ fn test_combos() -> Result<()> {
 		])
 		.crafter_stats(stats)
 		.build()?;
-	let result = sim.run(true);
+	let result = sim.run_linear(true);
 	assert!(result.simulation.success.is_some_and(|x| x));
 	assert_eq!(result.simulation.steps[0].added_progression, 360);
 	assert_eq!(result.simulation.steps[2].added_progression, 432);
@@ -199,7 +199,7 @@ fn test_reflect() -> Result<()> {
 		])
 		.crafter_stats(stats)
 		.build()?;
-	let result = sim.run(true);
+	let result = sim.run_linear(true);
 	assert_eq!(
 		result
 			.simulation
@@ -227,7 +227,7 @@ fn test_low_level() -> Result<()> {
 		])
 		.crafter_stats(stats)
 		.build()?;
-	let result = sim.run(true);
+	let result = sim.run_linear(true);
 	assert!(result.simulation.success.is_some_and(|x| x));
 	assert_eq!(result.simulation.steps[3].added_progression, 685);
 	assert_eq!(result.simulation.steps[0].added_quality, 817);
@@ -259,7 +259,7 @@ fn test_innovation() -> Result<()> {
 		])
 		.crafter_stats(stats)
 		.build()?;
-	let result = sim.run(true);
+	let result = sim.run_linear(true);
 	assert_eq!(result.simulation.steps[0].added_quality, 299);
 	assert_eq!(result.simulation.steps[1].added_quality, 358);
 	assert_eq!(result.simulation.steps[2].added_quality, 388);
@@ -286,7 +286,7 @@ fn test_flooring() -> Result<()> {
 		])
 		.crafter_stats(stats)
 		.build()?;
-	let result = sim.run(true);
+	let result = sim.run_linear(true);
 	assert_eq!(result.simulation.quality, 828);
 
 	// generateStarRecipe(580, 3900, 10920, 130, 115, 80, 70)
@@ -306,7 +306,7 @@ fn test_flooring() -> Result<()> {
 		])
 		.crafter_stats(stats)
 		.build()?;
-	let result = sim.run(true);
+	let result = sim.run_linear(true);
 	assert_eq!(result.simulation.steps[0].added_progression, 609);
 	assert_eq!(result.simulation.progression, 3897);
 
@@ -327,7 +327,7 @@ fn test_advanced_touch_combo() -> Result<()> {
 		])
 		.crafter_stats(stats.clone())
 		.build()?;
-	let result = sim.run(true);
+	let result = sim.run_linear(true);
 	assert_eq!(result.simulation.steps[1].cp_difference, -46);
 
 	let sim = SimulationBuilder::default()
@@ -339,7 +339,7 @@ fn test_advanced_touch_combo() -> Result<()> {
 		])
 		.crafter_stats(stats)
 		.build()?;
-	let result = sim.run(true);
+	let result = sim.run_linear(true);
 	assert_eq!(result.simulation.steps[1].cp_difference, -18);
 
 	Ok(())
@@ -360,7 +360,7 @@ fn test_level_90_accuracy() -> Result<()> {
 		])
 		.crafter_stats(stats)
 		.build()?;
-	let result = sim.run(true);
+	let result = sim.run_linear(true);
 	assert_eq!(result.simulation.steps[0].added_quality, 222);
 	assert_eq!(result.simulation.steps[1].added_progression, 222);
 	assert_eq!(result.simulation.steps[2].added_quality, 266);
@@ -384,7 +384,7 @@ fn test_innovation_great_strides_interaction() -> Result<()> {
 		])
 		.crafter_stats(stats)
 		.build()?;
-	let result = sim.run(true);
+	let result = sim.run_linear(true);
 	assert_eq!(result.simulation.steps[0].added_quality, 817);
 	assert_eq!(result.simulation.steps[3].added_quality, 2451);
 
@@ -405,7 +405,7 @@ fn test_lv80_2star_craft() -> Result<()> {
 		])
 		.crafter_stats(stats)
 		.build()?;
-	let result = sim.run(true);
+	let result = sim.run_linear(true);
 	assert_eq!(result.simulation.steps[0].added_progression, 230);
 	assert_eq!(result.simulation.steps[1].added_quality, 217);
 
@@ -437,7 +437,7 @@ fn test_high_byregots_stacks() -> Result<()> {
 		])
 		.crafter_stats(stats)
 		.build()?;
-	let result = sim.run(true);
+	let result = sim.run_linear(true);
 	assert!(result.simulation.success.is_some_and(|x| x));
 	assert_eq!(result.simulation.steps[11].added_quality, 4902);
 
@@ -459,7 +459,7 @@ fn test_pliant_step_state_reducing_cp_cost() -> Result<()> {
 		.crafter_stats(stats)
 		.step_states(vec![StepState::Pliant])
 		.build()?;
-	let result = sim.run(true);
+	let result = sim.run_linear(true);
 	assert_eq!(result.simulation.available_cp, 541 - 13);
 
 	Ok(())
@@ -481,7 +481,7 @@ fn test_pliant_step_state_reducing_cp_cost_two() -> Result<()> {
 		.crafter_stats(stats)
 		.step_states(vec![StepState::Normal, StepState::Pliant])
 		.build()?;
-	let result = sim.run(true);
+	let result = sim.run_linear(true);
 	assert_eq!(
 		result.simulation.available_cp,
 		541 - 6 - (56f64 / 2f64).floor() as u32
@@ -503,7 +503,7 @@ fn test_sturdy_step_state_reducing_durability_cost() -> Result<()> {
 		.crafter_stats(stats.clone())
 		.step_states(vec![StepState::Sturdy])
 		.build()?;
-	let result = sim.run(true);
+	let result = sim.run_linear(true);
 	assert_eq!(result.simulation.durability, 70 - 3);
 
 	let sim = SimulationBuilder::default()
@@ -515,7 +515,7 @@ fn test_sturdy_step_state_reducing_durability_cost() -> Result<()> {
 		.crafter_stats(stats)
 		.step_states(vec![StepState::Normal, StepState::Sturdy])
 		.build()?;
-	let result = sim.run(true);
+	let result = sim.run_linear(true);
 	assert_eq!(result.simulation.durability, 70 - 3);
 
 	Ok(())
@@ -540,7 +540,7 @@ fn test_not_ticking_buffs_with_certain_abilities() -> Result<()> {
 		])
 		.crafter_stats(stats)
 		.build()?;
-	let result = sim.run(true);
+	let result = sim.run_linear(true);
 	assert_eq!(
 		result
 			.simulation
@@ -567,7 +567,7 @@ fn test_5point4_standard_touch_combo_bonus() -> Result<()> {
 		])
 		.crafter_stats(stats.clone())
 		.build()?;
-	let result = sim.run(true);
+	let result = sim.run_linear(true);
 	assert_eq!(result.simulation.steps[1].cp_difference, -18);
 
 	Ok(())
