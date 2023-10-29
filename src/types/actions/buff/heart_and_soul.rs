@@ -63,7 +63,7 @@ impl CraftingAction for HeartAndSoul {
 		100
 	}
 
-	fn _can_be_used(&self, simulation_state: &Simulation) -> bool {
+	fn _can_be_used(&self, simulation_state: &Simulation, _linear: Option<bool>) -> bool {
 		simulation_state.crafter_stats.specialist
 			&& !simulation_state
 				.steps

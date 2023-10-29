@@ -27,18 +27,16 @@ impl CraftingAction for IntensiveSynthesis {
 		self.get_base_success_rate(simulation_state)
 	}
 
-	fn _can_be_used(&self, simulation_state: &Simulation) -> bool {
-		// TODO: add linear flag
-		// if linear
-		if true {
-			return true;
+	fn _can_be_used(&self, simulation_state: &Simulation, linear: Option<bool>) -> bool {
+		if linear.is_some_and(|b| b) {
+			true
+		} else if simulation_state.safe && !simulation_state.has_buff(Buff::HeartAndSoul) {
+			false
+		} else {
+			simulation_state.has_buff(Buff::HeartAndSoul)
+				|| simulation_state.state() == StepState::Good
+				|| simulation_state.state() == StepState::Excellent
 		}
-		if simulation_state.safe && !simulation_state.has_buff(Buff::HeartAndSoul) {
-			return false;
-		}
-		simulation_state.has_buff(Buff::HeartAndSoul)
-			|| simulation_state.state() == StepState::Good
-			|| simulation_state.state() == StepState::Excellent
 	}
 
 	fn get_base_cp_cost(&self, _simulation_state: &Simulation) -> u32 {

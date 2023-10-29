@@ -47,19 +47,31 @@ pub trait CraftingAction: DynClone {
 	}
 
 	fn can_be_used(&self, simulation_state: &Simulation) -> bool {
-		// TODO: add linear, safeMode args
+		self.can_be_used_linear(simulation_state, None)
+	}
+
+	fn can_be_used_linear(&self, simulation_state: &Simulation, linear: Option<bool>) -> bool {
+		self.can_be_used_with_flags(simulation_state, linear, None)
+	}
+
+	fn can_be_used_with_flags(
+		&self,
+		simulation_state: &Simulation,
+		linear: Option<bool>,
+		safe: Option<bool>,
+	) -> bool {
 		let level_requirement = self.get_level_requirement();
 		let craftsmanship_requirement = simulation_state.recipe.craftsmanship_req;
 		let control_requirement = simulation_state.recipe.control_req;
 
-		(if level_requirement.0 != CraftingJob::Any {
+		(if safe.is_some_and(|b| b) && level_requirement.0 != CraftingJob::Any {
 			simulation_state.crafter_stats.levels[level_requirement.0] >= level_requirement.1
 		} else {
 			simulation_state.crafter_stats.craftsmanship
 				>= craftsmanship_requirement.unwrap_or_default()
 				&& simulation_state.crafter_stats.control >= control_requirement.unwrap_or_default()
 				&& simulation_state.crafter_stats.level >= level_requirement.1
-		}) && self._can_be_used(simulation_state)
+		}) && self._can_be_used(simulation_state, linear)
 	}
 
 	fn get_fail_cause(&self, simulation_state: &Simulation) -> Option<&str> {
@@ -82,7 +94,7 @@ pub trait CraftingAction: DynClone {
 		}
 	}
 
-	fn _can_be_used(&self, simulation_state: &Simulation) -> bool;
+	fn _can_be_used(&self, simulation_state: &Simulation, linear: Option<bool>) -> bool;
 
 	fn get_cp_cost(&self, simulation_state: &Simulation) -> u32 {
 		let base_cost = self.get_base_cp_cost(simulation_state);

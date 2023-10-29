@@ -23,7 +23,7 @@ impl CraftingAction for TrainedFinesse {
 		self.get_base_success_rate(simulation_state)
 	}
 
-	fn _can_be_used(&self, simulation_state: &Simulation) -> bool {
+	fn _can_be_used(&self, simulation_state: &Simulation, _linear: Option<bool>) -> bool {
 		simulation_state
 			.get_buff(Buff::InnerQuiet)
 			.is_some_and(|b| b.stacks == 10)

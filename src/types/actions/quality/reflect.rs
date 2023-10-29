@@ -31,7 +31,7 @@ impl CraftingAction for Reflect {
 		self.get_base_success_rate(simulation_state)
 	}
 
-	fn _can_be_used(&self, simulation_state: &Simulation) -> bool {
+	fn _can_be_used(&self, simulation_state: &Simulation, _linear: Option<bool>) -> bool {
 		simulation_state
 			.steps
 			.iter()

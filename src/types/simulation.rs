@@ -134,14 +134,16 @@ impl Simulation {
 				if self.success.is_none() && !action.skips_buff_ticks() && !skip_ticks_on_fail {
 					self.tick_buffs(action.as_ref());
 				}
-				// result.after_buff_tick = {
+				// TODO: result.after_buff_tick = {
 				//     added_progression: self.progression - progression_before,
 				// };
 			}
 
-			// if (!linear && action != Action::FinalAppraisal && action != Action::RemoveFinalAppraisal) {
-			if !linear {
-				// self.tick_state();
+			if !linear
+				&& action.get_enum() != CraftingActionEnum::FinalAppraisal
+				&& action.get_enum() != CraftingActionEnum::RemoveFinalAppraisal
+			{
+				self.tick_state();
 			}
 			self.steps.push(result);
 		});
@@ -178,8 +180,7 @@ impl Simulation {
 	}
 
 	pub fn run_action(&mut self, action: &Box<dyn CraftingAction>, linear: bool) -> ActionResult {
-		// TODO: if (linear) { 999 } ...
-		// check this against teamcraft again
+		// TODO: if (safe_mode) { 999 } ...
 		let probability_roll: u32 = if false {
 			999
 		} else if linear {
@@ -196,7 +197,7 @@ impl Simulation {
 		let mut fail_cause: Option<&str> = None;
 		let mut success = false;
 
-		// if safe_mode &&
+		// TODO: if safe_mode &&
 		if action.get_success_rate(self) < 100
 			|| (action.requires_good() && !self.has_buff(Buff::HeartAndSoul))
 		{
@@ -288,6 +289,29 @@ impl Simulation {
 			.filter(|b| b.duration <= 0 && b.on_expire.is_some())
 			.for_each(|b| b.on_expire(self, action));
 		self.buffs = curr_buffs.into_iter().filter(|b| b.duration > 0).collect();
+	}
+
+	fn tick_state(&mut self) {
+		// if current state is EXCELLENT, next is always POOR
+		if self.state == StepState::Excellent {
+			self.state = StepState::Poor;
+			return;
+		} else
+		// if current state is GOOD OMEN, next is always GOOD
+		if self.state == StepState::GoodOmen {
+			self.state = StepState::Good;
+			return;
+		}
+
+		// Quality Assurance trait, level 63
+		let good_chance = if self.crafter_stats.level >= 63 {
+			0.25
+		} else {
+			0.2
+		};
+
+		// TODO: roll for next state
+		self.state = StepState::Normal;
 	}
 }
 

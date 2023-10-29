@@ -58,7 +58,7 @@ impl CraftingAction for Manipulation {
 		100
 	}
 
-	fn _can_be_used(&self, simulation_state: &Simulation) -> bool {
+	fn _can_be_used(&self, simulation_state: &Simulation, _linear: Option<bool>) -> bool {
 		if self.can_be_clipped() {
 			true
 		} else {

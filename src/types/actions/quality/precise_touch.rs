@@ -27,9 +27,8 @@ impl CraftingAction for PreciseTouch {
 		self.get_base_success_rate(simulation_state)
 	}
 
-	fn _can_be_used(&self, simulation_state: &Simulation) -> bool {
-		// TODO: if linear (default false)
-		if false {
+	fn _can_be_used(&self, simulation_state: &Simulation, linear: Option<bool>) -> bool {
+		if linear.unwrap_or(false) {
 			true
 		} else if simulation_state.safe && !simulation_state.has_buff(Buff::HeartAndSoul) {
 			false

@@ -23,7 +23,7 @@ impl CraftingAction for PrudentSynthesis {
 		self.get_base_success_rate(simulation_state)
 	}
 
-	fn _can_be_used(&self, simulation_state: &Simulation) -> bool {
+	fn _can_be_used(&self, simulation_state: &Simulation, _linear: Option<bool>) -> bool {
 		!simulation_state.has_buff(Buff::WasteNot) && !simulation_state.has_buff(Buff::WasteNotII)
 	}
 

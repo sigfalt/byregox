@@ -25,7 +25,7 @@ impl CraftingAction for Observe {
 		100
 	}
 
-	fn _can_be_used(&self, _simulation_state: &Simulation) -> bool {
+	fn _can_be_used(&self, _simulation_state: &Simulation, _linear: Option<bool>) -> bool {
 		true
 	}
 
