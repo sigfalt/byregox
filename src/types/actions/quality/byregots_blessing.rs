@@ -23,18 +23,25 @@ impl CraftingAction for ByregotsBlessing {
 		self.get_base_success_rate(simulation_state)
 	}
 
-	fn _can_be_used(&self, simulation_state: &Simulation) -> bool {
+	fn _can_be_used(&self, simulation_state: &Simulation, _linear: Option<bool>) -> bool {
 		simulation_state
 			.get_buff(Buff::InnerQuiet)
 			.is_some_and(|buff| buff.stacks > 0)
 	}
 
-	fn get_fail_cause(&self, simulation_state: &Simulation) -> Option<&str> {
+	fn get_fail_cause_with_flags(
+		&self,
+		simulation_state: &Simulation,
+		_linear: Option<bool>,
+		safe: Option<bool>,
+	) -> Option<&str> {
 		let level_requirement = self.get_level_requirement();
 		let craftsmanship_requirement = simulation_state.recipe.craftsmanship_req;
 		let control_requirement = simulation_state.recipe.control_req;
 
-		if (level_requirement.0 != CraftingJob::Any
+		if safe.is_some_and(|b| b) && self.get_success_rate(simulation_state) < 100 {
+			Some("Unsafe action")
+		} else if (level_requirement.0 != CraftingJob::Any
 			&& simulation_state.crafter_stats.levels[level_requirement.0] < level_requirement.1)
 			|| simulation_state.crafter_stats.level < level_requirement.1
 		{
@@ -73,7 +80,12 @@ impl CraftingAction for ByregotsBlessing {
 		(self.get_base_durability_cost(simulation_state) as f64 / divider).ceil() as u32
 	}
 
-	fn execute(&self, simulation_state: &mut Simulation) {
+	fn execute_with_flags(
+		&self,
+		simulation_state: &mut Simulation,
+		_safe: bool,
+		_skip_stack_addition: bool,
+	) {
 		let mut buff_mod = self.get_base_bonus(simulation_state);
 		let mut condition_mod = self.get_base_condition(simulation_state);
 		let potency = self.get_potency(simulation_state);

@@ -21,9 +21,8 @@ impl CraftingAction for TricksOfTheTrade {
 		100
 	}
 
-	fn _can_be_used(&self, simulation_state: &Simulation) -> bool {
-		// if linear (defaults to false)
-		if false {
+	fn _can_be_used(&self, simulation_state: &Simulation, linear: Option<bool>) -> bool {
+		if linear.unwrap_or(false) {
 			true
 		} else if simulation_state.safe {
 			true
@@ -41,7 +40,12 @@ impl CraftingAction for TricksOfTheTrade {
 		0
 	}
 
-	fn execute(&self, simulation_state: &mut Simulation) {
+	fn execute_with_flags(
+		&self,
+		simulation_state: &mut Simulation,
+		_safe: bool,
+		_skip_stack_addition: bool,
+	) {
 		if simulation_state.has_buff(Buff::HeartAndSoul)
 			|| simulation_state.state() == StepState::Good
 			|| simulation_state.state() == StepState::Excellent

@@ -25,7 +25,7 @@ impl CraftingAction for MastersMend {
 		100
 	}
 
-	fn _can_be_used(&self, _simulation_state: &Simulation) -> bool {
+	fn _can_be_used(&self, _simulation_state: &Simulation, _linear: Option<bool>) -> bool {
 		true
 	}
 
@@ -37,7 +37,12 @@ impl CraftingAction for MastersMend {
 		0
 	}
 
-	fn execute(&self, simulation_state: &mut Simulation) {
+	fn execute_with_flags(
+		&self,
+		simulation_state: &mut Simulation,
+		_safe: bool,
+		_skip_stack_addition: bool,
+	) {
 		simulation_state.repair(30);
 	}
 

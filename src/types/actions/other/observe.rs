@@ -25,7 +25,7 @@ impl CraftingAction for Observe {
 		100
 	}
 
-	fn _can_be_used(&self, _simulation_state: &Simulation) -> bool {
+	fn _can_be_used(&self, _simulation_state: &Simulation, _linear: Option<bool>) -> bool {
 		true
 	}
 
@@ -37,7 +37,12 @@ impl CraftingAction for Observe {
 		0
 	}
 
-	fn execute(&self, _simulation_state: &mut Simulation) {
+	fn execute_with_flags(
+		&self,
+		_simulation_state: &mut Simulation,
+		_safe: bool,
+		_skip_stack_addition: bool,
+	) {
 		// nothing
 	}
 

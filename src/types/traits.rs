@@ -47,27 +47,58 @@ pub trait CraftingAction: DynClone {
 	}
 
 	fn can_be_used(&self, simulation_state: &Simulation) -> bool {
-		// TODO: add linear, safeMode args
+		self.can_be_used_linear(simulation_state, None)
+	}
+
+	fn can_be_used_linear(&self, simulation_state: &Simulation, linear: Option<bool>) -> bool {
+		self.can_be_used_with_flags(simulation_state, linear, None)
+	}
+
+	fn can_be_used_with_flags(
+		&self,
+		simulation_state: &Simulation,
+		linear: Option<bool>,
+		safe: Option<bool>,
+	) -> bool {
 		let level_requirement = self.get_level_requirement();
 		let craftsmanship_requirement = simulation_state.recipe.craftsmanship_req;
 		let control_requirement = simulation_state.recipe.control_req;
 
-		(if level_requirement.0 != CraftingJob::Any {
+		(if safe.is_some_and(|b| b) && level_requirement.0 != CraftingJob::Any {
 			simulation_state.crafter_stats.levels[level_requirement.0] >= level_requirement.1
 		} else {
 			simulation_state.crafter_stats.craftsmanship
 				>= craftsmanship_requirement.unwrap_or_default()
 				&& simulation_state.crafter_stats.control >= control_requirement.unwrap_or_default()
 				&& simulation_state.crafter_stats.level >= level_requirement.1
-		}) && self._can_be_used(simulation_state)
+		}) && self._can_be_used(simulation_state, linear)
 	}
 
 	fn get_fail_cause(&self, simulation_state: &Simulation) -> Option<&str> {
+		self.get_fail_cause_linear(simulation_state, None)
+	}
+
+	fn get_fail_cause_linear(
+		&self,
+		simulation_state: &Simulation,
+		linear: Option<bool>,
+	) -> Option<&str> {
+		self.get_fail_cause_with_flags(simulation_state, linear, None)
+	}
+
+	fn get_fail_cause_with_flags(
+		&self,
+		simulation_state: &Simulation,
+		_linear: Option<bool>,
+		safe: Option<bool>,
+	) -> Option<&str> {
 		let level_requirement = self.get_level_requirement();
 		let craftsmanship_requirement = simulation_state.recipe.craftsmanship_req;
 		let control_requirement = simulation_state.recipe.control_req;
 
-		if (level_requirement.0 != CraftingJob::Any
+		if safe.is_some_and(|b| b) && self.get_success_rate(simulation_state) < 100 {
+			Some("Unsafe action")
+		} else if (level_requirement.0 != CraftingJob::Any
 			&& simulation_state.crafter_stats.levels[level_requirement.0] < level_requirement.1)
 			|| simulation_state.crafter_stats.level < level_requirement.1
 		{
@@ -82,9 +113,13 @@ pub trait CraftingAction: DynClone {
 		}
 	}
 
-	fn _can_be_used(&self, simulation_state: &Simulation) -> bool;
+	fn _can_be_used(&self, simulation_state: &Simulation, linear: Option<bool>) -> bool;
 
 	fn get_cp_cost(&self, simulation_state: &Simulation) -> u32 {
+		self.get_cp_cost_linear(simulation_state, false)
+	}
+
+	fn get_cp_cost_linear(&self, simulation_state: &Simulation, _linear: bool) -> u32 {
 		let base_cost = self.get_base_cp_cost(simulation_state);
 		if simulation_state.state() == StepState::Pliant {
 			(base_cost as f64 / 2.0).ceil() as u32
@@ -97,7 +132,20 @@ pub trait CraftingAction: DynClone {
 
 	fn get_durability_cost(&self, simulation_state: &Simulation) -> u32;
 
-	fn execute(&self, simulation_state: &mut Simulation);
+	fn execute(&self, simulation_state: &mut Simulation) {
+		self.execute_with_safe_flag(simulation_state, false)
+	}
+
+	fn execute_with_safe_flag(&self, simulation_state: &mut Simulation, safe: bool) {
+		self.execute_with_flags(simulation_state, safe, false)
+	}
+
+	fn execute_with_flags(
+		&self,
+		simulation_state: &mut Simulation,
+		safe: bool,
+		skip_stack_addition: bool,
+	);
 
 	fn on_fail(&self, _simulation_state: &Simulation) {}
 
@@ -168,7 +216,7 @@ impl CraftingAction for Class {
 		self.get_base_success_rate(simulation_state)
 	}
 
-	fn _can_be_used(&self, simulation_state: &Simulation) -> bool {
+	fn _can_be_used(&self, simulation_state: &Simulation, linear: Option<bool>) -> bool {
 		todo!()
 	}
 
@@ -183,7 +231,12 @@ impl CraftingAction for Class {
 		(self.get_base_durability_cost(simulation_state) as f64 / divider).ceil() as u32
 	}
 
-	fn execute(&self, simulation_state: &mut Simulation) {
+	fn execute_with_flags(
+		&self,
+		simulation_state: &mut Simulation,
+		safe: bool,
+		skip_stack_addition: bool,
+	) {
 		todo!()
 	}
 }
@@ -203,7 +256,7 @@ impl CraftingAction for Class {
 		self.get_base_success_rate(simulation_state)
 	}
 
-	fn _can_be_used(&self, simulation_state: &Simulation) -> bool {
+	fn _can_be_used(&self, simulation_state: &Simulation, linear: Option<bool>) -> bool {
 		todo!()
 	}
 
@@ -218,7 +271,12 @@ impl CraftingAction for Class {
 		(self.get_base_durability_cost(simulation_state) as f64 / divider).ceil() as u32
 	}
 
-	fn execute(&self, simulation_state: &mut Simulation) {
+	fn execute_with_flags(
+		&self,
+		simulation_state: &mut Simulation,
+		_safe: bool,
+		_skip_stack_addition: bool,
+	) {
 		let mut buff_mod = self.get_base_bonus(simulation_state);
 		let mut condition_mod = self.get_base_condition(simulation_state);
 		let potency = self.get_potency(simulation_state);
@@ -272,7 +330,7 @@ impl CraftingAction for Class {
 		self.get_base_success_rate(simulation_state)
 	}
 
-	fn _can_be_used(&self, simulation_state: &Simulation) -> bool {
+	fn _can_be_used(&self, simulation_state: &Simulation, linear: Option<bool>) -> bool {
 		todo!()
 	}
 
@@ -287,7 +345,12 @@ impl CraftingAction for Class {
 		(self.get_base_durability_cost(simulation_state) as f64 / divider).ceil() as u32
 	}
 
-	fn execute(&self, simulation_state: &mut Simulation) {
+	fn execute_with_flags(
+		&self,
+		simulation_state: &mut Simulation,
+		_safe: bool,
+		_skip_stack_addition: bool,
+	) {
 		let mut buff_mod = self.get_base_bonus(simulation_state);
 		let mut condition_mod = self.get_base_condition(simulation_state);
 		let potency = self.get_potency(simulation_state);
@@ -398,7 +461,7 @@ impl CraftingAction for Class {
 		100
 	}
 
-	fn _can_be_used(&self, simulation_state: &Simulation) -> bool {
+	fn _can_be_used(&self, simulation_state: &Simulation, _linear: Option<bool>) -> bool {
 		if self.can_be_clipped() {
 			true
 		} else {
@@ -414,7 +477,12 @@ impl CraftingAction for Class {
 		0
 	}
 
-	fn execute(&self, simulation_state: &mut Simulation) {
+	fn execute_with_flags(
+		&self,
+		simulation_state: &mut Simulation,
+		_safe: bool,
+		_skip_stack_addition: bool,
+	) {
 		self.get_overrides().into_iter().for_each(|b| simulation_state.remove_buff(b));
 		simulation_state.add_buff(self.get_applied_buff(simulation_state));
 	}

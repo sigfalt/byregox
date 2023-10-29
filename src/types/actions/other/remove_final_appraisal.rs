@@ -21,7 +21,7 @@ impl CraftingAction for RemoveFinalAppraisal {
 		100
 	}
 
-	fn _can_be_used(&self, simulation_state: &Simulation) -> bool {
+	fn _can_be_used(&self, simulation_state: &Simulation, _linear: Option<bool>) -> bool {
 		simulation_state.has_buff(Buff::FinalAppraisal)
 	}
 
@@ -33,7 +33,12 @@ impl CraftingAction for RemoveFinalAppraisal {
 		0
 	}
 
-	fn execute(&self, simulation_state: &mut Simulation) {
+	fn execute_with_flags(
+		&self,
+		simulation_state: &mut Simulation,
+		_safe: bool,
+		_skip_stack_addition: bool,
+	) {
 		simulation_state.remove_buff(Buff::FinalAppraisal);
 	}
 

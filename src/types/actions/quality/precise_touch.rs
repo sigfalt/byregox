@@ -27,9 +27,8 @@ impl CraftingAction for PreciseTouch {
 		self.get_base_success_rate(simulation_state)
 	}
 
-	fn _can_be_used(&self, simulation_state: &Simulation) -> bool {
-		// TODO: if linear (default false)
-		if false {
+	fn _can_be_used(&self, simulation_state: &Simulation, linear: Option<bool>) -> bool {
+		if linear.unwrap_or(false) {
 			true
 		} else if simulation_state.safe && !simulation_state.has_buff(Buff::HeartAndSoul) {
 			false
@@ -56,7 +55,12 @@ impl CraftingAction for PreciseTouch {
 		(self.get_base_durability_cost(simulation_state) as f64 / divider).ceil() as u32
 	}
 
-	fn execute(&self, simulation_state: &mut Simulation) {
+	fn execute_with_flags(
+		&self,
+		simulation_state: &mut Simulation,
+		_safe: bool,
+		_skip_stack_addition: bool,
+	) {
 		let mut buff_mod = self.get_base_bonus(simulation_state);
 		let mut condition_mod = self.get_base_condition(simulation_state);
 		let potency = self.get_potency(simulation_state);
