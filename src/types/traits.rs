@@ -75,11 +75,30 @@ pub trait CraftingAction: DynClone {
 	}
 
 	fn get_fail_cause(&self, simulation_state: &Simulation) -> Option<&str> {
+		self.get_fail_cause_linear(simulation_state, None)
+	}
+
+	fn get_fail_cause_linear(
+		&self,
+		simulation_state: &Simulation,
+		linear: Option<bool>,
+	) -> Option<&str> {
+		self.get_fail_cause_with_flags(simulation_state, linear, None)
+	}
+
+	fn get_fail_cause_with_flags(
+		&self,
+		simulation_state: &Simulation,
+		_linear: Option<bool>,
+		safe: Option<bool>,
+	) -> Option<&str> {
 		let level_requirement = self.get_level_requirement();
 		let craftsmanship_requirement = simulation_state.recipe.craftsmanship_req;
 		let control_requirement = simulation_state.recipe.control_req;
 
-		if (level_requirement.0 != CraftingJob::Any
+		if safe.is_some_and(|b| b) && self.get_success_rate(simulation_state) < 100 {
+			Some("Unsafe action")
+		} else if (level_requirement.0 != CraftingJob::Any
 			&& simulation_state.crafter_stats.levels[level_requirement.0] < level_requirement.1)
 			|| simulation_state.crafter_stats.level < level_requirement.1
 		{
