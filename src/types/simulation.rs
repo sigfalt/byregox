@@ -118,7 +118,7 @@ impl Simulation {
 					fail_cause = Some("Not enough CP");
 				}
 				// we can use the action
-				let result = if self.success.is_none()
+				let mut result = if self.success.is_none()
                     && has_enough_cp
                     // TODO: && self.steps.len() < max_turns
                     && can_use_action
@@ -136,6 +136,7 @@ impl Simulation {
 						skipped: true,
 						combo: None,
 						state: self.state,
+						after_buff_tick: None,
 					}
 				};
 
@@ -144,15 +145,18 @@ impl Simulation {
 					let quality_before = self.quality;
 					let progression_before = self.progression;
 					let durability_before = self.durability;
-					let cp_before = self.available_cp;
+					let cp_before = self.available_cp as i32;
 					let skip_ticks_on_fail =
 						!result.success.unwrap_or(false) && action.skip_on_fail();
 					if self.success.is_none() && !action.skips_buff_ticks() && !skip_ticks_on_fail {
 						self.tick_buffs(action.as_ref());
 					}
-					// TODO: result.after_buff_tick = {
-					//     added_progression: self.progression - progression_before,
-					// };
+					result.after_buff_tick = Some(BuffTickResult {
+						added_progression: self.progression - progression_before,
+						added_quality: self.quality - quality_before,
+						cp_difference: self.available_cp as i32 - cp_before,
+						solidity_difference: self.durability - durability_before,
+					});
 				}
 
 				if !linear
@@ -266,6 +270,7 @@ impl Simulation {
 			skipped: false,
 			combo: Some(combo),
 			state: self.state,
+			after_buff_tick: None,
 		}
 	}
 

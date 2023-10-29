@@ -12,12 +12,15 @@ pub struct ActionResult {
 	pub skipped: bool,
 	pub combo: Option<bool>,
 	pub state: StepState,
-	// pub after_buff_tick: Option<{
-	//     pub added_progression: u32,
-	//     pub added_quality: u32,
-	//     pub cp_difference: i32,
-	//     pub solidity_difference: i32
-	// }>
+	pub after_buff_tick: Option<BuffTickResult>,
+}
+
+#[derive(Clone)]
+pub struct BuffTickResult {
+	pub added_progression: u32,
+	pub added_quality: u32,
+	pub cp_difference: i32,
+	pub solidity_difference: i32,
 }
 
 #[derive(Clone, Default)]
