@@ -213,7 +213,7 @@ impl Simulation {
 
 		// even if failed, remove durability cost and CP
 		self.durability -= action.get_durability_cost(self) as i32;
-		self.available_cp -= action.get_cp_cost(self);
+		self.available_cp -= action.get_cp_cost_linear(self, linear);
 		if self.progression >= self.recipe.progress {
 			self.success = Some(true);
 		} else if self.durability <= 0 {

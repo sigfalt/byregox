@@ -116,6 +116,10 @@ pub trait CraftingAction: DynClone {
 	fn _can_be_used(&self, simulation_state: &Simulation, linear: Option<bool>) -> bool;
 
 	fn get_cp_cost(&self, simulation_state: &Simulation) -> u32 {
+		self.get_cp_cost_linear(simulation_state, false)
+	}
+
+	fn get_cp_cost_linear(&self, simulation_state: &Simulation, _linear: bool) -> u32 {
 		let base_cost = self.get_base_cp_cost(simulation_state);
 		if simulation_state.state() == StepState::Pliant {
 			(base_cost as f64 / 2.0).ceil() as u32
