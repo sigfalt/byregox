@@ -58,8 +58,8 @@ impl CraftingAction for IntensiveSynthesis {
 	fn execute_with_flags(
 		&self,
 		simulation_state: &mut Simulation,
-		safe: bool,
-		skip_stack_addition: bool,
+		_safe: bool,
+		_skip_stack_addition: bool,
 	) {
 		let mut buff_mod = self.get_base_bonus(simulation_state);
 		let mut condition_mod = self.get_base_condition(simulation_state);
