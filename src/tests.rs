@@ -573,6 +573,32 @@ fn test_5point4_standard_touch_combo_bonus() -> Result<()> {
 	Ok(())
 }
 
+#[test]
+fn test_heart_and_soul() -> Result<()> {
+	// generateRecipe(480, 900, 36208, 110, 90)
+	let recipe = generate_recipe_rlvl(3864, 80, 480, 80, 900, 36208, 110, 90);
+	// generateStats(90, 2745, 2885, 500)
+	let stats = generate_stats_specialist(90, 2745, 2885, 500, true, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe.clone())
+		.actions(vec![
+			Box::new(actions::Observe),
+			Box::new(actions::HeartAndSoul),
+			Box::new(actions::PreciseTouch),
+		])
+		.crafter_stats(stats.clone())
+		.step_states(vec![
+			StepState::Normal,
+			StepState::Normal,
+			StepState::Normal,
+		])
+		.build()?;
+	let result = sim.run();
+	assert!(result.simulation.quality > 0);
+
+	Ok(())
+}
+
 fn generate_recipe_lvl(
 	id: u32,
 	lvl: u8,
@@ -658,12 +684,23 @@ fn generate_stats(
 	cp: u32,
 	splendorous: bool,
 ) -> CrafterStats {
+	generate_stats_specialist(level, craftsmanship, control, cp, false, splendorous)
+}
+
+fn generate_stats_specialist(
+	level: u8,
+	craftsmanship: u32,
+	control: u32,
+	cp: u32,
+	specialist: bool,
+	splendorous: bool,
+) -> CrafterStats {
 	CrafterStats {
 		job_id: 14,
 		craftsmanship,
 		control,
 		cp,
-		specialist: false,
+		specialist,
 		splendorous,
 		level: CraftingLevel::new(level).unwrap(),
 		levels: CrafterLevels {
