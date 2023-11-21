@@ -526,8 +526,7 @@ fn test_sturdy_step_state_reducing_durability_cost() -> Result<()> {
 #[test]
 fn test_not_ticking_buffs_with_certain_abilities() -> Result<()> {
 	// generateRecipe(480, 6178, 36208, 110, 90)
-	let mut recipe = generate_recipe_lvl(3864, 80, 80, 6178, 36208, 110, 90);
-	recipe.rlvl = 480;
+	let recipe = generate_recipe_rlvl(3864, 80, 480, 80, 6178, 36208, 110, 90);
 	// generateStats(80, 2486, 2318, 613)
 	let stats = generate_stats(80, 2486, 2318, 613, false);
 	let sim = SimulationBuilder::default()
@@ -555,17 +554,16 @@ fn test_not_ticking_buffs_with_certain_abilities() -> Result<()> {
 #[test]
 fn test_5point4_standard_touch_combo_bonus() -> Result<()> {
 	// generateRecipe(480, 6178, 36208, 110, 90)
-	let mut recipe = generate_recipe_lvl(3864, 80, 80, 6178, 36208, 110, 90);
-	recipe.rlvl = 480;
+	let recipe = generate_recipe_rlvl(3864, 80, 480, 80, 6178, 36208, 110, 90);
 	// generateStats(80, 2486, 2318, 613)
 	let stats = generate_stats(80, 2486, 2318, 613, false);
 	let sim = SimulationBuilder::default()
-		.recipe(recipe.clone())
+		.recipe(recipe)
 		.actions(vec![
 			Box::new(actions::BasicTouch),
 			Box::new(actions::StandardTouch),
 		])
-		.crafter_stats(stats.clone())
+		.crafter_stats(stats)
 		.build()?;
 	let result = sim.run_linear(true);
 	assert_eq!(result.simulation.steps[1].cp_difference, -18);
