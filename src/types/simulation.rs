@@ -17,7 +17,8 @@ pub struct Simulation {
 	// private hqIngredients: {id: number; amount: number}[] = []
 	#[builder(default = "vec![]")]
 	step_states: Vec<StepState>,
-	// private fails: number[] = [],
+	#[builder(default = "vec![]")]
+	fails: Vec<usize>,
 
 	// Auto-initialized fields
 	#[builder(setter(skip), default = "0")]
@@ -123,7 +124,7 @@ impl Simulation {
                     // TODO: && self.steps.len() < max_turns
                     && can_use_action
 				{
-					self.run_action_with_flags(action, linear, safe)
+					self.run_action_with_flags(action, linear, safe, i)
 				} else {
 					ActionResult {
 						action: action.clone(),
@@ -199,16 +200,17 @@ impl Simulation {
 		res
 	}
 
-	pub fn run_action(&mut self, action: &Box<dyn CraftingAction>) -> ActionResult {
-		self.run_action_linear(action, false)
+	pub fn run_action(&mut self, action: &Box<dyn CraftingAction>, index: usize) -> ActionResult {
+		self.run_action_linear(action, false, index)
 	}
 
 	pub fn run_action_linear(
 		&mut self,
 		action: &Box<dyn CraftingAction>,
 		linear: bool,
+		index: usize,
 	) -> ActionResult {
-		self.run_action_with_flags(action, linear, false)
+		self.run_action_with_flags(action, linear, false, index)
 	}
 
 	pub fn run_action_with_flags(
@@ -216,8 +218,9 @@ impl Simulation {
 		action: &Box<dyn CraftingAction>,
 		linear: bool,
 		safe: bool,
+		index: usize,
 	) -> ActionResult {
-		let probability_roll: u32 = if safe {
+		let probability_roll: u32 = if self.fails.contains(&index) {
 			999
 		} else if linear {
 			0

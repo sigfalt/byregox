@@ -521,7 +521,33 @@ fn test_sturdy_step_state_reducing_durability_cost() -> Result<()> {
 	Ok(())
 }
 
-// should not tick buffs if a buff is set to fail
+#[test]
+fn test_not_tick_buffs_if_buff_set_to_fail() -> Result<()> {
+	// generateRecipe(480, 6178, 36208, 110, 90)
+	let recipe = generate_recipe_rlvl(3864, 80, 480, 80, 6178, 36208, 110, 90);
+	// generateStats(80, 2800, 2500, 541)
+	let stats = generate_stats(80, 2800, 2500, 541, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.actions(vec![
+			Box::new(actions::GreatStrides),
+			Box::new(actions::TricksOfTheTrade),
+		])
+		.crafter_stats(stats)
+		.step_states(vec![StepState::Normal])
+		.fails(vec![1])
+		.build()?;
+	let result = sim.run_linear(true);
+	assert_eq!(
+		result
+			.simulation
+			.get_buff(Buff::GreatStrides)
+			.map(|b| b.duration),
+		Some(3)
+	);
+
+	Ok(())
+}
 
 #[test]
 fn test_not_ticking_buffs_with_certain_abilities() -> Result<()> {
