@@ -405,7 +405,7 @@ impl GeneralAction for Class {
 */
 
 pub trait BuffAction: CraftingAction {
-	fn get_duration(&self, simulation_state: &Simulation) -> u32;
+	fn get_duration(&self, simulation_state: &Simulation) -> i32;
 
 	fn can_be_clipped(&self) -> bool {
 		false

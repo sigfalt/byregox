@@ -8,7 +8,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0"
-derive_builder = "0.12"
+derive_builder = "0.13"
 dotenvy = "0.15"
 dyn-clone = "1.0"
 enum_dispatch = "0.3"

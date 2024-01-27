@@ -9,7 +9,7 @@ use crate::types::{
 pub struct GreatStrides;
 
 impl BuffAction for GreatStrides {
-	fn get_duration(&self, _simulation_state: &Simulation) -> u32 {
+	fn get_duration(&self, _simulation_state: &Simulation) -> i32 {
 		3
 	}
 

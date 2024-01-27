@@ -79,7 +79,7 @@ impl Simulation {
 			buff.stacks = (buff.stacks + stacks).min(10);
 		} else {
 			self.buffs.push(EffectiveBuff {
-				duration: u32::MAX,
+				duration: i32::MAX,
 				stacks: stacks.min(10),
 				buff: Buff::InnerQuiet,
 				applied_step: self.step_states.len() as u32,
@@ -107,7 +107,7 @@ impl Simulation {
 				self.state = self
 					.step_states
 					.get(i)
-					.map_or_else(|| StepState::Normal, |s| s.clone());
+					.map_or_else(|| StepState::Normal, |s| *s);
 				let mut fail_cause: Option<&str> = None;
 
 				let can_use_action = action.can_be_used(&self);
