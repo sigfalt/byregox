@@ -444,8 +444,6 @@ fn test_high_byregots_stacks() -> Result<()> {
 	Ok(())
 }
 
-// skip tests with input conditions for now
-
 #[test]
 fn test_pliant_step_state_reducing_cp_cost() -> Result<()> {
 	// generateStarRecipe(480, 4943, 32328, 2480, 2195, 80, 70, true)
@@ -593,6 +591,40 @@ fn test_5point4_standard_touch_combo_bonus() -> Result<()> {
 		.build()?;
 	let result = sim.run_linear(true);
 	assert_eq!(result.simulation.steps[1].cp_difference, -18);
+
+	Ok(())
+}
+
+#[test]
+fn test_count_buffs_properly_in_step_by_step_mode() -> Result<()> {
+	// generateRecipe(480, 6178, 36208, 110, 90)
+	let recipe = generate_recipe_rlvl(3864, 80, 480, 80, 6178, 36208, 110, 90);
+	// generateStats(80, 2745, 2885, 626)
+	let stats = generate_stats(80, 2745, 2885, 626, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.actions(vec![
+			Box::new(actions::MuscleMemory),
+			Box::new(actions::Manipulation),
+			Box::new(actions::Observe),
+			Box::new(actions::Veneration),
+			Box::new(actions::Groundwork),
+			Box::new(actions::PrudentTouch),
+			Box::new(actions::PrudentTouch),
+			Box::new(actions::PrudentTouch),
+			Box::new(actions::PrudentTouch),
+			Box::new(actions::PrudentTouch),
+		])
+		.crafter_stats(stats)
+		.build()?;
+	let result = sim.run_max_steps(true, 4);
+	assert_eq!(
+		result
+			.simulation
+			.get_buff(Buff::Manipulation)
+			.map(|b| b.duration),
+		Some(6)
+	);
 
 	Ok(())
 }

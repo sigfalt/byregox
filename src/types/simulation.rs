@@ -94,10 +94,19 @@ impl Simulation {
 	}
 
 	pub fn run_linear(self, linear: bool) -> SimulationResult {
-		self.run_with_flags(linear, false)
+		self.run_max_steps(linear, usize::MAX)
 	}
 
-	pub fn run_with_flags(mut self, linear: bool, safe: bool) -> SimulationResult {
+	pub fn run_max_steps(self, linear: bool, max_steps: usize) -> SimulationResult {
+		self.run_with_flags(linear, max_steps, false)
+	}
+
+	pub fn run_with_flags(
+		mut self,
+		linear: bool,
+		max_steps: usize,
+		safe: bool,
+	) -> SimulationResult {
 		self.last_possible_reclaim_step = None;
 		self.actions
 			.clone()
@@ -120,9 +129,8 @@ impl Simulation {
 				}
 				// we can use the action
 				let mut result = if self.success.is_none()
-                    && has_enough_cp
-                    // TODO: && self.steps.len() < max_turns
-                    && can_use_action
+					&& has_enough_cp && self.steps.len() < max_steps
+					&& can_use_action
 				{
 					self.run_action_with_flags(action, linear, safe, i)
 				} else {
@@ -141,8 +149,7 @@ impl Simulation {
 					}
 				};
 
-				// TODO: if self.steps.len() < max_turns
-				if self.steps.len() < usize::MAX {
+				if self.steps.len() < max_steps {
 					let quality_before = self.quality;
 					let progression_before = self.progression;
 					let durability_before = self.durability;
