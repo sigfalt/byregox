@@ -630,6 +630,22 @@ fn test_count_buffs_properly_in_step_by_step_mode() -> Result<()> {
 }
 
 #[test]
+fn test_conditions_for_normal_recipe() -> Result<()> {
+	// generateRecipe(480, 6178, 36208, 110, 90)
+	let recipe = generate_recipe_rlvl(3864, 80, 480, 80, 6178, 36208, 110, 90);
+	// generateStats(80, 2745, 2885, 626)
+	let stats = generate_stats(80, 2745, 2885, 626, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.build()?;
+
+	// incomplete test
+
+	Ok(())
+}
+
+#[test]
 fn test_heart_and_soul() -> Result<()> {
 	// generateRecipe(480, 900, 36208, 110, 90)
 	let recipe = generate_recipe_rlvl(3864, 80, 480, 80, 900, 36208, 110, 90);

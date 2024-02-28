@@ -12,6 +12,7 @@ use super::{
 #[derive(Builder)]
 pub struct Simulation {
 	pub recipe: Craft,
+	#[builder(default = "vec![]")]
 	pub actions: Vec<Box<dyn CraftingAction>>,
 	pub crafter_stats: CrafterStats,
 	// private hqIngredients: {id: number; amount: number}[] = []
