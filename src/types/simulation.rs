@@ -343,9 +343,9 @@ impl Simulation {
 		if self.state == StepState::Excellent {
 			self.state = StepState::Poor;
 			return;
-		} else
+		}
 		// if current state is GOOD OMEN, next is always GOOD
-		if self.state == StepState::GoodOmen {
+		else if self.state == StepState::GoodOmen {
 			self.state = StepState::Good;
 			return;
 		}
