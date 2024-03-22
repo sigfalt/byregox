@@ -645,6 +645,97 @@ fn test_conditions_for_normal_recipe() -> Result<()> {
 	Ok(())
 }
 
+// should have proper conditions switch system
+/*
+const excellentTest = new Simulation(
+      generateRecipe(480, 6178, 36208, 110, 90, 995),
+      [new Observe(), new Observe()],
+      generateStats(80, 2745, 2885, 626)
+    );
+    excellentTest.state = StepState.EXCELLENT;
+    excellentTest.tickState();
+    expect(excellentTest.state).toEqual(StepState.POOR);
+    const goodOmen = new Simulation(
+      generateRecipe(480, 6178, 36208, 110, 90, 995),
+      [new Observe(), new Observe()],
+      generateStats(80, 2745, 2885, 626)
+    );
+    goodOmen.state = StepState.GOOD_OMEN;
+    goodOmen.tickState();
+    expect(goodOmen.state).toEqual(StepState.GOOD);
+ */
+
+// should have proper conditions for expert 1 recipes
+/*
+const simulation = new Simulation(
+      generateRecipe(480, 6178, 36208, 110, 90, 115),
+      [],
+      generateStats(80, 2745, 2885, 626),
+      [],
+      [],
+      []
+    );
+    expect(simulation.possibleConditions).toStrictEqual([
+      StepState.NORMAL,
+      StepState.GOOD,
+      StepState.CENTERED,
+      StepState.STURDY,
+      StepState.PLIANT,
+    ]);
+ */
+
+// should have proper conditions for expert 2 recipes
+/*
+const simulation = new Simulation(
+      generateRecipe(480, 6178, 36208, 110, 90, 483),
+      [],
+      generateStats(80, 2745, 2885, 626),
+      [],
+      [],
+      []
+    );
+    expect(simulation.possibleConditions).toStrictEqual([
+      StepState.NORMAL,
+      StepState.GOOD,
+      StepState.STURDY,
+      StepState.PLIANT,
+      StepState.MALLEABLE,
+      StepState.PRIMED,
+    ]);
+ */
+
+// should apply conditions with the proper rates for expert 2 conditions
+/*
+const simulation = new Simulation(
+      generateRecipe(480, 6178, 36208, 110, 90, 483),
+      [],
+      generateStats(80, 2745, 2885, 626),
+      [],
+      [],
+      []
+    );
+    simulation.recipe.expert = true;
+    const rates: { [state in StepState]?: number } = {
+      [StepState.NORMAL]: 0,
+      [StepState.GOOD]: 0,
+      [StepState.STURDY]: 0,
+      [StepState.PLIANT]: 0,
+      [StepState.MALLEABLE]: 0,
+      [StepState.PRIMED]: 0,
+    };
+    const numSamples = 100000;
+    for (let i = 0; i < numSamples; i++) {
+      simulation.tickState();
+      rates[simulation.state]! += 1;
+    }
+    expect(rates[StepState.NORMAL]! / numSamples).toBeCloseTo(0.37, 1);
+    expect(rates[StepState.GOOD]! / numSamples).toBeCloseTo(0.12, 1);
+    expect(rates[StepState.STURDY]! / numSamples).toBeCloseTo(0.15, 1);
+    expect(rates[StepState.PLIANT]! / numSamples).toBeCloseTo(0.12, 1);
+    expect(rates[StepState.MALLEABLE]! / numSamples).toBeCloseTo(0.12, 1);
+    expect(rates[StepState.PRIMED]! / numSamples).toBeCloseTo(0.12, 1);
+ */
+
 #[test]
 fn test_heart_and_soul() -> Result<()> {
 	// generateRecipe(480, 900, 36208, 110, 90)
@@ -670,6 +761,218 @@ fn test_heart_and_soul() -> Result<()> {
 
 	Ok(())
 }
+
+// progress flooring
+/*
+const simulation = new Simulation(
+      generateRecipe(535, 3000, 6700, 125, 109),
+      [new CarefulSynthesis()],
+      generateStats(90, 2606, 2457, 507)
+    );
+    simulation.run(true);
+    expect(simulation.progression).toBe(378);
+ */
+
+// quality buff flooring
+/*
+const simulation = new Simulation(
+      generateRecipe(285, 980, 3420, 88, 68),
+      [new Innovation(), new PrudentTouch(), new PrudentTouch(), new PrudentTouch()],
+      generateStats(66, 813, 683, 283)
+    );
+    simulation.run(true);
+    expect(simulation.quality).toBe(667);
+ */
+
+// quality flooring
+/*
+const simulation = new Simulation(
+      generateRecipe(145, 3000, 6700, 68, 48),
+      [new Innovation(), new BasicTouch(), new StandardTouch(), new BasicTouch()],
+      generateStats(58, 2606, 434, 507)
+    );
+    simulation.run(true);
+    expect(simulation.steps[3].addedQuality).toBe(225);
+    const simulation2 = new Simulation(
+      generateStarRecipe(610, 5060, 12628, 130, 115, 80, 70),
+      [
+        new MuscleMemory(),
+        new Manipulation(),
+        new Veneration(),
+        new WasteNotII(),
+        new Groundwork(),
+        new Groundwork(),
+        new DelicateSynthesis(),
+        new PreparatoryTouch(),
+        new PreparatoryTouch(),
+      ],
+      generateStats(90, 3702, 3792, 588)
+    );
+    simulation2.run(true);
+    expect(simulation2.steps[8].addedQuality).toBe(663);
+    const simulation3 = new Simulation(
+      generateStarRecipe(625, 5280, 13050, 130, 115, 80, 70),
+      [new Reflect(), new Innovation(), new BasicTouch(), new StandardTouch()],
+      generateStats(90, 3702, 4073, 588)
+    );
+    simulation3.run(true);
+    expect(simulation3.steps[3].addedQuality).toBe(663);
+ */
+
+// should fail if required quality is not met
+/*
+const simulation = new Simulation(
+      generateStarRecipe(590, 4300, 12800, 130, 115, 80, 70, false, 15, { requiredQuality: 12800 }),
+      [
+        new MuscleMemory(),
+        new Manipulation(),
+        new Veneration(),
+        new WasteNotII(),
+        new FinalAppraisal(),
+        new Groundwork(),
+        new Groundwork(),
+        new CarefulSynthesis(),
+        new Innovation(),
+        new PreparatoryTouch(),
+        new PreparatoryTouch(),
+        new PreparatoryTouch(),
+        new PreparatoryTouch(),
+        new Innovation(),
+        new PrudentTouch(),
+        new PrudentTouch(),
+        new Observe(),
+        new FocusedTouch(),
+        new Innovation(),
+        new TrainedFinesse(),
+        new TrainedFinesse(),
+        new GreatStrides(),
+        new ByregotsBlessing(),
+        new BasicSynthesis(),
+      ],
+      generateStats(90, 3392, 3338, 675)
+    );
+    expect(simulation.run(true).success).toBe(false);
+    const simulation2 = new Simulation(
+      generateStarRecipe(590, 4300, 12800, 130, 115, 80, 70, false, 15, { requiredQuality: 6400 }),
+      [
+        new MuscleMemory(),
+        new Manipulation(),
+        new Veneration(),
+        new WasteNotII(),
+        new FinalAppraisal(),
+        new Groundwork(),
+        new Groundwork(),
+        new CarefulSynthesis(),
+        new Innovation(),
+        new PreparatoryTouch(),
+        new PreparatoryTouch(),
+        new PreparatoryTouch(),
+        new PreparatoryTouch(),
+        new Innovation(),
+        new PrudentTouch(),
+        new PrudentTouch(),
+        new Observe(),
+        new FocusedTouch(),
+        new Innovation(),
+        new TrainedFinesse(),
+        new TrainedFinesse(),
+        new GreatStrides(),
+        new ByregotsBlessing(),
+        new BasicSynthesis(),
+      ],
+      generateStats(90, 3392, 3338, 675)
+    );
+    expect(simulation2.run(true).success).toBe(true);
+ */
+
+// should handle ToT and Heart and Soul properly
+/*
+const simulation = new Simulation(
+      generateStarRecipe(590, 4300, 12800, 130, 115, 80, 70, false, 15),
+      [new HeartAndSoul(), new PreparatoryTouch(), new TricksOfTheTrade()],
+      generateStats(90, 500, 500, 675),
+      [],
+      {
+        2: StepState.GOOD,
+      }
+    );
+    simulation.run(true);
+    expect(simulation.getBuff(Buff.HEART_AND_SOUL)).not.toBeUndefined();
+    const simulation2 = new Simulation(
+      generateStarRecipe(590, 4300, 12800, 130, 115, 80, 70, false, 15),
+      [new HeartAndSoul(), new PreparatoryTouch(), new TricksOfTheTrade()],
+      generateStats(90, 500, 500, 675)
+    );
+    simulation2.run(true);
+    expect(simulation2.getBuff(Buff.HEART_AND_SOUL)).toBeUndefined();
+ */
+
+// should calculate min stats
+/*
+const simulation = new Simulation(
+      generateRecipe(525, 1300, 6200, 123, 107, 15, { durability: 40 }),
+      [
+        new Reflect(),
+        new Groundwork(),
+        new MastersMend(),
+        new Manipulation(),
+        new WasteNot(),
+        new PreparatoryTouch(),
+        new PreparatoryTouch(),
+        new PreparatoryTouch(),
+        new PreparatoryTouch(),
+        new ByregotsBlessing(),
+        new BasicSynthesis(),
+      ],
+      generateStats(90, 4021, 3600, 500)
+    );
+    const stats = simulation.getMinStats();
+    expect(stats.found).toBe(true);
+    expect(stats.craftsmanship).toBe(3309);
+    expect(stats.control).toBe(3125);
+    expect(stats.cp).toBe(448);
+ */
+
+// should correctly identify tier thresholds for min stats
+/*
+const simulation = new Simulation(
+      generateRecipe(560, 3500, 7200, 130, 115, 15, { progressModifier: 90, qualityModifier: 80 }),
+      [
+        new MuscleMemory(),
+        new WasteNotII(),
+        new Groundwork(),
+        new DelicateSynthesis(),
+        new Innovation(),
+        new PreparatoryTouch(),
+        new PreparatoryTouch(),
+        new PreparatoryTouch(),
+        new PreparatoryTouch(),
+        new ByregotsBlessing(),
+        new CarefulSynthesis(),
+      ],
+      generateStats(90, 4021, 3600, 601)
+    );
+    const stats = simulation.getMinStats([3960, 5400, 6840]);
+    expect(stats.found).toBe(true);
+    expect(stats.craftsmanship).toBe(3875);
+    expect(stats.control).toBe(2962);
+    expect(stats.cp).toBe(363);
+ */
+
+// should use the enhanced Good modifier with Splendorous tools
+/*
+const simulation = new Simulation(
+      generateRecipe(1, 9, 80, 50, 30),
+      [new Observe(), new BasicTouch()],
+      generateStats(90, 4041, 3987, 616, true),
+      [],
+      {
+        1: StepState.GOOD,
+      }
+    );
+    simulation.run(true);
+    expect(simulation.quality).toBe(2387);
+ */
 
 fn generate_recipe_lvl(
 	id: u32,
