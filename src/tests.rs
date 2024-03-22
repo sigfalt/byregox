@@ -4,7 +4,7 @@ use crate::types::{
 	actions,
 	enums::{Buff, StepState},
 	structs::{Craft, CrafterLevels, CrafterStats, CraftingLevel},
-	tables, SimulationBuilder,
+	traits::CraftingAction,	tables, SimulationBuilder,
 };
 
 #[test]
@@ -645,25 +645,36 @@ fn test_conditions_for_normal_recipe() -> Result<()> {
 	Ok(())
 }
 
-// should have proper conditions switch system
-/*
-const excellentTest = new Simulation(
-      generateRecipe(480, 6178, 36208, 110, 90, 995),
-      [new Observe(), new Observe()],
-      generateStats(80, 2745, 2885, 626)
-    );
-    excellentTest.state = StepState.EXCELLENT;
-    excellentTest.tickState();
-    expect(excellentTest.state).toEqual(StepState.POOR);
-    const goodOmen = new Simulation(
-      generateRecipe(480, 6178, 36208, 110, 90, 995),
-      [new Observe(), new Observe()],
-      generateStats(80, 2745, 2885, 626)
-    );
-    goodOmen.state = StepState.GOOD_OMEN;
-    goodOmen.tickState();
-    expect(goodOmen.state).toEqual(StepState.GOOD);
- */
+#[test]
+fn test_conditions_switch() -> Result<()> {
+	// generateRecipe(480, 6178, 36208, 110, 90, (TODO conditionsFlag:)995)
+	let recipe = generate_recipe_rlvl(3864, 80, 480, 80, 6178, 36208, 110, 90);
+	// generateStats(80, 2745, 2885, 626)
+	let stats = generate_stats(80, 2745, 2885, 626, false);
+	let actions: Vec<Box<dyn CraftingAction>> = vec![
+		Box::new(actions::Observe),
+		Box::new(actions::Observe)
+	];
+	let mut excellent_test = SimulationBuilder::default()
+		.recipe(recipe.clone())
+		.crafter_stats(stats.clone())
+		.actions(actions.clone())
+		.build()?;
+	excellent_test.override_state(StepState::Excellent);
+	excellent_test.tick_state();
+	assert_eq!(excellent_test.state(), StepState::Poor);
+
+	let mut good_omen_test = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.actions(actions)
+		.build()?;
+	good_omen_test.override_state(StepState::GoodOmen);
+	good_omen_test.tick_state();
+	assert_eq!(good_omen_test.state(), StepState::Good);
+
+	Ok(())
+}
 
 // should have proper conditions for expert 1 recipes
 /*

@@ -60,6 +60,10 @@ impl Simulation {
 		self.state
 	}
 
+	pub fn override_state(&mut self, new_state: StepState) {
+		self.state = new_state;
+	}
+
 	pub fn has_combo_available(&self, action: &dyn CraftingAction) -> bool {
 		// starting from the most recent action
 		for step in self.steps.iter().rev() {
@@ -339,7 +343,7 @@ impl Simulation {
 		self.buffs = curr_buffs.into_iter().filter(|b| b.duration > 0).collect();
 	}
 
-	fn tick_state(&mut self) {
+	pub fn tick_state(&mut self) {
 		// if current state is EXCELLENT, next is always POOR
 		if self.state == StepState::Excellent {
 			self.state = StepState::Poor;
