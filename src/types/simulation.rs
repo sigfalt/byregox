@@ -1,4 +1,5 @@
 use derive_builder::{Builder, UninitializedFieldError};
+use num_traits::FromPrimitive;
 use rand::Rng;
 
 use crate::types::tables;
@@ -53,6 +54,9 @@ pub struct Simulation {
 
 	#[builder(setter(skip), default = "false")]
 	pub safe: bool,
+
+	#[builder(setter(skip), default = "self.build_possible_conditions()?")]
+	possible_conditions: Vec<StepState>,
 }
 
 impl Simulation {
@@ -343,6 +347,10 @@ impl Simulation {
 		self.buffs = curr_buffs.into_iter().filter(|b| b.duration > 0).collect();
 	}
 
+	pub fn possible_conditions(&self) -> &Vec<StepState> {
+		&self.possible_conditions
+	}
+
 	pub fn tick_state(&mut self) {
 		// if current state is EXCELLENT, next is always POOR
 		if self.state == StepState::Excellent {
@@ -398,5 +406,22 @@ impl SimulationBuilder {
 				"max_cp",
 			))),
 		}
+	}
+
+	fn build_possible_conditions(&self) -> Result<Vec<StepState>, SimulationBuilderError> {
+		let conditions_flag = match &self.recipe {
+			Some(r) => Ok(r.conditions_flag),
+			_ => Err(SimulationBuilderError::from(UninitializedFieldError::new(
+				"conditions_flag"
+			))),
+		}?;
+		let binary_string = format!("{:b}", conditions_flag);
+		Ok(binary_string.chars().rev().enumerate().filter_map(|(ix, chr)|
+			if chr == '1' {
+				StepState::from_usize(ix + 1)
+			} else {
+				None
+			}
+		).collect())
 	}
 }

@@ -640,7 +640,11 @@ fn test_conditions_for_normal_recipe() -> Result<()> {
 		.crafter_stats(stats)
 		.build()?;
 
-	// incomplete test
+	assert_eq!(sim.possible_conditions().len(), 4);
+	assert!(sim.possible_conditions().contains(&StepState::Normal));
+	assert!(sim.possible_conditions().contains(&StepState::Good));
+	assert!(sim.possible_conditions().contains(&StepState::Excellent));
+	assert!(sim.possible_conditions().contains(&StepState::Poor));
 
 	Ok(())
 }
@@ -676,44 +680,48 @@ fn test_conditions_switch() -> Result<()> {
 	Ok(())
 }
 
-// should have proper conditions for expert 1 recipes
-/*
-const simulation = new Simulation(
-      generateRecipe(480, 6178, 36208, 110, 90, 115),
-      [],
-      generateStats(80, 2745, 2885, 626),
-      [],
-      [],
-      []
-    );
-    expect(simulation.possibleConditions).toStrictEqual([
-      StepState.NORMAL,
-      StepState.GOOD,
-      StepState.CENTERED,
-      StepState.STURDY,
-      StepState.PLIANT,
-    ]);
- */
+#[test]
+fn test_expert_one_conditions() -> Result<()> {
+	// generateRecipe(480, 6178, 36208, 110, 90, 115)
+	let recipe = generate_recipe_rlvl_conditions(3864, 80, 480, 80, 6178, 36208, 110, 90, 115);
+	// generateStats(80, 2745, 2885, 626)
+	let stats = generate_stats(80, 2745, 2885, 626, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.build()?;
 
-// should have proper conditions for expert 2 recipes
-/*
-const simulation = new Simulation(
-      generateRecipe(480, 6178, 36208, 110, 90, 483),
-      [],
-      generateStats(80, 2745, 2885, 626),
-      [],
-      [],
-      []
-    );
-    expect(simulation.possibleConditions).toStrictEqual([
-      StepState.NORMAL,
-      StepState.GOOD,
-      StepState.STURDY,
-      StepState.PLIANT,
-      StepState.MALLEABLE,
-      StepState.PRIMED,
-    ]);
- */
+	assert_eq!(sim.possible_conditions().len(), 5);
+	assert!(sim.possible_conditions().contains(&StepState::Normal));
+	assert!(sim.possible_conditions().contains(&StepState::Good));
+	assert!(sim.possible_conditions().contains(&StepState::Centered));
+	assert!(sim.possible_conditions().contains(&StepState::Sturdy));
+	assert!(sim.possible_conditions().contains(&StepState::Pliant));
+
+	Ok(())
+}
+
+#[test]
+fn test_expert_two_conditions() -> Result<()> {
+	// generateRecipe(480, 6178, 36208, 110, 90, 483)
+	let recipe = generate_recipe_rlvl_conditions(3864, 80, 480, 80, 6178, 36208, 110, 90, 483);
+	// generateStats(80, 2745, 2885, 626)
+	let stats = generate_stats(80, 2745, 2885, 626, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.build()?;
+
+	assert_eq!(sim.possible_conditions().len(), 6);
+	assert!(sim.possible_conditions().contains(&StepState::Normal));
+	assert!(sim.possible_conditions().contains(&StepState::Good));
+	assert!(sim.possible_conditions().contains(&StepState::Sturdy));
+	assert!(sim.possible_conditions().contains(&StepState::Pliant));
+	assert!(sim.possible_conditions().contains(&StepState::Malleable));
+	assert!(sim.possible_conditions().contains(&StepState::Primed));
+
+	Ok(())
+}
 
 // should apply conditions with the proper rates for expert 2 conditions
 /*
@@ -1029,6 +1037,36 @@ fn generate_recipe_rlvl(
 		hq: Some(true),
 		quick_synth: Some(true),
 		ingredients: vec![],
+		conditions_flag: 15,
+		..Default::default()
+	}
+}
+
+fn generate_recipe_rlvl_conditions(
+	id: u32,
+	lvl: u8,
+	rlvl: u32,
+	durability: u32,
+	progress: u32,
+	quality: u32,
+	progress_divider: u32,
+	quality_divider: u32,
+	conditions_flag: u32
+) -> Craft {
+	Craft {
+		id: id.to_string(),
+		job: 14, // CRP
+		lvl: CraftingLevel::new(lvl).unwrap(),
+		rlvl,
+		durability,
+		progress,
+		quality,
+		progress_divider,
+		quality_divider,
+		hq: Some(true),
+		quick_synth: Some(true),
+		ingredients: vec![],
+		conditions_flag,
 		..Default::default()
 	}
 }
