@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use derive_builder::{Builder, UninitializedFieldError};
 use num_traits::FromPrimitive;
 use rand::Rng;
@@ -56,7 +57,7 @@ pub struct Simulation {
 	pub safe: bool,
 
 	#[builder(setter(skip), default = "self.build_possible_conditions()?")]
-	possible_conditions: Vec<StepState>,
+	possible_conditions: HashSet<StepState>,
 }
 
 impl Simulation {
@@ -347,7 +348,7 @@ impl Simulation {
 		self.buffs = curr_buffs.into_iter().filter(|b| b.duration > 0).collect();
 	}
 
-	pub fn possible_conditions(&self) -> &Vec<StepState> {
+	pub fn possible_conditions(&self) -> &HashSet<StepState> {
 		&self.possible_conditions
 	}
 
@@ -408,7 +409,7 @@ impl SimulationBuilder {
 		}
 	}
 
-	fn build_possible_conditions(&self) -> Result<Vec<StepState>, SimulationBuilderError> {
+	fn build_possible_conditions(&self) -> Result<HashSet<StepState>, SimulationBuilderError> {
 		let conditions_flag = match &self.recipe {
 			Some(r) => Ok(r.conditions_flag),
 			_ => Err(SimulationBuilderError::from(UninitializedFieldError::new(

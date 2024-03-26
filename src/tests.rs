@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use anyhow::Result;
 
 use crate::types::{
@@ -640,11 +641,12 @@ fn test_conditions_for_normal_recipe() -> Result<()> {
 		.crafter_stats(stats)
 		.build()?;
 
-	assert_eq!(sim.possible_conditions().len(), 4);
-	assert!(sim.possible_conditions().contains(&StepState::Normal));
-	assert!(sim.possible_conditions().contains(&StepState::Good));
-	assert!(sim.possible_conditions().contains(&StepState::Excellent));
-	assert!(sim.possible_conditions().contains(&StepState::Poor));
+	assert_eq!(sim.possible_conditions(), &HashSet::from([
+		StepState::Normal,
+		StepState::Good,
+		StepState::Excellent,
+		StepState::Poor,
+	]));
 
 	Ok(())
 }
@@ -691,12 +693,13 @@ fn test_expert_one_conditions() -> Result<()> {
 		.crafter_stats(stats)
 		.build()?;
 
-	assert_eq!(sim.possible_conditions().len(), 5);
-	assert!(sim.possible_conditions().contains(&StepState::Normal));
-	assert!(sim.possible_conditions().contains(&StepState::Good));
-	assert!(sim.possible_conditions().contains(&StepState::Centered));
-	assert!(sim.possible_conditions().contains(&StepState::Sturdy));
-	assert!(sim.possible_conditions().contains(&StepState::Pliant));
+	assert_eq!(sim.possible_conditions(), &HashSet::from([
+		StepState::Normal,
+		StepState::Good,
+		StepState::Centered,
+		StepState::Sturdy,
+		StepState::Pliant,
+	]));
 
 	Ok(())
 }
@@ -712,13 +715,14 @@ fn test_expert_two_conditions() -> Result<()> {
 		.crafter_stats(stats)
 		.build()?;
 
-	assert_eq!(sim.possible_conditions().len(), 6);
-	assert!(sim.possible_conditions().contains(&StepState::Normal));
-	assert!(sim.possible_conditions().contains(&StepState::Good));
-	assert!(sim.possible_conditions().contains(&StepState::Sturdy));
-	assert!(sim.possible_conditions().contains(&StepState::Pliant));
-	assert!(sim.possible_conditions().contains(&StepState::Malleable));
-	assert!(sim.possible_conditions().contains(&StepState::Primed));
+	assert_eq!(sim.possible_conditions(), &HashSet::from([
+		StepState::Normal,
+		StepState::Good,
+		StepState::Sturdy,
+		StepState::Pliant,
+		StepState::Malleable,
+		StepState::Primed,
+	]));
 
 	Ok(())
 }
