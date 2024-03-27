@@ -653,8 +653,8 @@ fn test_conditions_for_normal_recipe() -> Result<()> {
 
 #[test]
 fn test_conditions_switch() -> Result<()> {
-	// generateRecipe(480, 6178, 36208, 110, 90, (TODO conditionsFlag:)995)
-	let recipe = generate_recipe_rlvl(3864, 80, 480, 80, 6178, 36208, 110, 90);
+	// generateRecipe(480, 6178, 36208, 110, 90, 995)
+	let recipe = generate_recipe_rlvl_conditions(3864, 80, 480, 80, 6178, 36208, 110, 90, 995);
 	// generateStats(80, 2745, 2885, 626)
 	let stats = generate_stats(80, 2745, 2885, 626, false);
 	let actions: Vec<Box<dyn CraftingAction>> = vec![
@@ -795,6 +795,14 @@ const simulation = new Simulation(
     simulation.run(true);
     expect(simulation.progression).toBe(378);
  */
+
+#[test]
+fn test_progress_flooring() -> Result<()> {
+	// generateRecipe(535, 3000, 6700, 125, 109)
+	// generateStats(90, 2606, 2457, 507)
+
+	Ok(())
+}
 
 // quality buff flooring
 /*
