@@ -378,7 +378,7 @@ impl Simulation {
 
 impl SimulationBuilder {
 	fn build_starting_quality(&self) -> Result<u32, SimulationBuilderError> {
-		// TODO: Incorproate HQ ingredients calculation
+		// TODO: Incorporate HQ ingredients calculation
 		Ok(0)
 	}
 
