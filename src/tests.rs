@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use anyhow::Result;
 
 use crate::types::{
@@ -727,37 +727,45 @@ fn test_expert_two_conditions() -> Result<()> {
 	Ok(())
 }
 
-// should apply conditions with the proper rates for expert 2 conditions
-/*
-const simulation = new Simulation(
-      generateRecipe(480, 6178, 36208, 110, 90, 483),
-      [],
-      generateStats(80, 2745, 2885, 626),
-      [],
-      [],
-      []
-    );
-    simulation.recipe.expert = true;
-    const rates: { [state in StepState]?: number } = {
-      [StepState.NORMAL]: 0,
-      [StepState.GOOD]: 0,
-      [StepState.STURDY]: 0,
-      [StepState.PLIANT]: 0,
-      [StepState.MALLEABLE]: 0,
-      [StepState.PRIMED]: 0,
-    };
-    const numSamples = 100000;
-    for (let i = 0; i < numSamples; i++) {
-      simulation.tickState();
-      rates[simulation.state]! += 1;
-    }
-    expect(rates[StepState.NORMAL]! / numSamples).toBeCloseTo(0.37, 1);
-    expect(rates[StepState.GOOD]! / numSamples).toBeCloseTo(0.12, 1);
-    expect(rates[StepState.STURDY]! / numSamples).toBeCloseTo(0.15, 1);
-    expect(rates[StepState.PLIANT]! / numSamples).toBeCloseTo(0.12, 1);
-    expect(rates[StepState.MALLEABLE]! / numSamples).toBeCloseTo(0.12, 1);
-    expect(rates[StepState.PRIMED]! / numSamples).toBeCloseTo(0.12, 1);
- */
+#[test]
+fn test_expert_two_condition_rates() -> Result<()> {
+	// generateRecipe(480, 6178, 36208, 110, 90, 483)
+	let recipe = generate_recipe_rlvl_conditions(3864, 80, 480, 80, 6178, 36208, 110, 90, 483);
+	let recipe = Craft {expert: Some(true), ..recipe};
+	// generateStats(80, 2745, 2885, 626)
+	let stats = generate_stats(80, 2745, 2885, 626, false);
+	let mut sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.build()?;
+
+	let mut condition_rates: HashMap<_, _> = HashMap::from_iter(
+		sim.possible_conditions().iter().map(|&cond| (cond, 0))
+	);
+	let num_samples = 100_000;
+	for _ in 0..num_samples {
+		sim.tick_state();
+		condition_rates.entry(sim.state()).and_modify(|val| *val += 1);
+	}
+
+	let expected_rates = HashMap::from([
+		(StepState::Normal, 0.37),
+		(StepState::Good, 0.12),
+		(StepState::Sturdy, 0.15),
+		(StepState::Pliant, 0.12),
+		(StepState::Malleable, 0.12),
+		(StepState::Primed, 0.12)
+	]);
+	let num_samples = num_samples as f64;
+	let deviation = (num_samples * 0.001) as u64; // allow .1% random deviation
+	expected_rates.into_iter().for_each(|(state, rate)| {
+		let ideal_count = (rate * num_samples) as u64;
+		let acceptable_range = (ideal_count - deviation)..(ideal_count + deviation);
+		assert!(acceptable_range.contains(condition_rates.get(&state).unwrap()));
+	});
+
+	Ok(())
+}
 
 #[test]
 fn test_heart_and_soul() -> Result<()> {
