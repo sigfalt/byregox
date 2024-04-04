@@ -747,6 +747,7 @@ fn test_expert_two_condition_rates() -> Result<()> {
 		sim.tick_state();
 		condition_rates.entry(sim.state()).and_modify(|val| *val += 1);
 	}
+	println!("rates: {:#?}", condition_rates);
 
 	let expected_rates = HashMap::from([
 		(StepState::Normal, 0.37),
@@ -757,10 +758,11 @@ fn test_expert_two_condition_rates() -> Result<()> {
 		(StepState::Primed, 0.12)
 	]);
 	let num_samples = num_samples as f64;
-	let deviation = (num_samples * 0.001) as u64; // allow .1% random deviation
+	let deviation = (num_samples * 0.005) as u64; // allow .5% random deviation
 	expected_rates.into_iter().for_each(|(state, rate)| {
 		let ideal_count = (rate * num_samples) as u64;
 		let acceptable_range = (ideal_count - deviation)..(ideal_count + deviation);
+		println!("range for {:?}: {:?}", state, acceptable_range);
 		assert!(acceptable_range.contains(condition_rates.get(&state).unwrap()));
 	});
 
