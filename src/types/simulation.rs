@@ -1,7 +1,7 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use derive_builder::{Builder, UninitializedFieldError};
 use num_traits::FromPrimitive;
-use rand::Rng;
+use rand::{random, Rng};
 
 use crate::types::tables;
 
@@ -371,8 +371,47 @@ impl Simulation {
 			0.2
 		};
 
-		// TODO: roll for next state
-		self.state = StepState::Normal;
+		let mut states_and_rates: HashMap<_, _> = HashMap::from_iter(
+			self.possible_conditions.iter().filter_map(|&step_state| {
+			let rate_opt = match step_state {
+				StepState::Good => Some(
+					if self.recipe.expert.is_some_and(|b| b) { 0.12 } else { good_chance }
+				),
+				StepState::Excellent => Some(
+					if self.recipe.expert.is_some_and(|b| b) { 0.0 } else { 0.04 }
+				),
+				StepState::Poor => Some(0.0),
+				StepState::Centered => Some(0.15),
+				StepState::Sturdy => Some(0.15),
+				StepState::Pliant => Some(0.12),
+				StepState::Malleable => Some(0.12),
+				StepState::Primed => Some(0.12),
+				StepState::GoodOmen => Some(0.1),
+				_ => None
+			};
+			if let Some(rate) = rate_opt {
+				Some((step_state, rate))
+			} else {
+				None
+			}
+		}));
+		let non_normal_rate: f64 = states_and_rates.values().sum();
+		states_and_rates.insert(StepState::Normal, 1.0 - non_normal_rate);
+		self.state = Self::get_weighted_random(states_and_rates).unwrap_or(StepState::Normal);
+	}
+
+	fn get_weighted_random<T>(weighted_items: HashMap<T, f64>) -> Option<T> {
+		let total_weight: f64 = weighted_items.values().sum();
+		let threshold = random::<f64>() * total_weight;
+
+		let mut sum = 0.0;
+		for (item, weight) in weighted_items {
+			sum += weight;
+			if sum > threshold {
+				return Some(item);
+			}
+		}
+		None
 	}
 }
 
