@@ -795,21 +795,21 @@ fn test_heart_and_soul() -> Result<()> {
 	Ok(())
 }
 
-// progress flooring
-/*
-const simulation = new Simulation(
-      generateRecipe(535, 3000, 6700, 125, 109),
-      [new CarefulSynthesis()],
-      generateStats(90, 2606, 2457, 507)
-    );
-    simulation.run(true);
-    expect(simulation.progression).toBe(378);
- */
-
 #[test]
 fn test_progress_flooring() -> Result<()> {
 	// generateRecipe(535, 3000, 6700, 125, 109)
+	let recipe = generate_recipe_rlvl(3864, 80, 535, 80, 3000, 6700, 125, 109);
 	// generateStats(90, 2606, 2457, 507)
+	let stats = generate_stats(90, 2606, 2457, 507, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.actions(vec![
+			Box::new(actions::CarefulSynthesis)
+		])
+		.build()?;
+	let result = sim.run();
+	assert_eq!(result.simulation.progression, 378);
 
 	Ok(())
 }
