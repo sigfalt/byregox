@@ -814,17 +814,6 @@ fn test_progress_flooring() -> Result<()> {
 	Ok(())
 }
 
-// quality buff flooring
-/*
-const simulation = new Simulation(
-      generateRecipe(285, 980, 3420, 88, 68),
-      [new Innovation(), new PrudentTouch(), new PrudentTouch(), new PrudentTouch()],
-      generateStats(66, 813, 683, 283)
-    );
-    simulation.run(true);
-    expect(simulation.quality).toBe(667);
- */
-
 #[test]
 fn test_quality_buff_flooring() -> Result<()> {
 	// generateRecipe(285, 980, 3420, 88, 68)
