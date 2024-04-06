@@ -825,6 +825,29 @@ const simulation = new Simulation(
     expect(simulation.quality).toBe(667);
  */
 
+#[test]
+fn test_quality_buff_flooring() -> Result<()> {
+	// generateRecipe(285, 980, 3420, 88, 68)
+	let recipe = generate_recipe_rlvl(3864, 80, 285, 80, 980, 3420, 88, 68);
+	// generateStats(66, 813, 683, 283)
+	let stats = generate_stats(66, 813, 683, 283, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.actions(vec![
+			Box::new(actions::Innovation),
+			Box::new(actions::PrudentTouch),
+			Box::new(actions::PrudentTouch),
+			Box::new(actions::PrudentTouch),
+		])
+		.build()?;
+
+	let result = sim.run_linear(true);
+	assert_eq!(result.simulation.quality, 667);
+
+	Ok(())
+}
+
 // quality flooring
 /*
 const simulation = new Simulation(
