@@ -9,7 +9,7 @@ use crate::types::{
 pub struct FinalAppraisal;
 
 impl BuffAction for FinalAppraisal {
-	fn get_duration(&self, _simulation_state: &Simulation) -> u32 {
+	fn get_duration(&self, _simulation_state: &Simulation) -> i32 {
 		5
 	}
 

@@ -9,7 +9,7 @@ use crate::types::{
 pub struct Manipulation;
 
 impl BuffAction for Manipulation {
-	fn get_duration(&self, _simulation_state: &Simulation) -> u32 {
+	fn get_duration(&self, _simulation_state: &Simulation) -> i32 {
 		8
 	}
 

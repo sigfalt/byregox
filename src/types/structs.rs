@@ -119,9 +119,9 @@ impl CraftingLevel {
 		}
 	}
 }
-impl Into<u8> for CraftingLevel {
-	fn into(self) -> u8 {
-		self.val
+impl From<CraftingLevel> for u8 {
+	fn from(value: CraftingLevel) -> Self {
+		value.val
 	}
 }
 impl std::ops::Sub for CraftingLevel {
@@ -144,7 +144,7 @@ impl PartialOrd<u8> for CraftingLevel {
 
 #[derive(Clone)]
 pub struct EffectiveBuff {
-	pub duration: u32,
+	pub duration: i32,
 	pub stacks: u32,
 	pub buff: Buff,
 	pub applied_step: u32,

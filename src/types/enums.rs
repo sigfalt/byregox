@@ -1,4 +1,6 @@
-#[derive(Clone, Copy, PartialEq)]
+use num_derive::FromPrimitive;
+
+#[derive(Clone, Copy, Debug, Eq, FromPrimitive, Hash, PartialEq)]
 pub enum StepState {
 	None, // Fails the step
 	Normal,

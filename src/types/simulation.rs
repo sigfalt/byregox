@@ -1,5 +1,7 @@
+use std::collections::{HashMap, HashSet};
 use derive_builder::{Builder, UninitializedFieldError};
-use rand::Rng;
+use num_traits::FromPrimitive;
+use rand::{random, Rng};
 
 use crate::types::tables;
 
@@ -12,12 +14,14 @@ use super::{
 #[derive(Builder)]
 pub struct Simulation {
 	pub recipe: Craft,
+	#[builder(default = "vec![]")]
 	pub actions: Vec<Box<dyn CraftingAction>>,
 	pub crafter_stats: CrafterStats,
 	// private hqIngredients: {id: number; amount: number}[] = []
 	#[builder(default = "vec![]")]
 	step_states: Vec<StepState>,
-	// private fails: number[] = [],
+	#[builder(default = "vec![]")]
+	fails: Vec<usize>,
 
 	// Auto-initialized fields
 	#[builder(setter(skip), default = "0")]
@@ -51,11 +55,18 @@ pub struct Simulation {
 
 	#[builder(setter(skip), default = "false")]
 	pub safe: bool,
+
+	#[builder(setter(skip), default = "self.build_possible_conditions()?")]
+	possible_conditions: HashSet<StepState>,
 }
 
 impl Simulation {
 	pub fn state(&self) -> StepState {
 		self.state
+	}
+
+	pub fn override_state(&mut self, new_state: StepState) {
+		self.state = new_state;
 	}
 
 	pub fn has_combo_available(&self, action: &dyn CraftingAction) -> bool {
@@ -78,7 +89,7 @@ impl Simulation {
 			buff.stacks = (buff.stacks + stacks).min(10);
 		} else {
 			self.buffs.push(EffectiveBuff {
-				duration: u32::MAX,
+				duration: i32::MAX,
 				stacks: stacks.min(10),
 				buff: Buff::InnerQuiet,
 				applied_step: self.step_states.len() as u32,
@@ -93,10 +104,19 @@ impl Simulation {
 	}
 
 	pub fn run_linear(self, linear: bool) -> SimulationResult {
-		self.run_with_flags(linear, false)
+		self.run_max_steps(linear, usize::MAX)
 	}
 
-	pub fn run_with_flags(mut self, linear: bool, safe: bool) -> SimulationResult {
+	pub fn run_max_steps(self, linear: bool, max_steps: usize) -> SimulationResult {
+		self.run_with_flags(linear, max_steps, false)
+	}
+
+	pub fn run_with_flags(
+		mut self,
+		linear: bool,
+		max_steps: usize,
+		safe: bool,
+	) -> SimulationResult {
 		self.last_possible_reclaim_step = None;
 		self.actions
 			.clone()
@@ -106,7 +126,7 @@ impl Simulation {
 				self.state = self
 					.step_states
 					.get(i)
-					.map_or_else(|| StepState::Normal, |s| s.clone());
+					.map_or_else(|| StepState::Normal, |s| *s);
 				let mut fail_cause: Option<&str> = None;
 
 				let can_use_action = action.can_be_used(&self);
@@ -119,11 +139,10 @@ impl Simulation {
 				}
 				// we can use the action
 				let mut result = if self.success.is_none()
-                    && has_enough_cp
-                    // TODO: && self.steps.len() < max_turns
-                    && can_use_action
+					&& has_enough_cp && self.steps.len() < max_steps
+					&& can_use_action
 				{
-					self.run_action_with_flags(action, linear, safe)
+					self.run_action_with_flags(action, linear, safe, i)
 				} else {
 					ActionResult {
 						action: action.clone(),
@@ -140,8 +159,7 @@ impl Simulation {
 					}
 				};
 
-				// TODO: if self.steps.len() < max_turns
-				if self.steps.len() < usize::MAX {
+				if self.steps.len() < max_steps {
 					let quality_before = self.quality;
 					let progression_before = self.progression;
 					let durability_before = self.durability;
@@ -199,16 +217,17 @@ impl Simulation {
 		res
 	}
 
-	pub fn run_action(&mut self, action: &Box<dyn CraftingAction>) -> ActionResult {
-		self.run_action_linear(action, false)
+	pub fn run_action(&mut self, action: &Box<dyn CraftingAction>, index: usize) -> ActionResult {
+		self.run_action_linear(action, false, index)
 	}
 
 	pub fn run_action_linear(
 		&mut self,
 		action: &Box<dyn CraftingAction>,
 		linear: bool,
+		index: usize,
 	) -> ActionResult {
-		self.run_action_with_flags(action, linear, false)
+		self.run_action_with_flags(action, linear, false, index)
 	}
 
 	pub fn run_action_with_flags(
@@ -216,8 +235,9 @@ impl Simulation {
 		action: &Box<dyn CraftingAction>,
 		linear: bool,
 		safe: bool,
+		index: usize,
 	) -> ActionResult {
-		let probability_roll: u32 = if safe {
+		let probability_roll: u32 = if self.fails.contains(&index) {
 			999
 		} else if linear {
 			0
@@ -328,14 +348,18 @@ impl Simulation {
 		self.buffs = curr_buffs.into_iter().filter(|b| b.duration > 0).collect();
 	}
 
-	fn tick_state(&mut self) {
+	pub fn possible_conditions(&self) -> &HashSet<StepState> {
+		&self.possible_conditions
+	}
+
+	pub fn tick_state(&mut self) {
 		// if current state is EXCELLENT, next is always POOR
 		if self.state == StepState::Excellent {
 			self.state = StepState::Poor;
 			return;
-		} else
+		}
 		// if current state is GOOD OMEN, next is always GOOD
-		if self.state == StepState::GoodOmen {
+		else if self.state == StepState::GoodOmen {
 			self.state = StepState::Good;
 			return;
 		}
@@ -347,14 +371,53 @@ impl Simulation {
 			0.2
 		};
 
-		// TODO: roll for next state
-		self.state = StepState::Normal;
+		let mut states_and_rates: HashMap<_, _> = HashMap::from_iter(
+			self.possible_conditions.iter().filter_map(|&step_state| {
+			let rate_opt = match step_state {
+				StepState::Good => Some(
+					if self.recipe.expert.is_some_and(|b| b) { 0.12 } else { good_chance }
+				),
+				StepState::Excellent => Some(
+					if self.recipe.expert.is_some_and(|b| b) { 0.0 } else { 0.04 }
+				),
+				StepState::Poor => Some(0.0),
+				StepState::Centered => Some(0.15),
+				StepState::Sturdy => Some(0.15),
+				StepState::Pliant => Some(0.12),
+				StepState::Malleable => Some(0.12),
+				StepState::Primed => Some(0.12),
+				StepState::GoodOmen => Some(0.1),
+				_ => None
+			};
+			if let Some(rate) = rate_opt {
+				Some((step_state, rate))
+			} else {
+				None
+			}
+		}));
+		let non_normal_rate: f64 = states_and_rates.values().sum();
+		states_and_rates.insert(StepState::Normal, 1.0 - non_normal_rate);
+		self.state = Self::get_weighted_random(states_and_rates).unwrap_or(StepState::Normal);
+	}
+
+	fn get_weighted_random<T>(weighted_items: HashMap<T, f64>) -> Option<T> {
+		let total_weight: f64 = weighted_items.values().sum();
+		let threshold = random::<f64>() * total_weight;
+
+		let mut sum = 0.0;
+		for (item, weight) in weighted_items {
+			sum += weight;
+			if sum > threshold {
+				return Some(item);
+			}
+		}
+		None
 	}
 }
 
 impl SimulationBuilder {
 	fn build_starting_quality(&self) -> Result<u32, SimulationBuilderError> {
-		// TODO: Incorproate HQ ingredients calculation
+		// TODO: Incorporate HQ ingredients calculation
 		Ok(0)
 	}
 
@@ -383,5 +446,22 @@ impl SimulationBuilder {
 				"max_cp",
 			))),
 		}
+	}
+
+	fn build_possible_conditions(&self) -> Result<HashSet<StepState>, SimulationBuilderError> {
+		let conditions_flag = match &self.recipe {
+			Some(r) => Ok(r.conditions_flag),
+			_ => Err(SimulationBuilderError::from(UninitializedFieldError::new(
+				"conditions_flag"
+			))),
+		}?;
+		let binary_string = format!("{:b}", conditions_flag);
+		Ok(binary_string.chars().rev().enumerate().filter_map(|(ix, chr)|
+			if chr == '1' {
+				StepState::from_usize(ix + 1)
+			} else {
+				None
+			}
+		).collect())
 	}
 }

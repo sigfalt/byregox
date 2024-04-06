@@ -24,7 +24,7 @@ impl CraftingAction for TrainedEye {
 	fn _can_be_used(&self, simulation_state: &Simulation, _linear: Option<bool>) -> bool {
 		simulation_state.recipe.expert.is_some_and(|x| !x)
 			&& simulation_state.crafter_stats.level - simulation_state.recipe.lvl >= 10
-			&& simulation_state.steps.len() == 0
+			&& simulation_state.steps.is_empty()
 	}
 
 	fn get_base_cp_cost(&self, _simulation_state: &Simulation) -> u32 {

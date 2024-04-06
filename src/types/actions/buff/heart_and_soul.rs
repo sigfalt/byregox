@@ -9,10 +9,10 @@ use crate::types::{
 pub struct HeartAndSoul;
 
 impl BuffAction for HeartAndSoul {
-	fn get_duration(&self, _simulation_state: &Simulation) -> u32 {
+	fn get_duration(&self, _simulation_state: &Simulation) -> i32 {
 		// basically infinity
-		// improvement: fix for crafting rotations over 4,294,697,295 steps long
-		u32::MAX
+		// improvement: fix for crafting rotations over 2,147,483,647 steps long
+		i32::MAX
 	}
 
 	fn can_be_clipped(&self) -> bool {
@@ -33,7 +33,7 @@ impl BuffAction for HeartAndSoul {
 				&& simulation_state.state() != StepState::Excellent;
 			use CraftingActionEnum as CA;
 			if used_on_non_good_or_excellent
-				&& vec![
+				&& [
 					CA::PreciseTouch,
 					CA::IntensiveSynthesis,
 					CA::TricksOfTheTrade,

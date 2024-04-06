@@ -51,15 +51,15 @@ impl CraftingAction for ByregotsBlessing {
 			|| control_requirement.is_some_and(|x| x > simulation_state.crafter_stats.control)
 		{
 			Some("Missing stats requirement")
-		} else
+		}
 		// Byregots Blessing specific addition to blanket `get_fail_cause` impl
-		if simulation_state.success.is_some_and(|x| !x)
+		else if simulation_state.success.is_some_and(|x| !x)
 			&& !simulation_state.has_buff(Buff::InnerQuiet)
 		{
 			Some("No Inner Quiet")
-		} else
+		}
 		// end specific impl
-		{
+		else {
 			None
 		}
 	}

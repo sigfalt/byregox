@@ -1,10 +1,11 @@
+use std::collections::{HashMap, HashSet};
 use anyhow::Result;
 
 use crate::types::{
 	actions,
 	enums::{Buff, StepState},
 	structs::{Craft, CrafterLevels, CrafterStats, CraftingLevel},
-	tables, SimulationBuilder,
+	traits::CraftingAction,	tables, SimulationBuilder,
 };
 
 #[test]
@@ -444,8 +445,6 @@ fn test_high_byregots_stacks() -> Result<()> {
 	Ok(())
 }
 
-// skip tests with input conditions for now
-
 #[test]
 fn test_pliant_step_state_reducing_cp_cost() -> Result<()> {
 	// generateStarRecipe(480, 4943, 32328, 2480, 2195, 80, 70, true)
@@ -521,13 +520,38 @@ fn test_sturdy_step_state_reducing_durability_cost() -> Result<()> {
 	Ok(())
 }
 
-// should not tick buffs if a buff is set to fail
+#[test]
+fn test_not_tick_buffs_if_buff_set_to_fail() -> Result<()> {
+	// generateRecipe(480, 6178, 36208, 110, 90)
+	let recipe = generate_recipe_rlvl(3864, 80, 480, 80, 6178, 36208, 110, 90);
+	// generateStats(80, 2800, 2500, 541)
+	let stats = generate_stats(80, 2800, 2500, 541, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.actions(vec![
+			Box::new(actions::GreatStrides),
+			Box::new(actions::TricksOfTheTrade),
+		])
+		.crafter_stats(stats)
+		.step_states(vec![StepState::Normal])
+		.fails(vec![1])
+		.build()?;
+	let result = sim.run_linear(true);
+	assert_eq!(
+		result
+			.simulation
+			.get_buff(Buff::GreatStrides)
+			.map(|b| b.duration),
+		Some(3)
+	);
+
+	Ok(())
+}
 
 #[test]
 fn test_not_ticking_buffs_with_certain_abilities() -> Result<()> {
 	// generateRecipe(480, 6178, 36208, 110, 90)
-	let mut recipe = generate_recipe_lvl(3864, 80, 80, 6178, 36208, 110, 90);
-	recipe.rlvl = 480;
+	let recipe = generate_recipe_rlvl(3864, 80, 480, 80, 6178, 36208, 110, 90);
 	// generateStats(80, 2486, 2318, 613)
 	let stats = generate_stats(80, 2486, 2318, 613, false);
 	let sim = SimulationBuilder::default()
@@ -555,20 +579,192 @@ fn test_not_ticking_buffs_with_certain_abilities() -> Result<()> {
 #[test]
 fn test_5point4_standard_touch_combo_bonus() -> Result<()> {
 	// generateRecipe(480, 6178, 36208, 110, 90)
-	let mut recipe = generate_recipe_lvl(3864, 80, 80, 6178, 36208, 110, 90);
-	recipe.rlvl = 480;
+	let recipe = generate_recipe_rlvl(3864, 80, 480, 80, 6178, 36208, 110, 90);
 	// generateStats(80, 2486, 2318, 613)
 	let stats = generate_stats(80, 2486, 2318, 613, false);
 	let sim = SimulationBuilder::default()
-		.recipe(recipe.clone())
+		.recipe(recipe)
 		.actions(vec![
 			Box::new(actions::BasicTouch),
 			Box::new(actions::StandardTouch),
 		])
-		.crafter_stats(stats.clone())
+		.crafter_stats(stats)
 		.build()?;
 	let result = sim.run_linear(true);
 	assert_eq!(result.simulation.steps[1].cp_difference, -18);
+
+	Ok(())
+}
+
+#[test]
+fn test_count_buffs_properly_in_step_by_step_mode() -> Result<()> {
+	// generateRecipe(480, 6178, 36208, 110, 90)
+	let recipe = generate_recipe_rlvl(3864, 80, 480, 80, 6178, 36208, 110, 90);
+	// generateStats(80, 2745, 2885, 626)
+	let stats = generate_stats(80, 2745, 2885, 626, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.actions(vec![
+			Box::new(actions::MuscleMemory),
+			Box::new(actions::Manipulation),
+			Box::new(actions::Observe),
+			Box::new(actions::Veneration),
+			Box::new(actions::Groundwork),
+			Box::new(actions::PrudentTouch),
+			Box::new(actions::PrudentTouch),
+			Box::new(actions::PrudentTouch),
+			Box::new(actions::PrudentTouch),
+			Box::new(actions::PrudentTouch),
+		])
+		.crafter_stats(stats)
+		.build()?;
+	let result = sim.run_max_steps(true, 4);
+	assert_eq!(
+		result
+			.simulation
+			.get_buff(Buff::Manipulation)
+			.map(|b| b.duration),
+		Some(6)
+	);
+
+	Ok(())
+}
+
+#[test]
+fn test_conditions_for_normal_recipe() -> Result<()> {
+	// generateRecipe(480, 6178, 36208, 110, 90)
+	let recipe = generate_recipe_rlvl(3864, 80, 480, 80, 6178, 36208, 110, 90);
+	// generateStats(80, 2745, 2885, 626)
+	let stats = generate_stats(80, 2745, 2885, 626, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.build()?;
+
+	assert_eq!(sim.possible_conditions(), &HashSet::from([
+		StepState::Normal,
+		StepState::Good,
+		StepState::Excellent,
+		StepState::Poor,
+	]));
+
+	Ok(())
+}
+
+#[test]
+fn test_conditions_switch() -> Result<()> {
+	// generateRecipe(480, 6178, 36208, 110, 90, 995)
+	let recipe = generate_recipe_rlvl_conditions(3864, 80, 480, 80, 6178, 36208, 110, 90, 995);
+	// generateStats(80, 2745, 2885, 626)
+	let stats = generate_stats(80, 2745, 2885, 626, false);
+	let actions: Vec<Box<dyn CraftingAction>> = vec![
+		Box::new(actions::Observe),
+		Box::new(actions::Observe)
+	];
+	let mut excellent_test = SimulationBuilder::default()
+		.recipe(recipe.clone())
+		.crafter_stats(stats.clone())
+		.actions(actions.clone())
+		.build()?;
+	excellent_test.override_state(StepState::Excellent);
+	excellent_test.tick_state();
+	assert_eq!(excellent_test.state(), StepState::Poor);
+
+	let mut good_omen_test = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.actions(actions)
+		.build()?;
+	good_omen_test.override_state(StepState::GoodOmen);
+	good_omen_test.tick_state();
+	assert_eq!(good_omen_test.state(), StepState::Good);
+
+	Ok(())
+}
+
+#[test]
+fn test_expert_one_conditions() -> Result<()> {
+	// generateRecipe(480, 6178, 36208, 110, 90, 115)
+	let recipe = generate_recipe_rlvl_conditions(3864, 80, 480, 80, 6178, 36208, 110, 90, 115);
+	// generateStats(80, 2745, 2885, 626)
+	let stats = generate_stats(80, 2745, 2885, 626, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.build()?;
+
+	assert_eq!(sim.possible_conditions(), &HashSet::from([
+		StepState::Normal,
+		StepState::Good,
+		StepState::Centered,
+		StepState::Sturdy,
+		StepState::Pliant,
+	]));
+
+	Ok(())
+}
+
+#[test]
+fn test_expert_two_conditions() -> Result<()> {
+	// generateRecipe(480, 6178, 36208, 110, 90, 483)
+	let recipe = generate_recipe_rlvl_conditions(3864, 80, 480, 80, 6178, 36208, 110, 90, 483);
+	// generateStats(80, 2745, 2885, 626)
+	let stats = generate_stats(80, 2745, 2885, 626, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.build()?;
+
+	assert_eq!(sim.possible_conditions(), &HashSet::from([
+		StepState::Normal,
+		StepState::Good,
+		StepState::Sturdy,
+		StepState::Pliant,
+		StepState::Malleable,
+		StepState::Primed,
+	]));
+
+	Ok(())
+}
+
+#[test]
+fn test_expert_two_condition_rates() -> Result<()> {
+	// generateRecipe(480, 6178, 36208, 110, 90, 483)
+	let recipe = generate_recipe_rlvl_conditions(3864, 80, 480, 80, 6178, 36208, 110, 90, 483);
+	let recipe = Craft {expert: Some(true), ..recipe};
+	// generateStats(80, 2745, 2885, 626)
+	let stats = generate_stats(80, 2745, 2885, 626, false);
+	let mut sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.build()?;
+
+	let mut condition_rates: HashMap<_, _> = HashMap::from_iter(
+		sim.possible_conditions().iter().map(|&cond| (cond, 0))
+	);
+	let num_samples = 100_000;
+	for _ in 0..num_samples {
+		sim.tick_state();
+		condition_rates.entry(sim.state()).and_modify(|val| *val += 1);
+	}
+	println!("rates: {:#?}", condition_rates);
+
+	let expected_rates = HashMap::from([
+		(StepState::Normal, 0.37),
+		(StepState::Good, 0.12),
+		(StepState::Sturdy, 0.15),
+		(StepState::Pliant, 0.12),
+		(StepState::Malleable, 0.12),
+		(StepState::Primed, 0.12)
+	]);
+	let num_samples = num_samples as f64;
+	let deviation = (num_samples * 0.005) as u64; // allow .5% random deviation
+	expected_rates.into_iter().for_each(|(state, rate)| {
+		let ideal_count = (rate * num_samples) as u64;
+		let acceptable_range = (ideal_count - deviation)..(ideal_count + deviation);
+		println!("range for {:?}: {:?}", state, acceptable_range);
+		assert!(acceptable_range.contains(condition_rates.get(&state).unwrap()));
+	});
 
 	Ok(())
 }
@@ -598,6 +794,249 @@ fn test_heart_and_soul() -> Result<()> {
 
 	Ok(())
 }
+
+#[test]
+fn test_progress_flooring() -> Result<()> {
+	// generateRecipe(535, 3000, 6700, 125, 109)
+	let recipe = generate_recipe_rlvl(3864, 80, 535, 80, 3000, 6700, 125, 109);
+	// generateStats(90, 2606, 2457, 507)
+	let stats = generate_stats(90, 2606, 2457, 507, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.actions(vec![
+			Box::new(actions::CarefulSynthesis)
+		])
+		.build()?;
+	let result = sim.run();
+	assert_eq!(result.simulation.progression, 378);
+
+	Ok(())
+}
+
+// quality buff flooring
+/*
+const simulation = new Simulation(
+      generateRecipe(285, 980, 3420, 88, 68),
+      [new Innovation(), new PrudentTouch(), new PrudentTouch(), new PrudentTouch()],
+      generateStats(66, 813, 683, 283)
+    );
+    simulation.run(true);
+    expect(simulation.quality).toBe(667);
+ */
+
+#[test]
+fn test_quality_buff_flooring() -> Result<()> {
+	// generateRecipe(285, 980, 3420, 88, 68)
+	let recipe = generate_recipe_rlvl(3864, 80, 285, 80, 980, 3420, 88, 68);
+	// generateStats(66, 813, 683, 283)
+	let stats = generate_stats(66, 813, 683, 283, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.actions(vec![
+			Box::new(actions::Innovation),
+			Box::new(actions::PrudentTouch),
+			Box::new(actions::PrudentTouch),
+			Box::new(actions::PrudentTouch),
+		])
+		.build()?;
+
+	let result = sim.run_linear(true);
+	assert_eq!(result.simulation.quality, 667);
+
+	Ok(())
+}
+
+// quality flooring
+/*
+const simulation = new Simulation(
+      generateRecipe(145, 3000, 6700, 68, 48),
+      [new Innovation(), new BasicTouch(), new StandardTouch(), new BasicTouch()],
+      generateStats(58, 2606, 434, 507)
+    );
+    simulation.run(true);
+    expect(simulation.steps[3].addedQuality).toBe(225);
+    const simulation2 = new Simulation(
+      generateStarRecipe(610, 5060, 12628, 130, 115, 80, 70),
+      [
+        new MuscleMemory(),
+        new Manipulation(),
+        new Veneration(),
+        new WasteNotII(),
+        new Groundwork(),
+        new Groundwork(),
+        new DelicateSynthesis(),
+        new PreparatoryTouch(),
+        new PreparatoryTouch(),
+      ],
+      generateStats(90, 3702, 3792, 588)
+    );
+    simulation2.run(true);
+    expect(simulation2.steps[8].addedQuality).toBe(663);
+    const simulation3 = new Simulation(
+      generateStarRecipe(625, 5280, 13050, 130, 115, 80, 70),
+      [new Reflect(), new Innovation(), new BasicTouch(), new StandardTouch()],
+      generateStats(90, 3702, 4073, 588)
+    );
+    simulation3.run(true);
+    expect(simulation3.steps[3].addedQuality).toBe(663);
+ */
+
+// should fail if required quality is not met
+/*
+const simulation = new Simulation(
+      generateStarRecipe(590, 4300, 12800, 130, 115, 80, 70, false, 15, { requiredQuality: 12800 }),
+      [
+        new MuscleMemory(),
+        new Manipulation(),
+        new Veneration(),
+        new WasteNotII(),
+        new FinalAppraisal(),
+        new Groundwork(),
+        new Groundwork(),
+        new CarefulSynthesis(),
+        new Innovation(),
+        new PreparatoryTouch(),
+        new PreparatoryTouch(),
+        new PreparatoryTouch(),
+        new PreparatoryTouch(),
+        new Innovation(),
+        new PrudentTouch(),
+        new PrudentTouch(),
+        new Observe(),
+        new FocusedTouch(),
+        new Innovation(),
+        new TrainedFinesse(),
+        new TrainedFinesse(),
+        new GreatStrides(),
+        new ByregotsBlessing(),
+        new BasicSynthesis(),
+      ],
+      generateStats(90, 3392, 3338, 675)
+    );
+    expect(simulation.run(true).success).toBe(false);
+    const simulation2 = new Simulation(
+      generateStarRecipe(590, 4300, 12800, 130, 115, 80, 70, false, 15, { requiredQuality: 6400 }),
+      [
+        new MuscleMemory(),
+        new Manipulation(),
+        new Veneration(),
+        new WasteNotII(),
+        new FinalAppraisal(),
+        new Groundwork(),
+        new Groundwork(),
+        new CarefulSynthesis(),
+        new Innovation(),
+        new PreparatoryTouch(),
+        new PreparatoryTouch(),
+        new PreparatoryTouch(),
+        new PreparatoryTouch(),
+        new Innovation(),
+        new PrudentTouch(),
+        new PrudentTouch(),
+        new Observe(),
+        new FocusedTouch(),
+        new Innovation(),
+        new TrainedFinesse(),
+        new TrainedFinesse(),
+        new GreatStrides(),
+        new ByregotsBlessing(),
+        new BasicSynthesis(),
+      ],
+      generateStats(90, 3392, 3338, 675)
+    );
+    expect(simulation2.run(true).success).toBe(true);
+ */
+
+// should handle ToT and Heart and Soul properly
+/*
+const simulation = new Simulation(
+      generateStarRecipe(590, 4300, 12800, 130, 115, 80, 70, false, 15),
+      [new HeartAndSoul(), new PreparatoryTouch(), new TricksOfTheTrade()],
+      generateStats(90, 500, 500, 675),
+      [],
+      {
+        2: StepState.GOOD,
+      }
+    );
+    simulation.run(true);
+    expect(simulation.getBuff(Buff.HEART_AND_SOUL)).not.toBeUndefined();
+    const simulation2 = new Simulation(
+      generateStarRecipe(590, 4300, 12800, 130, 115, 80, 70, false, 15),
+      [new HeartAndSoul(), new PreparatoryTouch(), new TricksOfTheTrade()],
+      generateStats(90, 500, 500, 675)
+    );
+    simulation2.run(true);
+    expect(simulation2.getBuff(Buff.HEART_AND_SOUL)).toBeUndefined();
+ */
+
+// should calculate min stats
+/*
+const simulation = new Simulation(
+      generateRecipe(525, 1300, 6200, 123, 107, 15, { durability: 40 }),
+      [
+        new Reflect(),
+        new Groundwork(),
+        new MastersMend(),
+        new Manipulation(),
+        new WasteNot(),
+        new PreparatoryTouch(),
+        new PreparatoryTouch(),
+        new PreparatoryTouch(),
+        new PreparatoryTouch(),
+        new ByregotsBlessing(),
+        new BasicSynthesis(),
+      ],
+      generateStats(90, 4021, 3600, 500)
+    );
+    const stats = simulation.getMinStats();
+    expect(stats.found).toBe(true);
+    expect(stats.craftsmanship).toBe(3309);
+    expect(stats.control).toBe(3125);
+    expect(stats.cp).toBe(448);
+ */
+
+// should correctly identify tier thresholds for min stats
+/*
+const simulation = new Simulation(
+      generateRecipe(560, 3500, 7200, 130, 115, 15, { progressModifier: 90, qualityModifier: 80 }),
+      [
+        new MuscleMemory(),
+        new WasteNotII(),
+        new Groundwork(),
+        new DelicateSynthesis(),
+        new Innovation(),
+        new PreparatoryTouch(),
+        new PreparatoryTouch(),
+        new PreparatoryTouch(),
+        new PreparatoryTouch(),
+        new ByregotsBlessing(),
+        new CarefulSynthesis(),
+      ],
+      generateStats(90, 4021, 3600, 601)
+    );
+    const stats = simulation.getMinStats([3960, 5400, 6840]);
+    expect(stats.found).toBe(true);
+    expect(stats.craftsmanship).toBe(3875);
+    expect(stats.control).toBe(2962);
+    expect(stats.cp).toBe(363);
+ */
+
+// should use the enhanced Good modifier with Splendorous tools
+/*
+const simulation = new Simulation(
+      generateRecipe(1, 9, 80, 50, 30),
+      [new Observe(), new BasicTouch()],
+      generateStats(90, 4041, 3987, 616, true),
+      [],
+      {
+        1: StepState.GOOD,
+      }
+    );
+    simulation.run(true);
+    expect(simulation.quality).toBe(2387);
+ */
 
 fn generate_recipe_lvl(
 	id: u32,
@@ -643,6 +1082,36 @@ fn generate_recipe_rlvl(
 		hq: Some(true),
 		quick_synth: Some(true),
 		ingredients: vec![],
+		conditions_flag: 15,
+		..Default::default()
+	}
+}
+
+fn generate_recipe_rlvl_conditions(
+	id: u32,
+	lvl: u8,
+	rlvl: u32,
+	durability: u32,
+	progress: u32,
+	quality: u32,
+	progress_divider: u32,
+	quality_divider: u32,
+	conditions_flag: u32
+) -> Craft {
+	Craft {
+		id: id.to_string(),
+		job: 14, // CRP
+		lvl: CraftingLevel::new(lvl).unwrap(),
+		rlvl,
+		durability,
+		progress,
+		quality,
+		progress_divider,
+		quality_divider,
+		hq: Some(true),
+		quick_synth: Some(true),
+		ingredients: vec![],
+		conditions_flag,
 		..Default::default()
 	}
 }
