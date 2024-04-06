@@ -837,40 +837,69 @@ fn test_quality_buff_flooring() -> Result<()> {
 	Ok(())
 }
 
-// quality flooring
-/*
-const simulation = new Simulation(
-      generateRecipe(145, 3000, 6700, 68, 48),
-      [new Innovation(), new BasicTouch(), new StandardTouch(), new BasicTouch()],
-      generateStats(58, 2606, 434, 507)
-    );
-    simulation.run(true);
-    expect(simulation.steps[3].addedQuality).toBe(225);
-    const simulation2 = new Simulation(
-      generateStarRecipe(610, 5060, 12628, 130, 115, 80, 70),
-      [
-        new MuscleMemory(),
-        new Manipulation(),
-        new Veneration(),
-        new WasteNotII(),
-        new Groundwork(),
-        new Groundwork(),
-        new DelicateSynthesis(),
-        new PreparatoryTouch(),
-        new PreparatoryTouch(),
-      ],
-      generateStats(90, 3702, 3792, 588)
-    );
-    simulation2.run(true);
-    expect(simulation2.steps[8].addedQuality).toBe(663);
-    const simulation3 = new Simulation(
-      generateStarRecipe(625, 5280, 13050, 130, 115, 80, 70),
-      [new Reflect(), new Innovation(), new BasicTouch(), new StandardTouch()],
-      generateStats(90, 3702, 4073, 588)
-    );
-    simulation3.run(true);
-    expect(simulation3.steps[3].addedQuality).toBe(663);
- */
+#[test]
+fn test_quality_flooring() -> Result<()> {
+	// generateRecipe(145, 3000, 6700, 68, 48)
+	let recipe = generate_recipe_rlvl(3864, 80, 145, 80, 3000, 6700, 68, 48);
+	// generateStats(58, 2606, 434, 507)
+	let stats = generate_stats(58, 2606, 434, 507, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.actions(vec![
+			Box::new(actions::Innovation),
+			Box::new(actions::BasicTouch),
+			Box::new(actions::StandardTouch),
+			Box::new(actions::BasicTouch),
+		])
+		.build()?;
+
+	let result = sim.run_linear(true);
+	assert_eq!(result.simulation.steps[3].added_quality, 225);
+
+	// generateStarRecipe(610, 5060, 12628, 130, 115, 80, 70)
+	let recipe = generate_star_recipe(610, 5060, 12628, 130, 115, 80, 70);
+	// generateStats(90, 3702, 3792, 588)
+	let stats = generate_stats(90, 3702, 3792, 588, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.actions(vec![
+			Box::new(actions::MuscleMemory),
+			Box::new(actions::Manipulation),
+			Box::new(actions::Veneration),
+			Box::new(actions::WasteNotII),
+			Box::new(actions::Groundwork),
+			Box::new(actions::Groundwork),
+			Box::new(actions::DelicateSynthesis),
+			Box::new(actions::PreparatoryTouch),
+			Box::new(actions::PreparatoryTouch),
+		])
+		.build()?;
+
+	let result = sim.run_linear(true);
+	assert_eq!(result.simulation.steps[8].added_quality, 663);
+
+	// generateStarRecipe(625, 5280, 13050, 130, 115, 80, 70)
+	let recipe = generate_star_recipe(625, 5280, 13050, 130, 115, 80, 70);
+	// generateStats(90, 3702, 4073, 588)
+	let stats = generate_stats(90, 3702, 4073, 588, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.actions(vec![
+			Box::new(actions::Reflect),
+			Box::new(actions::Innovation),
+			Box::new(actions::StandardTouch),
+			Box::new(actions::BasicTouch),
+		])
+		.build()?;
+
+	let result = sim.run_linear(true);
+	assert_eq!(result.simulation.steps[3].added_quality, 663);
+
+	Ok(())
+}
 
 // should fail if required quality is not met
 /*
