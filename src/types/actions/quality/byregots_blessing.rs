@@ -84,13 +84,13 @@ impl CraftingAction for ByregotsBlessing {
 		&self,
 		simulation_state: &mut Simulation,
 		_safe: bool,
-		_skip_stack_addition: bool,
+		skip_stack_addition: bool,
 	) {
-		let mut buff_mod = self.get_base_bonus(simulation_state);
-		let mut condition_mod = self.get_base_condition(simulation_state);
-		let potency = self.get_potency(simulation_state);
+		let buff_mod = self.get_base_bonus(simulation_state);
+		let potency = self.get_potency(simulation_state) as f64;
 		let quality_increase = self.get_base_quality(simulation_state) as f64;
 
+		let mut condition_mod = self.get_base_condition(simulation_state);
 		match simulation_state.state() {
 			StepState::Excellent => condition_mod *= 4.0,
 			StepState::Poor => condition_mod *= 0.5,
@@ -104,11 +104,10 @@ impl CraftingAction for ByregotsBlessing {
 			_ => (),
 		};
 
-		buff_mod += simulation_state
+		let iq_mod = simulation_state
 			.get_buff(Buff::InnerQuiet)
 			.map(|b| b.stacks)
-			.unwrap_or_default() as f64
-			/ 10.0;
+			.unwrap_or(0);
 
 		let mut buff_mult = 1.0;
 		if simulation_state.has_buff(Buff::GreatStrides) {
@@ -119,13 +118,11 @@ impl CraftingAction for ByregotsBlessing {
 			buff_mult += 0.5;
 		}
 
-		let buff_mod: f64 = ((buff_mod as f32) * (buff_mult as f32)) as f64;
-		let efficiency = ((potency as f64 * buff_mod) as f32) as f64;
-		simulation_state.quality +=
-			(quality_increase * condition_mod * efficiency / 100.0).floor() as u32;
+		let buff_mod = ((buff_mod * buff_mult * (100 + iq_mod * 10) as f64 / 100.0) as f32) as f64;
+		let efficiency = ((potency * buff_mod) as f32) as f64;
+		simulation_state.quality += (quality_increase * condition_mod * efficiency / 100.0) as u32;
 
-		// if !skipStackAddition { // argument to function, defaults to false
-		if true {
+		if !skip_stack_addition {
 			simulation_state.add_inner_quiet_stacks(1);
 		}
 
