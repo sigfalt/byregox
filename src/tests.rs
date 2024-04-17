@@ -890,8 +890,8 @@ fn test_quality_flooring() -> Result<()> {
 		.actions(vec![
 			Box::new(actions::Reflect),
 			Box::new(actions::Innovation),
-			Box::new(actions::StandardTouch),
 			Box::new(actions::BasicTouch),
+			Box::new(actions::StandardTouch),
 		])
 		.build()?;
 
