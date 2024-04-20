@@ -988,27 +988,51 @@ fn test_required_quality_unmet_fails()-> Result<()> {
 	Ok(())
 }
 
-// should handle ToT and Heart and Soul properly
-/*
-const simulation = new Simulation(
-      generateStarRecipe(590, 4300, 12800, 130, 115, 80, 70, false, 15),
-      [new HeartAndSoul(), new PreparatoryTouch(), new TricksOfTheTrade()],
-      generateStats(90, 500, 500, 675),
-      [],
-      {
-        2: StepState.GOOD,
-      }
-    );
-    simulation.run(true);
-    expect(simulation.getBuff(Buff.HEART_AND_SOUL)).not.toBeUndefined();
-    const simulation2 = new Simulation(
-      generateStarRecipe(590, 4300, 12800, 130, 115, 80, 70, false, 15),
-      [new HeartAndSoul(), new PreparatoryTouch(), new TricksOfTheTrade()],
-      generateStats(90, 500, 500, 675)
-    );
-    simulation2.run(true);
-    expect(simulation2.getBuff(Buff.HEART_AND_SOUL)).toBeUndefined();
- */
+#[test]
+fn test_tricksofthetrade_and_heartandsoul() -> Result<()> {
+	// generateStarRecipe(590, 4300, 12800, 130, 115, 80, 70, false, 15)
+	let recipe = generate_star_recipe(590, 4300, 12800, 130, 115, 80, 15);
+	// generateStats(90, 3392, 3338, 675)
+	let stats = generate_stats(90, 3392, 3338, 675, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.actions(vec![
+			Box::new(actions::HeartAndSoul),
+			Box::new(actions::PreparatoryTouch),
+			Box::new(actions::TricksOfTheTrade),
+		])
+		.step_states(vec![
+			StepState::None,
+			StepState::None,
+			StepState::Good
+		])
+		.build()?;
+	// simulation.run(true);
+	// expect(simulation.getBuff(Buff.HEART_AND_SOUL)).not.toBeUndefined();
+	let result = sim.run_linear(true);
+	assert!(result.simulation.get_buff(Buff::HeartAndSoul).is_some());
+
+	// generateStarRecipe(590, 4300, 12800, 130, 115, 80, 70, false, 15)
+	let recipe = generate_star_recipe(590, 4300, 12800, 130, 115, 80, 15);
+	// generateStats(90, 500, 500, 675)
+	let stats = generate_stats(90, 500, 500, 675, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.actions(vec![
+			Box::new(actions::HeartAndSoul),
+			Box::new(actions::PreparatoryTouch),
+			Box::new(actions::TricksOfTheTrade),
+		])
+		.build()?;
+	// simulation.run(true);
+	// expect(simulation2.getBuff(Buff.HEART_AND_SOUL)).toBeUndefined();
+	let result = sim.run_linear(true);
+	assert!(result.simulation.get_buff(Buff::HeartAndSoul).is_none());
+
+	Ok(())
+}
 
 // should calculate min stats
 /*
