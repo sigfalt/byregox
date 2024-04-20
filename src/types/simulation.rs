@@ -373,7 +373,7 @@ impl Simulation {
 
 		let mut states_and_rates: HashMap<_, _> = HashMap::from_iter(
 			self.possible_conditions.iter().filter_map(|&step_state| {
-			let rate_opt = match step_state {
+			match step_state {
 				StepState::Good => Some(
 					if self.recipe.expert.is_some_and(|b| b) { 0.12 } else { good_chance }
 				),
@@ -388,12 +388,7 @@ impl Simulation {
 				StepState::Primed => Some(0.12),
 				StepState::GoodOmen => Some(0.1),
 				_ => None
-			};
-			if let Some(rate) = rate_opt {
-				Some((step_state, rate))
-			} else {
-				None
-			}
+			}.map(|rate| (step_state, rate))
 		}));
 		let non_normal_rate: f64 = states_and_rates.values().sum();
 		states_and_rates.insert(StepState::Normal, 1.0 - non_normal_rate);
