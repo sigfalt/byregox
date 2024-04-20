@@ -901,71 +901,92 @@ fn test_quality_flooring() -> Result<()> {
 	Ok(())
 }
 
-// should fail if required quality is not met
-/*
-const simulation = new Simulation(
-      generateStarRecipe(590, 4300, 12800, 130, 115, 80, 70, false, 15, { requiredQuality: 12800 }),
-      [
-        new MuscleMemory(),
-        new Manipulation(),
-        new Veneration(),
-        new WasteNotII(),
-        new FinalAppraisal(),
-        new Groundwork(),
-        new Groundwork(),
-        new CarefulSynthesis(),
-        new Innovation(),
-        new PreparatoryTouch(),
-        new PreparatoryTouch(),
-        new PreparatoryTouch(),
-        new PreparatoryTouch(),
-        new Innovation(),
-        new PrudentTouch(),
-        new PrudentTouch(),
-        new Observe(),
-        new FocusedTouch(),
-        new Innovation(),
-        new TrainedFinesse(),
-        new TrainedFinesse(),
-        new GreatStrides(),
-        new ByregotsBlessing(),
-        new BasicSynthesis(),
-      ],
-      generateStats(90, 3392, 3338, 675)
-    );
-    expect(simulation.run(true).success).toBe(false);
-    const simulation2 = new Simulation(
-      generateStarRecipe(590, 4300, 12800, 130, 115, 80, 70, false, 15, { requiredQuality: 6400 }),
-      [
-        new MuscleMemory(),
-        new Manipulation(),
-        new Veneration(),
-        new WasteNotII(),
-        new FinalAppraisal(),
-        new Groundwork(),
-        new Groundwork(),
-        new CarefulSynthesis(),
-        new Innovation(),
-        new PreparatoryTouch(),
-        new PreparatoryTouch(),
-        new PreparatoryTouch(),
-        new PreparatoryTouch(),
-        new Innovation(),
-        new PrudentTouch(),
-        new PrudentTouch(),
-        new Observe(),
-        new FocusedTouch(),
-        new Innovation(),
-        new TrainedFinesse(),
-        new TrainedFinesse(),
-        new GreatStrides(),
-        new ByregotsBlessing(),
-        new BasicSynthesis(),
-      ],
-      generateStats(90, 3392, 3338, 675)
-    );
-    expect(simulation2.run(true).success).toBe(true);
- */
+#[test]
+fn test_required_quality_unmet_fails()-> Result<()> {
+	// generateStarRecipe(590, 4300, 12800, 130, 115, 80, 70, false, 15, { requiredQuality: 12800 })
+	let recipe = Craft {
+		required_quality: Some(12800),
+		..generate_star_recipe(590, 4300, 12800, 130, 115, 80, 15)
+	};
+	// generateStats(90, 3392, 3338, 675)
+	let stats = generate_stats(90, 3392, 3338, 675, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.actions(vec![
+			Box::new(actions::MuscleMemory),
+			Box::new(actions::Manipulation),
+			Box::new(actions::Veneration),
+			Box::new(actions::WasteNotII),
+			Box::new(actions::FinalAppraisal),
+			Box::new(actions::Groundwork),
+			Box::new(actions::Groundwork),
+			Box::new(actions::CarefulSynthesis),
+			Box::new(actions::Innovation),
+			Box::new(actions::PreparatoryTouch),
+			Box::new(actions::PreparatoryTouch),
+			Box::new(actions::PreparatoryTouch),
+			Box::new(actions::PreparatoryTouch),
+			Box::new(actions::Innovation),
+			Box::new(actions::PrudentTouch),
+			Box::new(actions::PrudentTouch),
+			Box::new(actions::Observe),
+			Box::new(actions::FocusedTouch),
+			Box::new(actions::Innovation),
+			Box::new(actions::TrainedFinesse),
+			Box::new(actions::TrainedFinesse),
+			Box::new(actions::GreatStrides),
+			Box::new(actions::ByregotsBlessing),
+			Box::new(actions::BasicSynthesis),
+		])
+		.build()?;
+	// expect(simulation.run(true).success).toBe(false);
+	let result = sim.run_linear(true);
+	assert!(!result.success);
+
+	// generateStarRecipe(590, 4300, 12800, 130, 115, 80, 70, false, 15, { requiredQuality: 6400 })
+	let recipe = Craft {
+		required_quality: Some(6400),
+		..generate_star_recipe(590, 4300, 12800, 130, 115, 80, 15)
+	};
+	// generateStats(90, 3392, 3338, 675)
+	let stats = generate_stats(90, 3392, 3338, 675, false);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.actions(vec![
+			Box::new(actions::MuscleMemory),
+			Box::new(actions::Manipulation),
+			Box::new(actions::Veneration),
+			Box::new(actions::WasteNotII),
+			Box::new(actions::FinalAppraisal),
+			Box::new(actions::Groundwork),
+			Box::new(actions::Groundwork),
+			Box::new(actions::CarefulSynthesis),
+			Box::new(actions::Innovation),
+			Box::new(actions::PreparatoryTouch),
+			Box::new(actions::PreparatoryTouch),
+			Box::new(actions::PreparatoryTouch),
+			Box::new(actions::PreparatoryTouch),
+			Box::new(actions::Innovation),
+			Box::new(actions::PrudentTouch),
+			Box::new(actions::PrudentTouch),
+			Box::new(actions::Observe),
+			Box::new(actions::FocusedTouch),
+			Box::new(actions::Innovation),
+			Box::new(actions::TrainedFinesse),
+			Box::new(actions::TrainedFinesse),
+			Box::new(actions::GreatStrides),
+			Box::new(actions::ByregotsBlessing),
+			Box::new(actions::BasicSynthesis),
+		])
+		.build()?;
+	// expect(simulation2.run(true).success).toBe(true);
+	let result = sim.run_linear(true);
+	assert!(!result.success);
+
+	Ok(())
+}
 
 // should handle ToT and Heart and Soul properly
 /*
