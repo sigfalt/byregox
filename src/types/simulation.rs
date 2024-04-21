@@ -126,7 +126,9 @@ impl Simulation {
 				self.state = self
 					.step_states
 					.get(i)
-					.map_or_else(|| StepState::Normal, |s| *s);
+					.map_or_else(|| StepState::Normal, |&s| {
+						if s == StepState::None { StepState::Normal } else { s }
+					});
 				let mut fail_cause: Option<&str> = None;
 
 				let can_use_action = action.can_be_used_with_flags(&self, Some(linear), Some(safe));
