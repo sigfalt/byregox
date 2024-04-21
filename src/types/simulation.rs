@@ -129,9 +129,9 @@ impl Simulation {
 					.map_or_else(|| StepState::Normal, |s| *s);
 				let mut fail_cause: Option<&str> = None;
 
-				let can_use_action = action.can_be_used(&self);
+				let can_use_action = action.can_be_used_with_flags(&self, Some(linear), Some(safe));
 				if !can_use_action {
-					fail_cause = action.get_fail_cause(&self);
+					fail_cause = action.get_fail_cause_with_flags(&self, Some(linear), Some(safe));
 				}
 				let has_enough_cp = action.get_base_cp_cost(&self) <= self.available_cp;
 				if !has_enough_cp {
