@@ -1016,7 +1016,7 @@ fn test_tricksofthetrade_and_heartandsoul() -> Result<()> {
 	// generateStarRecipe(590, 4300, 12800, 130, 115, 80, 70, false, 15)
 	let recipe = generate_star_recipe(590, 4300, 12800, 130, 115, 80, 15);
 	// generateStats(90, 500, 500, 675)
-	let stats = generate_stats(90, 500, 500, 675, false);
+	let stats = generate_stats(90, 3392, 3338, 675, false);
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
 		.crafter_stats(stats)
@@ -1216,7 +1216,7 @@ fn generate_stats(
 	cp: u32,
 	splendorous: bool,
 ) -> CrafterStats {
-	generate_stats_specialist(level, craftsmanship, control, cp, false, splendorous)
+	generate_stats_specialist(level, craftsmanship, control, cp, true, splendorous)
 }
 
 fn generate_stats_specialist(
