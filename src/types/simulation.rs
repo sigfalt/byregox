@@ -334,18 +334,19 @@ impl Simulation {
 	}
 
 	fn tick_buffs(&mut self, action: &dyn CraftingAction) {
-		let mut curr_buffs = self.buffs.clone();
-		curr_buffs.iter_mut().for_each(|b| {
+		let buff_vec = self.buffs.clone();
+		buff_vec.iter().for_each(|b| {
 			if b.applied_step < self.steps.len() as u32 {
 				b.tick(self, action);
-				b.duration -= 1;
-			}
+				if let Some(buff_ref) = self.get_mut_buff(b.buff) {
+					buff_ref.duration -= 1;
+				}
+			};
 		});
-		curr_buffs
-			.iter()
+		buff_vec.iter()
 			.filter(|b| b.duration <= 0 && b.on_expire.is_some())
 			.for_each(|b| b.on_expire(self, action));
-		self.buffs = curr_buffs.into_iter().filter(|b| b.duration > 0).collect();
+		self.buffs = self.buffs.clone().into_iter().filter(|b| b.duration > 0).collect();
 	}
 
 	pub fn possible_conditions(&self) -> &HashSet<StepState> {
