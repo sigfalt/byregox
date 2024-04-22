@@ -116,3 +116,15 @@ pub enum CraftingJob {
 	Alchemist,
 	Culinarian,
 }
+
+#[derive(Clone, Copy, PartialEq)]
+pub enum FailCause {
+	UnsafeAction,
+	DurabilityReachedZero,
+	NotEnoughCP,
+	MissingLevelRequirement,
+	MissingStatsRequirement,
+	NotSpecialist,
+	NoInnerQuiet,
+	QualityTooLow
+}
