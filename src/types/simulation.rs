@@ -255,9 +255,8 @@ impl Simulation {
 		let mut fail_cause: Option<&str> = None;
 		let mut success = false;
 
-		// TODO: if safe_mode &&
-		if action.get_success_rate(self) < 100
-			|| (action.requires_good() && !self.has_buff(Buff::HeartAndSoul))
+		if safe &&
+			(action.get_success_rate(self) < 100 || (action.requires_good() && !self.has_buff(Buff::HeartAndSoul)))
 		{
 			fail_cause = Some("Unsafe action");
 			action.on_fail(self);
