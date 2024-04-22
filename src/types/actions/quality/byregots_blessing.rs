@@ -4,6 +4,7 @@ use crate::types::{
 	traits::{CraftingAction, GeneralAction, QualityAction},
 	Simulation,
 };
+use crate::types::enums::FailCause;
 
 #[derive(Clone)]
 pub struct ByregotsBlessing;
@@ -34,29 +35,29 @@ impl CraftingAction for ByregotsBlessing {
 		simulation_state: &Simulation,
 		_linear: Option<bool>,
 		safe: Option<bool>,
-	) -> Option<&str> {
+	) -> Option<FailCause> {
 		let level_requirement = self.get_level_requirement();
 		let craftsmanship_requirement = simulation_state.recipe.craftsmanship_req;
 		let control_requirement = simulation_state.recipe.control_req;
 
 		if safe.is_some_and(|b| b) && self.get_success_rate(simulation_state) < 100 {
-			Some("Unsafe action")
+			Some(FailCause::UnsafeAction)
 		} else if (level_requirement.0 != CraftingJob::Any
 			&& simulation_state.crafter_stats.levels[level_requirement.0] < level_requirement.1)
 			|| simulation_state.crafter_stats.level < level_requirement.1
 		{
-			Some("Missing level requirement")
+			Some(FailCause::MissingLevelRequirement)
 		} else if craftsmanship_requirement
 			.is_some_and(|x| x > simulation_state.crafter_stats.craftsmanship)
 			|| control_requirement.is_some_and(|x| x > simulation_state.crafter_stats.control)
 		{
-			Some("Missing stats requirement")
+			Some(FailCause::MissingStatsRequirement)
 		}
 		// Byregots Blessing specific addition to blanket `get_fail_cause` impl
 		else if simulation_state.success.is_some_and(|x| !x)
 			&& !simulation_state.has_buff(Buff::InnerQuiet)
 		{
-			Some("No Inner Quiet")
+			Some(FailCause::NoInnerQuiet)
 		}
 		// end specific impl
 		else {

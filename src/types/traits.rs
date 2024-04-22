@@ -74,7 +74,7 @@ pub trait CraftingAction: DynClone {
 		}) && self._can_be_used(simulation_state, linear)
 	}
 
-	fn get_fail_cause(&self, simulation_state: &Simulation) -> Option<&str> {
+	fn get_fail_cause(&self, simulation_state: &Simulation) -> Option<FailCause> {
 		self.get_fail_cause_linear(simulation_state, None)
 	}
 
@@ -82,7 +82,7 @@ pub trait CraftingAction: DynClone {
 		&self,
 		simulation_state: &Simulation,
 		linear: Option<bool>,
-	) -> Option<&str> {
+	) -> Option<FailCause> {
 		self.get_fail_cause_with_flags(simulation_state, linear, None)
 	}
 
@@ -91,23 +91,23 @@ pub trait CraftingAction: DynClone {
 		simulation_state: &Simulation,
 		_linear: Option<bool>,
 		safe: Option<bool>,
-	) -> Option<&str> {
+	) -> Option<FailCause> {
 		let level_requirement = self.get_level_requirement();
 		let craftsmanship_requirement = simulation_state.recipe.craftsmanship_req;
 		let control_requirement = simulation_state.recipe.control_req;
 
 		if safe.is_some_and(|b| b) && self.get_success_rate(simulation_state) < 100 {
-			Some("Unsafe action")
+			Some(FailCause::UnsafeAction)
 		} else if (level_requirement.0 != CraftingJob::Any
 			&& simulation_state.crafter_stats.levels[level_requirement.0] < level_requirement.1)
 			|| simulation_state.crafter_stats.level < level_requirement.1
 		{
-			Some("Missing level requirement")
+			Some(FailCause::MissingLevelRequirement)
 		} else if craftsmanship_requirement
 			.is_some_and(|x| x > simulation_state.crafter_stats.craftsmanship)
 			|| control_requirement.is_some_and(|x| x > simulation_state.crafter_stats.control)
 		{
-			Some("Missing stats requirement")
+			Some(FailCause::MissingStatsRequirement)
 		} else {
 			None
 		}

@@ -2,6 +2,7 @@ use std::collections::{HashMap, HashSet};
 use derive_builder::{Builder, UninitializedFieldError};
 use num_traits::FromPrimitive;
 use rand::{random, Rng};
+use crate::types::enums::FailCause;
 
 use crate::types::tables;
 
@@ -129,7 +130,7 @@ impl Simulation {
 					.map_or_else(|| StepState::Normal, |&s| {
 						if s == StepState::None { StepState::Normal } else { s }
 					});
-				let mut fail_cause: Option<&str> = None;
+				let mut fail_cause: Option<FailCause> = None;
 
 				let can_use_action = action.can_be_used_with_flags(&self, Some(linear), Some(safe));
 				if !can_use_action {
@@ -137,7 +138,7 @@ impl Simulation {
 				}
 				let has_enough_cp = action.get_base_cp_cost(&self) <= self.available_cp;
 				if !has_enough_cp {
-					fail_cause = Some("Not enough CP");
+					fail_cause = Some(FailCause::NotEnoughCP);
 				}
 				// we can use the action
 				let mut result = if self.success.is_none()
@@ -149,7 +150,7 @@ impl Simulation {
 					ActionResult {
 						action: action.clone(),
 						success: None,
-						fail_cause: fail_cause.map(|x| x.to_string()),
+						fail_cause,
 						added_progression: 0,
 						added_quality: 0,
 						cp_difference: 0,
@@ -206,7 +207,7 @@ impl Simulation {
 			success,
 			simulation: self,
 			fail_cause: if has_required_quality && !success {
-				Some("Quality too low".to_string())
+				Some(FailCause::QualityTooLow)
 			} else {
 				None
 			},
@@ -252,13 +253,13 @@ impl Simulation {
 		let cp_before = self.available_cp;
 		let combo = action.has_combo(self);
 
-		let mut fail_cause: Option<&str> = None;
+		let mut fail_cause: Option<FailCause> = None;
 		let mut success = false;
 
 		if safe &&
 			(action.get_success_rate(self) < 100 || (action.requires_good() && !self.has_buff(Buff::HeartAndSoul)))
 		{
-			fail_cause = Some("Unsafe action");
+			fail_cause = Some(FailCause::UnsafeAction);
 			action.on_fail(self);
 			self.safe = false;
 		} else if action.get_success_rate(self) >= probability_roll {
@@ -274,14 +275,14 @@ impl Simulation {
 		if self.progression >= self.recipe.progress {
 			self.success = Some(true);
 		} else if self.durability <= 0 {
-			fail_cause = Some("Durability reached zero");
+			fail_cause = Some(FailCause::DurabilityReachedZero);
 			self.success = Some(false);
 		}
 
 		ActionResult {
 			action: action.clone(),
 			success: Some(success),
-			fail_cause: fail_cause.map(|x| x.to_string()),
+			fail_cause,
 			added_progression: self.progression - progression_before,
 			added_quality: self.quality - quality_before,
 			cp_difference: 0i32

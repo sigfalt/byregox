@@ -4,7 +4,7 @@ use super::{enums::*, traits::CraftingAction, Simulation};
 pub struct ActionResult {
 	pub action: Box<dyn CraftingAction>,
 	pub success: Option<bool>,
-	pub fail_cause: Option<String>,
+	pub fail_cause: Option<FailCause>,
 	pub added_progression: u32,
 	pub added_quality: u32,
 	pub cp_difference: i32,
@@ -181,5 +181,5 @@ pub struct SimulationResult {
 	pub hq_percent: u32,
 	pub success: bool,
 	pub simulation: Simulation,
-	pub fail_cause: Option<String>,
+	pub fail_cause: Option<FailCause>,
 }
