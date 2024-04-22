@@ -1086,20 +1086,29 @@ const simulation = new Simulation(
     expect(stats.cp).toBe(363);
  */
 
-// should use the enhanced Good modifier with Splendorous tools
-/*
-const simulation = new Simulation(
-      generateRecipe(1, 9, 80, 50, 30),
-      [new Observe(), new BasicTouch()],
-      generateStats(90, 4041, 3987, 616, true),
-      [],
-      {
-        1: StepState.GOOD,
-      }
-    );
-    simulation.run(true);
-    expect(simulation.quality).toBe(2387);
- */
+#[test]
+fn test_enhanced_good_modifier_with_splendorous_tools() -> Result<()> {
+	// generateRecipe(1, 9, 80, 50, 30)
+	let recipe = generate_recipe_lvl(3864, 1, 80, 9, 80, 50, 30);
+	// generateStats(90, 4041, 3987, 616, true)
+	let stats = generate_stats(90, 4041, 3987, 616, true);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.actions(vec![
+			Box::new(actions::Observe),
+			Box::new(actions::BasicTouch),
+		])
+		.step_states(vec![
+			StepState::None,
+			StepState::Good
+		])
+		.build()?;
+	let result = sim.run_linear(true);
+	assert_eq!(result.simulation.quality, 2387);
+
+	Ok(())
+}
 
 fn generate_recipe_lvl(
 	id: u32,
