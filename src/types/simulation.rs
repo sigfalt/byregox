@@ -126,12 +126,14 @@ impl Simulation {
 				self.state = self
 					.step_states
 					.get(i)
-					.map_or_else(|| StepState::Normal, |s| *s);
+					.map_or_else(|| StepState::Normal, |&s| {
+						if s == StepState::None { StepState::Normal } else { s }
+					});
 				let mut fail_cause: Option<&str> = None;
 
-				let can_use_action = action.can_be_used(&self);
+				let can_use_action = action.can_be_used_with_flags(&self, Some(linear), Some(safe));
 				if !can_use_action {
-					fail_cause = action.get_fail_cause(&self);
+					fail_cause = action.get_fail_cause_with_flags(&self, Some(linear), Some(safe));
 				}
 				let has_enough_cp = action.get_base_cp_cost(&self) <= self.available_cp;
 				if !has_enough_cp {
@@ -253,9 +255,8 @@ impl Simulation {
 		let mut fail_cause: Option<&str> = None;
 		let mut success = false;
 
-		// TODO: if safe_mode &&
-		if action.get_success_rate(self) < 100
-			|| (action.requires_good() && !self.has_buff(Buff::HeartAndSoul))
+		if safe &&
+			(action.get_success_rate(self) < 100 || (action.requires_good() && !self.has_buff(Buff::HeartAndSoul)))
 		{
 			fail_cause = Some("Unsafe action");
 			action.on_fail(self);
@@ -334,18 +335,19 @@ impl Simulation {
 	}
 
 	fn tick_buffs(&mut self, action: &dyn CraftingAction) {
-		let mut curr_buffs = self.buffs.clone();
-		curr_buffs.iter_mut().for_each(|b| {
+		let buff_vec = self.buffs.clone();
+		buff_vec.iter().for_each(|b| {
 			if b.applied_step < self.steps.len() as u32 {
 				b.tick(self, action);
-				b.duration -= 1;
-			}
+				if let Some(buff_ref) = self.get_mut_buff(b.buff) {
+					buff_ref.duration -= 1;
+				}
+			};
 		});
-		curr_buffs
-			.iter()
+		buff_vec.iter()
 			.filter(|b| b.duration <= 0 && b.on_expire.is_some())
 			.for_each(|b| b.on_expire(self, action));
-		self.buffs = curr_buffs.into_iter().filter(|b| b.duration > 0).collect();
+		self.buffs = self.buffs.clone().into_iter().filter(|b| b.duration > 0).collect();
 	}
 
 	pub fn possible_conditions(&self) -> &HashSet<StepState> {
@@ -373,7 +375,7 @@ impl Simulation {
 
 		let mut states_and_rates: HashMap<_, _> = HashMap::from_iter(
 			self.possible_conditions.iter().filter_map(|&step_state| {
-			let rate_opt = match step_state {
+			match step_state {
 				StepState::Good => Some(
 					if self.recipe.expert.is_some_and(|b| b) { 0.12 } else { good_chance }
 				),
@@ -388,12 +390,7 @@ impl Simulation {
 				StepState::Primed => Some(0.12),
 				StepState::GoodOmen => Some(0.1),
 				_ => None
-			};
-			if let Some(rate) = rate_opt {
-				Some((step_state, rate))
-			} else {
-				None
-			}
+			}.map(|rate| (step_state, rate))
 		}));
 		let non_normal_rate: f64 = states_and_rates.values().sum();
 		states_and_rates.insert(StepState::Normal, 1.0 - non_normal_rate);

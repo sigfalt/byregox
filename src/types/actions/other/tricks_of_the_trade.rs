@@ -22,8 +22,10 @@ impl CraftingAction for TricksOfTheTrade {
 	}
 
 	fn _can_be_used(&self, simulation_state: &Simulation, linear: Option<bool>) -> bool {
-		if linear.unwrap_or(false) || simulation_state.safe {
+		if linear.unwrap_or(false) {
 			true
+		} else if simulation_state.safe {
+			false
 		} else {
 			simulation_state.state() == StepState::Good
 				|| simulation_state.state() == StepState::Excellent
