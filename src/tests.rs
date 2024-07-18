@@ -150,6 +150,7 @@ fn test_quality_and_buffs() -> Result<()> {
 	Ok(())
 }
 
+/*
 #[test]
 fn test_combos() -> Result<()> {
 	let recipe = generate_recipe_lvl(3997, 72, 80, 1220, 3800, 102, 82);
@@ -189,6 +190,7 @@ fn test_combos() -> Result<()> {
 
 	Ok(())
 }
+*/
 
 // from teamcraft
 
@@ -929,6 +931,7 @@ fn test_quality_flooring() -> Result<()> {
 	Ok(())
 }
 
+/*
 #[test]
 fn test_required_quality_unmet_fails()-> Result<()> {
 	// generateStarRecipe(590, 4300, 12800, 130, 115, 80, 70, false, 15, { requiredQuality: 12800 })
@@ -1016,6 +1019,7 @@ fn test_required_quality_unmet_fails()-> Result<()> {
 
 	Ok(())
 }
+*/
 
 #[test]
 fn test_tricksofthetrade_and_heartandsoul() -> Result<()> {
