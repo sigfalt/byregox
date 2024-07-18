@@ -39,7 +39,6 @@ pub enum CraftingActionEnum {
 	PrudentSynthesis,
 	RapidSynthesis,
 	Groundwork,
-	FocusedSynthesis,
 	MuscleMemory,
 	IntensiveSynthesis,
 
@@ -50,7 +49,6 @@ pub enum CraftingActionEnum {
 	HastyTouch,
 	ByregotsBlessing,
 	PreciseTouch,
-	FocusedTouch,
 	PrudentTouch,
 	TrainedEye,
 	PreparatoryTouch,

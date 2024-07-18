@@ -22,10 +22,6 @@ pub use precise_touch::*;
 mod prudent_touch;
 pub use prudent_touch::*;
 
-// level 68
-mod focused_touch;
-pub use focused_touch::*;
-
 // level 69
 mod reflect;
 pub use reflect::*;

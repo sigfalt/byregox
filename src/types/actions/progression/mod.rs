@@ -14,10 +14,6 @@ pub use muscle_memory::*;
 mod careful_synthesis;
 pub use careful_synthesis::*;
 
-// level 67
-mod focused_synthesis;
-pub use focused_synthesis::*;
-
 // level 72
 mod groundwork;
 pub use groundwork::*;
