@@ -204,9 +204,9 @@ pub trait GeneralAction: CraftingAction {
 // any class that implements GeneralAction should inherit the following defaults
 /*
 impl CraftingAction for Class {
-	fn get_level_requirement(&self) -> (CraftingJob, u32) {
-		todo!()
-	}
+	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
+        todo!()
+    }
 
 	fn get_type(&self) -> ActionType {
 		todo!()
@@ -239,6 +239,10 @@ impl CraftingAction for Class {
 	) {
 		todo!()
 	}
+
+	fn get_enum(&self) -> CraftingActionEnum {
+		todo!()
+	}
 }
 */
 
@@ -246,9 +250,9 @@ pub trait ProgressAction: GeneralAction {}
 // any class that implements ProgressAction should inherit the following defaults
 /*
 impl CraftingAction for Class {
-	fn get_level_requirement(&self) -> (CraftingJob, u32) {
-		todo!()
-	}
+	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
+        todo!()
+    }
 
 	fn get_type(&self) -> ActionType { ActionType::Progression }
 
@@ -299,6 +303,10 @@ impl CraftingAction for Class {
 			simulation_state.remove_buff(Buff::FinalAppraisal);
 		}
 	}
+
+	fn get_enum(&self) -> CraftingActionEnum {
+		todo!()
+	}
 }
 
 impl GeneralAction for Class {
@@ -320,9 +328,9 @@ pub trait QualityAction: GeneralAction {}
 // any class that implements QualityAction should inherit the following defaults
 /*
 impl CraftingAction for Class {
-	fn get_level_requirement(&self) -> (CraftingJob, u32) {
-		todo!()
-	}
+	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
+        todo!()
+    }
 
 	fn get_type(&self) -> ActionType { ActionType::Quality }
 
@@ -390,6 +398,10 @@ impl CraftingAction for Class {
 		if !skip_stack_addition {
 			simulation_state.add_inner_quiet_stacks(1);
 		}
+	}
+
+	fn get_enum(&self) -> CraftingActionEnum {
+		todo!()
 	}
 }
 
@@ -489,6 +501,10 @@ impl CraftingAction for Class {
 	) {
 		self.get_overrides().into_iter().for_each(|b| simulation_state.remove_buff(b));
 		simulation_state.add_buff(self.get_applied_buff(simulation_state));
+	}
+
+	fn get_enum(&self) -> CraftingActionEnum {
+		todo!()
 	}
 }
 */
