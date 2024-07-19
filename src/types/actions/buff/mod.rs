@@ -27,3 +27,7 @@ pub use manipulation::*;
 // level 86
 mod heart_and_soul;
 pub use heart_and_soul::*;
+
+// level 100
+mod trained_perfection;
+pub use trained_perfection::*;

@@ -41,3 +41,11 @@ pub use advanced_touch::*;
 // level 90
 mod trained_finesse;
 pub use trained_finesse::*;
+
+// level 92
+mod refined_touch;
+pub use refined_touch::*;
+
+// level 96
+mod daring_touch;
+pub use daring_touch::*;
