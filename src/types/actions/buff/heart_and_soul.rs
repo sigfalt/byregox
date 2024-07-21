@@ -51,12 +51,12 @@ impl CraftingAction for HeartAndSoul {
 		true
 	}
 
-	fn get_type(&self) -> ActionType {
-		ActionType::Other
-	}
-
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
 		(CraftingJob::Any, CraftingLevel::new(86).unwrap())
+	}
+
+	fn get_type(&self) -> ActionType {
+		ActionType::Other
 	}
 
 	fn _get_success_rate(&self, _simulation_state: &Simulation) -> u32 {

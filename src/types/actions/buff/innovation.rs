@@ -31,12 +31,12 @@ impl CraftingAction for Innovation {
 		true
 	}
 
-	fn get_type(&self) -> ActionType {
-		ActionType::Buff
-	}
-
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
 		(CraftingJob::Any, CraftingLevel::new(26).unwrap())
+	}
+
+	fn get_type(&self) -> ActionType {
+		ActionType::Buff
 	}
 
 	fn _get_success_rate(&self, _simulation_state: &Simulation) -> u32 {
