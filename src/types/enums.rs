@@ -72,6 +72,7 @@ pub enum CraftingActionEnum {
 	Innovation,
 	Veneration,
 	FinalAppraisal,
+	QuickInnovation,
 	TrainedPerfection,
 
 	// Other
@@ -104,6 +105,8 @@ pub enum Buff {
 	FinalAppraisal,
 
 	HeartAndSoul,
+
+	TrainedPerfection,
 }
 
 #[derive(Clone, Copy, PartialEq)]
