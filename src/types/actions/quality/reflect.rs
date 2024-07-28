@@ -112,7 +112,7 @@ impl CraftingAction for Reflect {
 
 impl GeneralAction for Reflect {
 	fn get_potency(&self, _simulation_state: &Simulation) -> u32 {
-		100
+		300
 	}
 
 	fn get_base_durability_cost(&self, _simulation_state: &Simulation) -> u32 {
