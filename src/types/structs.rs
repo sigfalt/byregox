@@ -106,13 +106,15 @@ impl std::ops::Index<CraftingJob> for CrafterLevels {
 	}
 }
 
+const MAX_LEVEL: u8 = 100;
+
 #[derive(Clone, Copy, Default, Eq, PartialEq, PartialOrd)]
 pub struct CraftingLevel {
 	val: u8,
 }
 impl CraftingLevel {
 	pub fn new(val: u8) -> Option<CraftingLevel> {
-		if (0..=90).contains(&val) {
+		if (0..=MAX_LEVEL).contains(&val) {
 			Some(CraftingLevel { val })
 		} else {
 			None
