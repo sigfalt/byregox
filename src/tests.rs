@@ -300,7 +300,7 @@ fn test_dawntrail_flooring() -> Result<()> {
 	let result = sim.run_linear(true);
 	assert_eq!(result.simulation.quality, 2610);
 
-	
+
 	// generateRecipe(685, 6300, 11400, 167, 147),
 	let recipe = generate_recipe_rlvl(3864, 80, 685, 80, 6300, 11400, 167, 147);
 
@@ -340,7 +340,27 @@ fn test_dawntrail_flooring() -> Result<()> {
 	Ok(())
 }
 
-// should combo refined touch with basic touch
+#[test]
+fn test_combo_refinedtouch_with_basictouch() -> Result<()> {
+	// generateRecipe(517, 1000, 5200, 121, 105)
+	let recipe = generate_recipe_lvl(3864, 81, 80, 1000, 5200, 121, 105);
+	// generateStats(100, 2763, 2780, 545)
+	let stats = generate_stats(100, 2763, 2780, 545);
+
+	let sim = SimulationBuilder::default()
+		.recipe(recipe.clone())
+		.actions(vec![
+			Box::new(actions::BasicTouch),
+			Box::new(actions::RefinedTouch),
+		])
+		.crafter_stats(stats.clone())
+		.build()?;
+
+	let result = sim.run_linear(true);
+	assert!(result.simulation.get_buff(Buff::InnerQuiet).is_some_and(|b| b.stacks == 3));
+
+	Ok(())
+}
 
 // should combo advanced touch with observe
 
