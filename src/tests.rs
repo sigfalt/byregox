@@ -150,48 +150,6 @@ fn test_quality_and_buffs() -> Result<()> {
 	Ok(())
 }
 
-/*
-#[test]
-fn test_combos() -> Result<()> {
-	let recipe = generate_recipe_lvl(3997, 72, 80, 1220, 3800, 102, 82);
-	let stats = generate_stats(90, 1208, 698, 534);
-	let sim = SimulationBuilder::default()
-		.recipe(recipe)
-		.actions(vec![
-			Box::new(actions::MuscleMemory),
-			Box::new(actions::Manipulation),
-			Box::new(actions::CarefulSynthesis),
-			Box::new(actions::CarefulSynthesis),
-			Box::new(actions::BasicTouch),
-			Box::new(actions::StandardTouch),
-			Box::new(actions::AdvancedTouch),
-			Box::new(actions::StandardTouch),
-			Box::new(actions::AdvancedTouch),
-			Box::new(actions::Observe),
-			Box::new(actions::FocusedTouch),
-			Box::new(actions::Observe),
-			Box::new(actions::FocusedSynthesis),
-		])
-		.crafter_stats(stats)
-		.build()?;
-
-	let result = sim.run_linear(true);
-	assert!(result.simulation.success.is_some_and(|x| x));
-	assert_eq!(result.simulation.steps[0].added_progression, 360);
-	assert_eq!(result.simulation.steps[2].added_progression, 432);
-	assert_eq!(result.simulation.steps[3].added_progression, 216);
-	assert_eq!(result.simulation.steps[12].added_progression, 240);
-	assert_eq!(result.simulation.steps[4].added_quality, 120);
-	assert_eq!(result.simulation.steps[5].added_quality, 165);
-	assert_eq!(result.simulation.steps[6].added_quality, 216);
-	assert_eq!(result.simulation.steps[7].added_quality, 195);
-	assert_eq!(result.simulation.steps[8].added_quality, 252);
-	assert_eq!(result.simulation.steps[10].added_quality, 270);
-
-	Ok(())
-}
-*/
-
 // from teamcraft
 
 #[test]
@@ -346,10 +304,10 @@ fn test_dawntrail_flooring() -> Result<()> {
 	// generateStarRecipe(580, 3900, 10920, 130, 115, 80, 70)
 	let recipe = generate_star_recipe(580, 3900, 10920, 130, 115, 80, 70);
 	// generateRecipe(685, 6300, 11400, 167, 147),
+	let recipe = generate_recipe_rlvl(3864, 80, 685, 80, 6300, 11400, 167, 147);
 
-	// generateStats(90, 3289, 3420, 400)
-	let stats = generate_stats(90, 3289, 3420, 400);
 	// generateStats(100, 4045, 3902, 601)
+	let stats = generate_stats(100, 4045, 3902, 601);
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
 		.actions(vec![
