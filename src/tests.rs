@@ -236,7 +236,7 @@ fn test_low_level() -> Result<()> {
 	let result = sim.run_linear(true);
 	assert!(result.simulation.success.is_some_and(|x| x));
 	assert_eq!(result.simulation.steps[3].added_progression, 685);
-	assert_eq!(result.simulation.steps[0].added_quality, 817);
+	assert_eq!(result.simulation.steps[0].added_quality, 2451);
 	assert_eq!(result.simulation.steps[1].added_quality, 980);
 	assert_eq!(result.simulation.steps[2].added_quality, 1699);
 
@@ -267,7 +267,7 @@ fn test_innovation() -> Result<()> {
 		.build()?;
 
 	let result = sim.run_linear(true);
-	assert_eq!(result.simulation.steps[0].added_quality, 299);
+	assert_eq!(result.simulation.steps[0].added_quality, 897);
 	assert_eq!(result.simulation.steps[1].added_quality, 358);
 	assert_eq!(result.simulation.steps[2].added_quality, 388);
 	assert_eq!(result.simulation.steps[6].added_quality, 1255);
@@ -323,6 +323,72 @@ fn test_flooring() -> Result<()> {
 }
 
 #[test]
+fn test_dawntrail_flooring() -> Result<()> {
+	// generateRecipe(685, 6300, 11400, 167, 147)
+	let recipe = generate_recipe_rlvl(3864, 80, 685, 80, 6300, 11400, 167, 147);
+	// generateStats(94, 3957, 3896, 563)
+	let stats = generate_stats(94, 3957, 3896, 563);
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.actions(vec![
+			Box::new(actions::Reflect),
+			Box::new(actions::Innovation),
+			Box::new(actions::PreparatoryTouch),
+			Box::new(actions::PrudentTouch),
+		])
+		.crafter_stats(stats)
+		.build()?;
+
+	let result = sim.run_linear(true);
+	assert_eq!(result.simulation.quality, 2610);
+
+
+	// generateStarRecipe(580, 3900, 10920, 130, 115, 80, 70)
+	let recipe = generate_star_recipe(580, 3900, 10920, 130, 115, 80, 70);
+	// generateRecipe(685, 6300, 11400, 167, 147),
+
+	// generateStats(90, 3289, 3420, 400)
+	let stats = generate_stats(90, 3289, 3420, 400);
+	// generateStats(100, 4045, 3902, 601)
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.actions(vec![
+			Box::new(actions::Reflect),
+			Box::new(actions::Innovation),
+			Box::new(actions::PreparatoryTouch),
+			Box::new(actions::PrudentTouch),
+			Box::new(actions::GreatStrides),
+			Box::new(actions::PreparatoryTouch),
+			Box::new(actions::GreatStrides),
+			Box::new(actions::Innovation),
+			Box::new(actions::PreparatoryTouch),
+			Box::new(actions::ImmaculateMend),
+			Box::new(actions::GreatStrides),
+			Box::new(actions::ByregotsBlessing),
+			Box::new(actions::WasteNot),
+			Box::new(actions::Veneration),
+			Box::new(actions::Groundwork),
+			Box::new(actions::Groundwork),
+			Box::new(actions::Groundwork),
+			Box::new(actions::Groundwork),
+			Box::new(actions::Veneration),
+			Box::new(actions::Groundwork),
+		])
+		.crafter_stats(stats)
+		.build()?;
+
+	let result = sim.run_linear(true);
+	assert_eq!(result.simulation.quality, 11400);
+	assert_eq!(result.simulation.progression, 6585);
+
+	Ok(())
+}
+
+// should combo refined touch with basic touch
+
+// should combo advanced touch with observe
+
+#[test]
 fn test_advanced_touch_combo() -> Result<()> {
 	// generateRecipe(517, 1000, 5200, 121, 105)
 	let recipe = generate_recipe_lvl(3864, 81, 80, 1000, 5200, 121, 105);
@@ -374,7 +440,7 @@ fn test_level_90_accuracy() -> Result<()> {
 		.build()?;
 
 	let result = sim.run_linear(true);
-	assert_eq!(result.simulation.steps[0].added_quality, 222);
+	assert_eq!(result.simulation.steps[0].added_quality, 666);
 	assert_eq!(result.simulation.steps[1].added_progression, 222);
 	assert_eq!(result.simulation.steps[2].added_quality, 266);
 
@@ -399,7 +465,7 @@ fn test_innovation_great_strides_interaction() -> Result<()> {
 		.build()?;
 
 	let result = sim.run_linear(true);
-	assert_eq!(result.simulation.steps[0].added_quality, 817);
+	assert_eq!(result.simulation.steps[0].added_quality, 2451);
 	assert_eq!(result.simulation.steps[3].added_quality, 2451);
 
 	Ok(())
@@ -931,7 +997,6 @@ fn test_quality_flooring() -> Result<()> {
 	Ok(())
 }
 
-/*
 #[test]
 fn test_required_quality_unmet_fails()-> Result<()> {
 	// generateStarRecipe(590, 4300, 12800, 130, 115, 80, 70, false, 15, { requiredQuality: 12800 })
@@ -962,7 +1027,7 @@ fn test_required_quality_unmet_fails()-> Result<()> {
 			Box::new(actions::PrudentTouch),
 			Box::new(actions::PrudentTouch),
 			Box::new(actions::Observe),
-			Box::new(actions::FocusedTouch),
+			Box::new(actions::AdvancedTouch),
 			Box::new(actions::Innovation),
 			Box::new(actions::TrainedFinesse),
 			Box::new(actions::TrainedFinesse),
@@ -1004,7 +1069,7 @@ fn test_required_quality_unmet_fails()-> Result<()> {
 			Box::new(actions::PrudentTouch),
 			Box::new(actions::PrudentTouch),
 			Box::new(actions::Observe),
-			Box::new(actions::FocusedTouch),
+			Box::new(actions::AdvancedTouch),
 			Box::new(actions::Innovation),
 			Box::new(actions::TrainedFinesse),
 			Box::new(actions::TrainedFinesse),
@@ -1019,7 +1084,6 @@ fn test_required_quality_unmet_fails()-> Result<()> {
 
 	Ok(())
 }
-*/
 
 #[test]
 fn test_tricksofthetrade_and_heartandsoul() -> Result<()> {
@@ -1091,7 +1155,7 @@ const simulation = new Simulation(
     const stats = simulation.getMinStats();
     expect(stats.found).toBe(true);
     expect(stats.craftsmanship).toBe(3309);
-    expect(stats.control).toBe(3125);
+    expect(stats.control).toBe(2793);
     expect(stats.cp).toBe(448);
  */
 
@@ -1148,6 +1212,98 @@ fn test_enhanced_good_modifier_with_splendorous_tools() -> Result<()> {
 
 	Ok(())
 }
+
+/*
+    it('Should not increase Inner Quiet when job level is below 11', () => {
+    const simulation = new Simulation(
+      generateRecipe(1, 9, 80, 50, 30),
+      [new BasicTouch()],
+      generateStats(10, 10, 10, 20),
+      [],
+      {
+        1: StepState.NORMAL,
+      }
+    );
+
+    simulation.run(true);
+    expect(simulation.buffs).toHaveLength(0);
+  });
+
+  it('Should reduce durability cost to 0 after using TrainedPerfection', () => {
+    const simulation = new Simulation(
+      generateRecipe(1, 9, 80, 50, 30),
+      [new TrainedPerfection(), new BasicTouch(), new BasicTouch()],
+      generateStats(100, 4041, 3987, 616, true),
+      []
+    );
+
+    const result = simulation.run(true);
+    expect(result.steps[1].solidityDifference).toBe(0);
+    expect(result.steps[2].solidityDifference).toBe(
+      -new BasicTouch().getDurabilityCost(simulation)
+    );
+  });
+
+  it('Should reduce durability cost to 0 after using TrainedPerfection even if buffs used inbetween', () => {
+    const simulation = new Simulation(
+      generateRecipe(1, 9, 80, 50, 30),
+      [new TrainedPerfection(), new Innovation(), new BasicTouch()],
+      generateStats(100, 4041, 3987, 616, true),
+      []
+    );
+
+    const result = simulation.run(true);
+    expect(result.steps[2].solidityDifference).toBe(0);
+  });
+
+  it('Should remove TrainedPerfection after it has reduced a cost to 0', () => {
+    const simulation = new Simulation(
+      generateRecipe(1, 9, 80, 50, 30),
+      [new TrainedPerfection(), new Innovation(), new BasicTouch(), new BasicTouch()],
+      generateStats(100, 4041, 3987, 616, true),
+      []
+    );
+
+    const result = simulation.run(true);
+    expect(result.steps[2].solidityDifference).toBe(0);
+    expect(result.simulation.hasBuff(Buff.TRAINED_PERFECTION)).toBeFalsy();
+  });
+
+  it('Should only be able to use Daring Touch after Hasty Touch success', () => {
+    const simulation = new Simulation(
+      generateRecipe(1, 9, 80, 50, 30),
+      [new HastyTouch(), new DaringTouch(), new DaringTouch()],
+      generateStats(100, 4041, 3987, 616, true),
+      []
+    );
+
+    const result = simulation.run(true);
+    expect(result.steps[1].success).toBe(true);
+    expect(result.steps[2].success).toBe(null);
+  });
+
+  it('Should not reduce efficiency on Groundwork when Trained Perfection is used', () => {
+    const recipe = { ...generateRecipe(1, 9, 80, 50, 30), durability: 10 };
+    const simulation1 = new Simulation(
+      recipe,
+      [new Groundwork()],
+      generateStats(100, 4041, 3987, 616, true),
+      []
+    );
+
+    const simulation2 = new Simulation(
+      recipe,
+      [new TrainedPerfection(), new Groundwork()],
+      generateStats(100, 4041, 3987, 616, true),
+      []
+    );
+
+    expect(simulation1.run(true).steps[0].addedProgression).toBeLessThan(
+      simulation2.run(true).steps[1].addedProgression
+    );
+  });
+});
+ */
 
 fn generate_recipe_lvl(
 	id: u32,
