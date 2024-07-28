@@ -8,34 +8,34 @@ pub struct ImmaculateMend;
 
 impl CraftingAction for ImmaculateMend {
     fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-        todo!()
+        (CraftingJob::Any, CraftingLevel::new(98).unwrap())
     }
 
     fn get_type(&self) -> ActionType {
-        todo!()
+        ActionType::Repair
     }
 
     fn _get_success_rate(&self, simulation_state: &Simulation) -> u32 {
-        todo!()
+        100
     }
 
     fn _can_be_used(&self, simulation_state: &Simulation, linear: Option<bool>) -> bool {
-        todo!()
+        true
     }
 
     fn get_base_cp_cost(&self, simulation_state: &Simulation) -> u32 {
-        todo!()
+        112
     }
 
     fn get_durability_cost(&self, simulation_state: &Simulation) -> u32 {
-        todo!()
+        0
     }
 
     fn execute_with_flags(&self, simulation_state: &mut Simulation, safe: bool, skip_stack_addition: bool) {
-        todo!()
+        simulation_state.durability = simulation_state.recipe.durability as i32;
     }
 
     fn get_enum(&self) -> CraftingActionEnum {
-        todo!()
+        CraftingActionEnum::ImmaculateMend
     }
 }
