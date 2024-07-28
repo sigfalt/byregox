@@ -14,10 +14,10 @@ impl CraftingAction for AdvancedTouch {
 	fn has_combo(&self, simulation_state: &Simulation) -> bool {
 		// need to check not only for StandardTouch, but that it was also combo'd
 		for step in simulation_state.steps.iter().rev() {
-			if step.action.get_enum() == CraftingActionEnum::StandardTouch
-				&& step.success.is_some_and(|x| x)
-				&& step.combo.is_some_and(|x| x)
-			{
+			if step.action.get_enum() == CraftingActionEnum::Observe
+				|| (step.action.get_enum() == CraftingActionEnum::StandardTouch
+					&& step.success.is_some_and(|x| x)
+					&& step.combo.is_some_and(|x| x)) {
 				return true;
 			}
 			if !step.skipped {

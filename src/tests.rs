@@ -362,7 +362,27 @@ fn test_combo_refinedtouch_with_basictouch() -> Result<()> {
 	Ok(())
 }
 
-// should combo advanced touch with observe
+#[test]
+fn test_combo_advancedtouch_with_observe() -> Result<()> {
+	// generateRecipe(517, 1000, 5200, 121, 105)
+	let recipe = generate_recipe_lvl(3864, 81, 80, 1000, 5200, 121, 105);
+	// generateStats(90, 2763, 2780, 545)
+	let stats = generate_stats(90, 2763, 2780, 545);
+
+	let sim = SimulationBuilder::default()
+		.recipe(recipe.clone())
+		.actions(vec![
+			Box::new(actions::Observe),
+			Box::new(actions::AdvancedTouch),
+		])
+		.crafter_stats(stats.clone())
+		.build()?;
+
+	let result = sim.run_linear(true);
+	assert_eq!(result.simulation.steps[1].cp_difference, -18);
+
+	Ok(())
+}
 
 #[test]
 fn test_advanced_touch_combo() -> Result<()> {
