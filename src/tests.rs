@@ -300,9 +300,7 @@ fn test_dawntrail_flooring() -> Result<()> {
 	let result = sim.run_linear(true);
 	assert_eq!(result.simulation.quality, 2610);
 
-
-	// generateStarRecipe(580, 3900, 10920, 130, 115, 80, 70)
-	let recipe = generate_star_recipe(580, 3900, 10920, 130, 115, 80, 70);
+	
 	// generateRecipe(685, 6300, 11400, 167, 147),
 	let recipe = generate_recipe_rlvl(3864, 80, 685, 80, 6300, 11400, 167, 147);
 
