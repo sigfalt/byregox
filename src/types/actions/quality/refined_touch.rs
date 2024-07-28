@@ -1,5 +1,5 @@
 use crate::types::enums::{ActionType, Buff, CraftingActionEnum, CraftingJob, StepState};
-use crate::types::Simulation;
+use crate::types::{actions, Simulation};
 use crate::types::structs::CraftingLevel;
 use crate::types::traits::{CraftingAction, GeneralAction, QualityAction};
 
@@ -9,8 +9,12 @@ pub struct RefinedTouch;
 impl QualityAction for RefinedTouch {}
 
 impl CraftingAction for RefinedTouch {
+    fn has_combo(&self, simulation_state: &Simulation) -> bool {
+        simulation_state.has_combo_available(&actions::BasicTouch)
+    }
+
     fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-        todo!()
+        (CraftingJob::Any, CraftingLevel::new(92).unwrap())
     }
 
     fn get_type(&self) -> ActionType { ActionType::Quality }
@@ -19,12 +23,12 @@ impl CraftingAction for RefinedTouch {
         self.get_base_success_rate(simulation_state)
     }
 
-    fn _can_be_used(&self, simulation_state: &Simulation, linear: Option<bool>) -> bool {
-        todo!()
+    fn _can_be_used(&self, _simulation_state: &Simulation, _linear: Option<bool>) -> bool {
+        true
     }
 
-    fn get_base_cp_cost(&self, simulation_state: &Simulation) -> u32 {
-        todo!()
+    fn get_base_cp_cost(&self, _simulation_state: &Simulation) -> u32 {
+        24
     }
 
     fn get_durability_cost(&self, simulation_state: &Simulation) -> u32 {
@@ -40,6 +44,9 @@ impl CraftingAction for RefinedTouch {
         _safe: bool,
         skip_stack_addition: bool,
     ) {
+        // Refined Touch specific addition to blanket `execute` impl
+        let has_combo = self.has_combo(simulation_state);
+
         let buff_mod = self.get_base_bonus(simulation_state);
         let potency = self.get_potency(simulation_state) as f64;
         let quality_increase = self.get_base_quality(simulation_state) as f64;
@@ -79,23 +86,28 @@ impl CraftingAction for RefinedTouch {
         if !skip_stack_addition && simulation_state.crafter_stats.level >= 11 {
             simulation_state.add_inner_quiet_stacks(1);
         }
+
+        // Refined Touch specific addition to blanket `execute` impl
+        if has_combo {
+            simulation_state.add_inner_quiet_stacks(1);
+        }
     }
 
     fn get_enum(&self) -> CraftingActionEnum {
-        todo!()
+        CraftingActionEnum::RefinedTouch
     }
 }
 
 impl GeneralAction for RefinedTouch {
-    fn get_potency(&self, simulation_state: &Simulation) -> u32 {
-        todo!()
+    fn get_potency(&self, _simulation_state: &Simulation) -> u32 {
+        100
     }
 
-    fn get_base_durability_cost(&self, simulation_state: &Simulation) -> u32 {
-        todo!()
+    fn get_base_durability_cost(&self, _simulation_state: &Simulation) -> u32 {
+        10
     }
 
-    fn get_base_success_rate(&self, simulation_state: &Simulation) -> u32 {
-        todo!()
+    fn get_base_success_rate(&self, _simulation_state: &Simulation) -> u32 {
+        100
     }
 }
