@@ -1209,22 +1209,31 @@ fn test_enhanced_good_modifier_with_splendorous_tools() -> Result<()> {
 	Ok(())
 }
 
+#[test]
+fn test_inner_quiet_below_level_11() -> Result<()> {
+	// generateRecipe(1, 9, 80, 50, 30)
+	let recipe = generate_recipe_lvl(3864, 1, 80, 9, 80, 50, 30);
+	// generateStats(10, 10, 10, 20),
+	let stats = generate_stats(10, 10, 10, 20);
+
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.actions(vec![
+			Box::new(actions::BasicTouch),
+		])
+		.step_states(vec![
+			StepState::Normal
+		])
+		.build()?;
+
+	let result = sim.run_linear(true);
+	assert!(result.simulation.get_buff(Buff::InnerQuiet).is_none());
+
+	Ok(())
+}
+
 /*
-    it('Should not increase Inner Quiet when job level is below 11', () => {
-    const simulation = new Simulation(
-      generateRecipe(1, 9, 80, 50, 30),
-      [new BasicTouch()],
-      generateStats(10, 10, 10, 20),
-      [],
-      {
-        1: StepState.NORMAL,
-      }
-    );
-
-    simulation.run(true);
-    expect(simulation.buffs).toHaveLength(0);
-  });
-
   it('Should reduce durability cost to 0 after using TrainedPerfection', () => {
     const simulation = new Simulation(
       generateRecipe(1, 9, 80, 50, 30),
