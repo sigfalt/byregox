@@ -81,7 +81,7 @@ impl CraftingAction for HastyTouch {
 			buff_mult += 0.5;
 		}
 
-		let buff_mod = ((buff_mod * buff_mult * (100 + iq_mod * 10) as f64 / 100.0) as f32) as f64;
+		let buff_mod = buff_mod * buff_mult * (100 + iq_mod * 10) as f64 / 100.0;
 		let efficiency = ((potency * buff_mod) as f32) as f64;
 		simulation_state.quality += (quality_increase * condition_mod * efficiency / 100.0) as u32;
 
