@@ -7,16 +7,18 @@ use crate::types::traits::{BuffAction, CraftingAction};
 pub struct TrainedPerfection;
 
 impl BuffAction for TrainedPerfection {
-    fn get_duration(&self, simulation_state: &Simulation) -> i32 {
-        todo!()
+    fn get_duration(&self, _simulation_state: &Simulation) -> i32 {
+        // basically infinity
+        // improvement: fix for crafting rotations over 2,147,483,647 steps long
+        i32::MAX
     }
 
     fn get_buff(&self) -> Buff {
-        todo!()
+        Buff::TrainedPerfection
     }
 
     fn get_initial_stacks(&self) -> u32 {
-        todo!()
+        0
     }
 }
 
@@ -25,15 +27,15 @@ impl CraftingAction for TrainedPerfection {
         true
     }
 
+    fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
+        (CraftingJob::Any, CraftingLevel::new(100).unwrap())
+    }
+
     fn get_type(&self) -> ActionType {
         ActionType::Buff
     }
 
-    fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-        todo!()
-    }
-
-    fn _get_success_rate(&self, simulation_state: &Simulation) -> u32 {
+    fn _get_success_rate(&self, _simulation_state: &Simulation) -> u32 {
         100
     }
 
@@ -45,11 +47,11 @@ impl CraftingAction for TrainedPerfection {
         }
     }
 
-    fn get_base_cp_cost(&self, simulation_state: &Simulation) -> u32 {
-        todo!()
+    fn get_base_cp_cost(&self, _simulation_state: &Simulation) -> u32 {
+        0
     }
 
-    fn get_durability_cost(&self, simulation_state: &Simulation) -> u32 {
+    fn get_durability_cost(&self, _simulation_state: &Simulation) -> u32 {
         0
     }
 
@@ -64,6 +66,6 @@ impl CraftingAction for TrainedPerfection {
     }
 
     fn get_enum(&self) -> CraftingActionEnum {
-        todo!()
+        CraftingActionEnum::TrainedPerfection
     }
 }
