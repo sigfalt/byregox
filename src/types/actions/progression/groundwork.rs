@@ -91,7 +91,8 @@ impl GeneralAction for Groundwork {
 		} else {
 			300
 		};
-		if simulation_state.durability >= self.get_durability_cost(simulation_state) as i32 {
+		if simulation_state.has_buff(Buff::TrainedPerfection)
+			|| (simulation_state.durability >= self.get_durability_cost(simulation_state) as i32) {
 			base_potency
 		} else {
 			base_potency / 2

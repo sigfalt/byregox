@@ -1341,29 +1341,42 @@ fn test_hasty_touch_only_after_daring_touch() -> Result<()> {
 	Ok(())
 }
 
-/*
-  it('Should not reduce efficiency on Groundwork when Trained Perfection is used', () => {
-    const recipe = { ...generateRecipe(1, 9, 80, 50, 30), durability: 10 };
-    const simulation1 = new Simulation(
-      recipe,
-      [new Groundwork()],
-      generateStats(100, 4041, 3987, 616, true),
-      []
-    );
+#[test]
+fn test_groundwork_efficiency_with_trained_perfection() -> Result<()> {
+	// { ...generateRecipe(1, 9, 80, 50, 30), durability: 10 }
+	let recipe = Craft {
+		durability: 10,
+		..generate_recipe_lvl(3864, 1, 80, 9, 80, 50, 30)
+	};
+	// generateStats(100, 4041, 3987, 616, true)
+	let stats = CrafterStats {
+		splendorous: true,
+		..generate_stats(100, 4041, 3987, 616)
+	};
 
-    const simulation2 = new Simulation(
-      recipe,
-      [new TrainedPerfection(), new Groundwork()],
-      generateStats(100, 4041, 3987, 616, true),
-      []
-    );
+	let sim = SimulationBuilder::default()
+		.recipe(recipe.clone())
+		.crafter_stats(stats.clone())
+		.actions(vec![
+			Box::new(actions::Groundwork),
+		])
+		.build()?;
+	let result1 = sim.run_linear(true);
 
-    expect(simulation1.run(true).steps[0].addedProgression).toBeLessThan(
-      simulation2.run(true).steps[1].addedProgression
-    );
-  });
-});
- */
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.actions(vec![
+			Box::new(actions::TrainedPerfection),
+			Box::new(actions::Groundwork),
+		])
+		.build()?;
+	let result2 = sim.run_linear(true);
+
+	assert!(result1.steps[0].added_progression < result2.steps[1].added_progression);
+
+	Ok(())
+}
 
 fn generate_recipe_lvl(
 	id: u32,
