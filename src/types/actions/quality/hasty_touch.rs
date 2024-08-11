@@ -4,6 +4,7 @@ use crate::types::{
 	traits::{CraftingAction, GeneralAction, QualityAction},
 	Simulation,
 };
+use crate::types::structs::EffectiveBuff;
 
 #[derive(Clone)]
 pub struct HastyTouch;
@@ -87,6 +88,17 @@ impl CraftingAction for HastyTouch {
 
 		if !skip_stack_addition && simulation_state.crafter_stats.level >= 11 {
 			simulation_state.add_inner_quiet_stacks(1);
+		}
+
+		if simulation_state.crafter_stats.level >= 96 {
+			simulation_state.add_buff(EffectiveBuff {
+				duration: 1,
+				stacks: 1,
+				buff: Buff::Expedience,
+				applied_step: simulation_state.steps.len() as u32,
+				tick: None,
+				on_expire: None,
+			})
 		}
 	}
 

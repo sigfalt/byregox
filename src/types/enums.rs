@@ -106,6 +106,8 @@ pub enum Buff {
 
 	HeartAndSoul,
 
+	Expedience,
+
 	TrainedPerfection,
 }
 
