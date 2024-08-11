@@ -1251,9 +1251,6 @@ fn test_trained_perfection() -> Result<()> {
 			Box::new(actions::BasicTouch),
 			Box::new(actions::BasicTouch),
 		])
-		.step_states(vec![
-			StepState::Normal
-		])
 		.build()?;
 
 	let result = sim.run_linear(true);
@@ -1281,9 +1278,6 @@ fn test_trained_perfection_with_moves_between() -> Result<()> {
 			Box::new(actions::Innovation),
 			Box::new(actions::BasicTouch),
 		])
-		.step_states(vec![
-			StepState::Normal
-		])
 		.build()?;
 
 	let result = sim.run_linear(true);
@@ -1310,9 +1304,6 @@ fn test_trained_perfection_buff_consumed() -> Result<()> {
 			Box::new(actions::Innovation),
 			Box::new(actions::BasicTouch),
 			Box::new(actions::BasicTouch),
-		])
-		.step_states(vec![
-			StepState::Normal
 		])
 		.build()?;
 
