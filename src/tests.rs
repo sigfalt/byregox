@@ -1314,20 +1314,34 @@ fn test_trained_perfection_buff_consumed() -> Result<()> {
 	Ok(())
 }
 
+#[test]
+fn test_hasty_touch_only_after_daring_touch() -> Result<()> {
+	// generateRecipe(1, 9, 80, 50, 30)
+	let recipe = generate_recipe_lvl(3864, 1, 80, 9, 80, 50, 30);
+	// generateStats(100, 4041, 3987, 616, true)
+	let stats = CrafterStats {
+		splendorous: true,
+		..generate_stats(100, 4041, 3987, 616)
+	};
+
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.actions(vec![
+			Box::new(actions::HastyTouch),
+			Box::new(actions::DaringTouch),
+			Box::new(actions::DaringTouch),
+		])
+		.build()?;
+
+	let result = sim.run_linear(true);
+	assert!(result.steps[1].success.is_some_and(|step_success| step_success));
+	assert!(result.steps[2].success.is_none());
+
+	Ok(())
+}
+
 /*
-  it('Should only be able to use Daring Touch after Hasty Touch success', () => {
-    const simulation = new Simulation(
-      generateRecipe(1, 9, 80, 50, 30),
-      [new HastyTouch(), new DaringTouch(), new DaringTouch()],
-      generateStats(100, 4041, 3987, 616, true),
-      []
-    );
-
-    const result = simulation.run(true);
-    expect(result.steps[1].success).toBe(true);
-    expect(result.steps[2].success).toBe(null);
-  });
-
   it('Should not reduce efficiency on Groundwork when Trained Perfection is used', () => {
     const recipe = { ...generateRecipe(1, 9, 80, 50, 30), durability: 10 };
     const simulation1 = new Simulation(
