@@ -1263,32 +1263,67 @@ fn test_trained_perfection() -> Result<()> {
 	Ok(())
 }
 
+#[test]
+fn test_trained_perfection_with_moves_between() -> Result<()> {
+	// generateRecipe(1, 9, 80, 50, 30)
+	let recipe = generate_recipe_lvl(3864, 1, 80, 9, 80, 50, 30);
+	// generateStats(100, 4041, 3987, 616, true)
+	let stats = CrafterStats {
+		splendorous: true,
+		..generate_stats(100, 4041, 3987, 616)
+	};
+
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.actions(vec![
+			Box::new(actions::TrainedPerfection),
+			Box::new(actions::Innovation),
+			Box::new(actions::BasicTouch),
+		])
+		.step_states(vec![
+			StepState::Normal
+		])
+		.build()?;
+
+	let result = sim.run_linear(true);
+	assert_eq!(result.steps[2].solidity_difference, 0);
+
+	Ok(())
+}
+
+#[test]
+fn test_trained_perfection_buff_consumed() -> Result<()> {
+	// generateRecipe(1, 9, 80, 50, 30)
+	let recipe = generate_recipe_lvl(3864, 1, 80, 9, 80, 50, 30);
+	// generateStats(100, 4041, 3987, 616, true)
+	let stats = CrafterStats {
+		splendorous: true,
+		..generate_stats(100, 4041, 3987, 616)
+	};
+
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.actions(vec![
+			Box::new(actions::TrainedPerfection),
+			Box::new(actions::Innovation),
+			Box::new(actions::BasicTouch),
+			Box::new(actions::BasicTouch),
+		])
+		.step_states(vec![
+			StepState::Normal
+		])
+		.build()?;
+
+	let result = sim.run_linear(true);
+	assert_eq!(result.steps[2].solidity_difference, 0);
+	assert!(!result.simulation.has_buff(Buff::TrainedPerfection));
+
+	Ok(())
+}
+
 /*
-  it('Should reduce durability cost to 0 after using TrainedPerfection even if buffs used inbetween', () => {
-    const simulation = new Simulation(
-      generateRecipe(1, 9, 80, 50, 30),
-      [new TrainedPerfection(), new Innovation(), new BasicTouch()],
-      generateStats(100, 4041, 3987, 616, true),
-      []
-    );
-
-    const result = simulation.run(true);
-    expect(result.steps[2].solidityDifference).toBe(0);
-  });
-
-  it('Should remove TrainedPerfection after it has reduced a cost to 0', () => {
-    const simulation = new Simulation(
-      generateRecipe(1, 9, 80, 50, 30),
-      [new TrainedPerfection(), new Innovation(), new BasicTouch(), new BasicTouch()],
-      generateStats(100, 4041, 3987, 616, true),
-      []
-    );
-
-    const result = simulation.run(true);
-    expect(result.steps[2].solidityDifference).toBe(0);
-    expect(result.simulation.hasBuff(Buff.TRAINED_PERFECTION)).toBeFalsy();
-  });
-
   it('Should only be able to use Daring Touch after Hasty Touch success', () => {
     const simulation = new Simulation(
       generateRecipe(1, 9, 80, 50, 30),
