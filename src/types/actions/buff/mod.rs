@@ -31,7 +31,3 @@ pub use heart_and_soul::*;
 // level 96
 mod quick_innovation;
 pub use quick_innovation::*;
-
-// level 100
-mod trained_perfection;
-pub use trained_perfection::*;

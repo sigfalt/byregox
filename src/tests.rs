@@ -1233,22 +1233,37 @@ fn test_inner_quiet_below_level_11() -> Result<()> {
 	Ok(())
 }
 
+#[test]
+fn test_trained_perfection() -> Result<()> {
+	// generateRecipe(1, 9, 80, 50, 30)
+	let recipe = generate_recipe_lvl(3864, 1, 80, 9, 80, 50, 30);
+	// generateStats(100, 4041, 3987, 616, true)
+	let stats = CrafterStats {
+		splendorous: true,
+		..generate_stats(100, 4041, 3987, 616)
+	};
+
+	let sim = SimulationBuilder::default()
+		.recipe(recipe)
+		.crafter_stats(stats)
+		.actions(vec![
+			Box::new(actions::TrainedPerfection),
+			Box::new(actions::BasicTouch),
+			Box::new(actions::BasicTouch),
+		])
+		.step_states(vec![
+			StepState::Normal
+		])
+		.build()?;
+
+	let result = sim.run_linear(true);
+	assert_eq!(result.steps[1].solidity_difference, 0);
+	assert_eq!(result.steps[2].solidity_difference, -(actions::BasicTouch.get_durability_cost(&result.simulation) as i32));
+
+	Ok(())
+}
+
 /*
-  it('Should reduce durability cost to 0 after using TrainedPerfection', () => {
-    const simulation = new Simulation(
-      generateRecipe(1, 9, 80, 50, 30),
-      [new TrainedPerfection(), new BasicTouch(), new BasicTouch()],
-      generateStats(100, 4041, 3987, 616, true),
-      []
-    );
-
-    const result = simulation.run(true);
-    expect(result.steps[1].solidityDifference).toBe(0);
-    expect(result.steps[2].solidityDifference).toBe(
-      -new BasicTouch().getDurabilityCost(simulation)
-    );
-  });
-
   it('Should reduce durability cost to 0 after using TrainedPerfection even if buffs used inbetween', () => {
     const simulation = new Simulation(
       generateRecipe(1, 9, 80, 50, 30),

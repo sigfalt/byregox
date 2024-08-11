@@ -24,3 +24,7 @@ pub use delicate_synthesis::*;
 // level 98
 mod immaculate_mend;
 pub use immaculate_mend::*;
+
+// level 100
+mod trained_perfection;
+pub use trained_perfection::*;
