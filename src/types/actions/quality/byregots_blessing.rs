@@ -13,7 +13,7 @@ impl QualityAction for ByregotsBlessing {}
 
 impl CraftingAction for ByregotsBlessing {
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::new(50).unwrap())
+		(CraftingJob::Any, CraftingLevel::unchecked_new(50))
 	}
 
 	fn get_type(&self) -> ActionType {

@@ -52,7 +52,7 @@ impl CraftingAction for HeartAndSoul {
 	}
 
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::new(86).unwrap())
+		(CraftingJob::Any, CraftingLevel::unchecked_new(86))
 	}
 
 	fn get_type(&self) -> ActionType {

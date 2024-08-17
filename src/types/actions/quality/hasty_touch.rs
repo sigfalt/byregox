@@ -13,7 +13,7 @@ impl QualityAction for HastyTouch {}
 
 impl CraftingAction for HastyTouch {
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::new(9).unwrap())
+		(CraftingJob::Any, CraftingLevel::unchecked_new(9))
 	}
 
 	fn get_type(&self) -> ActionType {

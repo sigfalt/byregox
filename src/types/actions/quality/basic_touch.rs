@@ -7,7 +7,7 @@ impl QualityAction for BasicTouch {}
 
 impl CraftingAction for BasicTouch {
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::new(5).unwrap())
+		(CraftingJob::Any, CraftingLevel::unchecked_new(5))
 	}
 
 	fn get_type(&self) -> ActionType {

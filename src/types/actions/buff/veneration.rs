@@ -32,7 +32,7 @@ impl CraftingAction for Veneration {
 	}
 
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::new(15).unwrap())
+		(CraftingJob::Any, CraftingLevel::unchecked_new(15))
 	}
 
 	fn get_type(&self) -> ActionType {

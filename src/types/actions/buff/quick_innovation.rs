@@ -32,7 +32,7 @@ impl CraftingAction for QuickInnovation {
     }
 
     fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-        (CraftingJob::Any, CraftingLevel::new(26).unwrap())
+        (CraftingJob::Any, CraftingLevel::unchecked_new(26))
     }
 
     fn get_type(&self) -> ActionType {

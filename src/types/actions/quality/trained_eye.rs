@@ -10,7 +10,7 @@ pub struct TrainedEye;
 
 impl CraftingAction for TrainedEye {
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::new(80).unwrap())
+		(CraftingJob::Any, CraftingLevel::unchecked_new(80))
 	}
 
 	fn get_type(&self) -> crate::types::enums::ActionType {

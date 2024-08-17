@@ -1247,7 +1247,7 @@ fn generate_recipe_lvl(
 	generate_recipe_rlvl(
 		id,
 		lvl,
-		tables::level_to_ilevel(CraftingLevel::new(lvl).unwrap()),
+		tables::level_to_ilevel(CraftingLevel::unchecked_new(lvl)),
 		durability,
 		progress,
 		quality,
@@ -1269,7 +1269,7 @@ fn generate_recipe_rlvl(
 	Craft {
 		id: id.to_string(),
 		job: 14, // CRP
-		lvl: CraftingLevel::new(lvl).unwrap(),
+		lvl: CraftingLevel::unchecked_new(lvl),
 		rlvl,
 		durability,
 		progress,
@@ -1296,7 +1296,7 @@ fn generate_star_recipe(
 	Craft {
 		id: "33904".to_string(),
 		job: 14, // CRP
-		lvl: CraftingLevel::new(80).unwrap(),
+		lvl: CraftingLevel::unchecked_new(80),
 		rlvl,
 		durability: 70,
 		quality,
@@ -1327,16 +1327,16 @@ fn generate_stats(
 		cp,
 		specialist: false,
 		splendorous: false,
-		level: CraftingLevel::new(level).unwrap(),
+		level: CraftingLevel::unchecked_new(level),
 		levels: CrafterLevels {
-			crp: CraftingLevel::new(level).unwrap(),
-			bsm: CraftingLevel::new(level).unwrap(),
-			arm: CraftingLevel::new(level).unwrap(),
-			gsm: CraftingLevel::new(level).unwrap(),
-			ltw: CraftingLevel::new(level).unwrap(),
-			wvr: CraftingLevel::new(level).unwrap(),
-			alc: CraftingLevel::new(level).unwrap(),
-			cul: CraftingLevel::new(level).unwrap(),
+			crp: CraftingLevel::unchecked_new(level),
+			bsm: CraftingLevel::unchecked_new(level),
+			arm: CraftingLevel::unchecked_new(level),
+			gsm: CraftingLevel::unchecked_new(level),
+			ltw: CraftingLevel::unchecked_new(level),
+			wvr: CraftingLevel::unchecked_new(level),
+			alc: CraftingLevel::unchecked_new(level),
+			cul: CraftingLevel::unchecked_new(level),
 		},
 	}
 }

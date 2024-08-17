@@ -8,7 +8,7 @@ pub struct ImmaculateMend;
 
 impl CraftingAction for ImmaculateMend {
     fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-        (CraftingJob::Any, CraftingLevel::new(98).unwrap())
+        (CraftingJob::Any, CraftingLevel::unchecked_new(98))
     }
 
     fn get_type(&self) -> ActionType {

@@ -28,7 +28,7 @@ impl CraftingAction for TrainedPerfection {
 	}
 
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::new(100).unwrap())
+		(CraftingJob::Any, CraftingLevel::unchecked_new(100))
 	}
 
 	fn get_type(&self) -> ActionType {

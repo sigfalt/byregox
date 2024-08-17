@@ -13,7 +13,7 @@ impl QualityAction for StandardTouch {}
 
 impl CraftingAction for StandardTouch {
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::new(18).unwrap())
+		(CraftingJob::Any, CraftingLevel::unchecked_new(18))
 	}
 
 	fn has_combo(&self, simulation_state: &Simulation) -> bool {

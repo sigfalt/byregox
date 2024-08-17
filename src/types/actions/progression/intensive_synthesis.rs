@@ -12,7 +12,7 @@ impl ProgressAction for IntensiveSynthesis {}
 
 impl CraftingAction for IntensiveSynthesis {
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::new(78).unwrap())
+		(CraftingJob::Any, CraftingLevel::unchecked_new(78))
 	}
 
 	fn requires_good(&self) -> bool {

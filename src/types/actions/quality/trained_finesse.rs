@@ -12,7 +12,7 @@ impl QualityAction for TrainedFinesse {}
 
 impl CraftingAction for TrainedFinesse {
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::new(90).unwrap())
+		(CraftingJob::Any, CraftingLevel::unchecked_new(90))
 	}
 
 	fn get_type(&self) -> ActionType {

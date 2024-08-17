@@ -16,7 +16,7 @@ impl CraftingAction for PreciseTouch {
 	}
 
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::new(53).unwrap())
+		(CraftingJob::Any, CraftingLevel::unchecked_new(53))
 	}
 
 	fn get_type(&self) -> ActionType {

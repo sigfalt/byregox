@@ -12,7 +12,7 @@ impl ProgressAction for Groundwork {}
 
 impl CraftingAction for Groundwork {
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::new(72).unwrap())
+		(CraftingJob::Any, CraftingLevel::unchecked_new(72))
 	}
 
 	fn get_type(&self) -> ActionType {

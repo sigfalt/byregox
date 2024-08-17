@@ -36,7 +36,7 @@ impl CraftingAction for WasteNotII {
 	}
 
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::new(47).unwrap())
+		(CraftingJob::Any, CraftingLevel::unchecked_new(47))
 	}
 
 	fn get_type(&self) -> ActionType {
