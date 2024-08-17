@@ -214,7 +214,7 @@ impl Simulation {
 		};
 		if let Some(failed_action) = failed_action {
 			if failed_action.fail_cause.is_some() {
-				res.fail_cause = failed_action.fail_cause.clone();
+				res.fail_cause = failed_action.fail_cause;
 			}
 		}
 		res
