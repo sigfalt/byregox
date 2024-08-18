@@ -1,7 +1,4 @@
-use crate::types::enums::*;
-use crate::types::structs::CraftingLevel;
-use crate::types::traits::*;
-use crate::types::Simulation;
+use crate::types::{enums::*, structs::CraftingLevel, traits::*, Simulation};
 
 #[derive(Clone)]
 pub struct BasicSynthesis;

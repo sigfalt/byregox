@@ -1,10 +1,9 @@
 use crate::types::{
-	enums::{ActionType, Buff, CraftingActionEnum, CraftingJob, StepState},
+	enums::{ActionType, Buff, CraftingActionEnum, CraftingJob, FailCause, StepState},
 	structs::CraftingLevel,
 	traits::{CraftingAction, GeneralAction, QualityAction},
 	Simulation,
 };
-use crate::types::enums::FailCause;
 
 #[derive(Clone)]
 pub struct ByregotsBlessing;

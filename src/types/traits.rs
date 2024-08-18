@@ -205,8 +205,8 @@ pub trait GeneralAction: CraftingAction {
 /*
 impl CraftingAction for Class {
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-        todo!()
-    }
+		todo!()
+	}
 
 	fn get_type(&self) -> ActionType {
 		todo!()
@@ -251,8 +251,8 @@ pub trait ProgressAction: GeneralAction {}
 /*
 impl CraftingAction for Class {
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-        todo!()
-    }
+		todo!()
+	}
 
 	fn get_type(&self) -> ActionType { ActionType::Progression }
 
@@ -329,8 +329,8 @@ pub trait QualityAction: GeneralAction {}
 /*
 impl CraftingAction for Class {
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-        todo!()
-    }
+		todo!()
+	}
 
 	fn get_type(&self) -> ActionType { ActionType::Quality }
 

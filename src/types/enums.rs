@@ -133,5 +133,5 @@ pub enum FailCause {
 	MissingStatsRequirement,
 	NotSpecialist,
 	NoInnerQuiet,
-	QualityTooLow
+	QualityTooLow,
 }

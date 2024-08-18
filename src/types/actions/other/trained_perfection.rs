@@ -1,7 +1,9 @@
-use crate::types::enums::{ActionType, Buff, CraftingActionEnum, CraftingJob};
-use crate::types::Simulation;
-use crate::types::structs::CraftingLevel;
-use crate::types::traits::{BuffAction, CraftingAction};
+use crate::types::{
+	enums::{ActionType, Buff, CraftingActionEnum, CraftingJob},
+	structs::CraftingLevel,
+	traits::{BuffAction, CraftingAction},
+	Simulation,
+};
 
 #[derive(Clone)]
 pub struct TrainedPerfection;
@@ -40,8 +42,10 @@ impl CraftingAction for TrainedPerfection {
 	}
 
 	fn _can_be_used(&self, simulation_state: &Simulation, _linear: Option<bool>) -> bool {
-		!simulation_state.steps.iter().any(|step|
-			step.action.get_enum() == CraftingActionEnum::TrainedPerfection)
+		!simulation_state
+			.steps
+			.iter()
+			.any(|step| step.action.get_enum() == CraftingActionEnum::TrainedPerfection)
 	}
 
 	fn get_base_cp_cost(&self, _simulation_state: &Simulation) -> u32 {
@@ -58,7 +62,9 @@ impl CraftingAction for TrainedPerfection {
 		_safe: bool,
 		_skip_stack_addition: bool,
 	) {
-		self.get_overrides().into_iter().for_each(|b| simulation_state.remove_buff(b));
+		self.get_overrides()
+			.into_iter()
+			.for_each(|b| simulation_state.remove_buff(b));
 		simulation_state.add_buff(self.get_applied_buff(simulation_state));
 	}
 

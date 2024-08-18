@@ -1,10 +1,9 @@
 use crate::types::{
 	enums::{ActionType, Buff, CraftingActionEnum, CraftingJob, StepState},
-	structs::CraftingLevel,
+	structs::{CraftingLevel, EffectiveBuff},
 	traits::{CraftingAction, GeneralAction, QualityAction},
 	Simulation,
 };
-use crate::types::structs::EffectiveBuff;
 
 #[derive(Clone)]
 pub struct HastyTouch;

@@ -13,7 +13,7 @@ impl CraftingAction for TrainedEye {
 		(CraftingJob::Any, CraftingLevel::unchecked_new(80))
 	}
 
-	fn get_type(&self) -> crate::types::enums::ActionType {
+	fn get_type(&self) -> ActionType {
 		ActionType::Quality
 	}
 

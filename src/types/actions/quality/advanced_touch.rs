@@ -17,7 +17,8 @@ impl CraftingAction for AdvancedTouch {
 			if step.action.get_enum() == CraftingActionEnum::Observe
 				|| (step.action.get_enum() == CraftingActionEnum::StandardTouch
 					&& step.success.is_some_and(|x| x)
-					&& step.combo.is_some_and(|x| x)) {
+					&& step.combo.is_some_and(|x| x))
+			{
 				return true;
 			}
 			if !step.skipped {

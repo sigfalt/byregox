@@ -1,8 +1,8 @@
-use std::collections::{HashMap, HashSet};
+use crate::types::enums::FailCause;
 use derive_builder::{Builder, UninitializedFieldError};
 use num_traits::FromPrimitive;
 use rand::{random, Rng};
-use crate::types::enums::FailCause;
+use std::collections::{HashMap, HashSet};
 
 use crate::types::tables;
 
@@ -124,12 +124,16 @@ impl Simulation {
 			.iter()
 			.enumerate()
 			.for_each(|(i, action)| {
-				self.state = self
-					.step_states
-					.get(i)
-					.map_or_else(|| StepState::Normal, |&s| {
-						if s == StepState::None { StepState::Normal } else { s }
-					});
+				self.state = self.step_states.get(i).map_or_else(
+					|| StepState::Normal,
+					|&s| {
+						if s == StepState::None {
+							StepState::Normal
+						} else {
+							s
+						}
+					},
+				);
 				let mut fail_cause: Option<FailCause> = None;
 
 				let can_use_action = action.can_be_used_with_flags(&self, Some(linear), Some(safe));
@@ -256,8 +260,9 @@ impl Simulation {
 		let mut fail_cause: Option<FailCause> = None;
 		let mut success = false;
 
-		if safe &&
-			(action.get_success_rate(self) < 100 || (action.requires_good() && !self.has_buff(Buff::HeartAndSoul)))
+		if safe
+			&& (action.get_success_rate(self) < 100
+				|| (action.requires_good() && !self.has_buff(Buff::HeartAndSoul)))
 		{
 			fail_cause = Some(FailCause::UnsafeAction);
 			action.on_fail(self);
@@ -349,10 +354,16 @@ impl Simulation {
 				}
 			};
 		});
-		buff_vec.iter()
+		buff_vec
+			.iter()
 			.filter(|b| b.duration <= 0 && b.on_expire.is_some())
 			.for_each(|b| b.on_expire(self, action));
-		self.buffs = self.buffs.clone().into_iter().filter(|b| b.duration > 0).collect();
+		self.buffs = self
+			.buffs
+			.clone()
+			.into_iter()
+			.filter(|b| b.duration > 0)
+			.collect();
 	}
 
 	pub fn possible_conditions(&self) -> &HashSet<StepState> {
@@ -378,25 +389,30 @@ impl Simulation {
 			0.2
 		};
 
-		let mut states_and_rates: HashMap<_, _> = HashMap::from_iter(
-			self.possible_conditions.iter().filter_map(|&step_state| {
-			match step_state {
-				StepState::Good => Some(
-					if self.recipe.expert.is_some_and(|b| b) { 0.12 } else { good_chance }
-				),
-				StepState::Excellent => Some(
-					if self.recipe.expert.is_some_and(|b| b) { 0.0 } else { 0.04 }
-				),
-				StepState::Poor => Some(0.0),
-				StepState::Centered => Some(0.15),
-				StepState::Sturdy => Some(0.15),
-				StepState::Pliant => Some(0.12),
-				StepState::Malleable => Some(0.12),
-				StepState::Primed => Some(0.12),
-				StepState::GoodOmen => Some(0.1),
-				_ => None
-			}.map(|rate| (step_state, rate))
-		}));
+		let mut states_and_rates: HashMap<_, _> =
+			HashMap::from_iter(self.possible_conditions.iter().filter_map(|&step_state| {
+				match step_state {
+					StepState::Good => Some(if self.recipe.expert.is_some_and(|b| b) {
+						0.12
+					} else {
+						good_chance
+					}),
+					StepState::Excellent => Some(if self.recipe.expert.is_some_and(|b| b) {
+						0.0
+					} else {
+						0.04
+					}),
+					StepState::Poor => Some(0.0),
+					StepState::Centered => Some(0.15),
+					StepState::Sturdy => Some(0.15),
+					StepState::Pliant => Some(0.12),
+					StepState::Malleable => Some(0.12),
+					StepState::Primed => Some(0.12),
+					StepState::GoodOmen => Some(0.1),
+					_ => None,
+				}
+				.map(|rate| (step_state, rate))
+			}));
 		let non_normal_rate: f64 = states_and_rates.values().sum();
 		states_and_rates.insert(StepState::Normal, 1.0 - non_normal_rate);
 		self.state = Self::get_weighted_random(states_and_rates).unwrap_or(StepState::Normal);
@@ -454,16 +470,21 @@ impl SimulationBuilder {
 		let conditions_flag = match &self.recipe {
 			Some(r) => Ok(r.conditions_flag),
 			_ => Err(SimulationBuilderError::from(UninitializedFieldError::new(
-				"conditions_flag"
+				"conditions_flag",
 			))),
 		}?;
 		let binary_string = format!("{:b}", conditions_flag);
-		Ok(binary_string.chars().rev().enumerate().filter_map(|(ix, chr)|
-			if chr == '1' {
-				StepState::from_usize(ix + 1)
-			} else {
-				None
-			}
-		).collect())
+		Ok(binary_string
+			.chars()
+			.rev()
+			.enumerate()
+			.filter_map(|(ix, chr)| {
+				if chr == '1' {
+					StepState::from_usize(ix + 1)
+				} else {
+					None
+				}
+			})
+			.collect())
 	}
 }
