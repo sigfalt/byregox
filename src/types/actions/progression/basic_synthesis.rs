@@ -1,7 +1,4 @@
-use crate::types::enums::*;
-use crate::types::structs::CraftingLevel;
-use crate::types::traits::*;
-use crate::types::Simulation;
+use crate::types::{enums::*, structs::CraftingLevel, traits::*, Simulation};
 
 #[derive(Clone)]
 pub struct BasicSynthesis;
@@ -28,7 +25,7 @@ impl GeneralAction for BasicSynthesis {
 
 impl CraftingAction for BasicSynthesis {
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::new(1).unwrap())
+		(CraftingJob::Any, CraftingLevel::unchecked_new(1))
 	}
 
 	fn get_type(&self) -> ActionType {

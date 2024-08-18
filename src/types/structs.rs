@@ -78,14 +78,14 @@ pub struct CrafterLevels {
 impl From<[u8; 8]> for CrafterLevels {
 	fn from(value: [u8; 8]) -> Self {
 		CrafterLevels {
-			crp: CraftingLevel::new(value[0]).unwrap(),
-			bsm: CraftingLevel::new(value[1]).unwrap(),
-			arm: CraftingLevel::new(value[2]).unwrap(),
-			gsm: CraftingLevel::new(value[3]).unwrap(),
-			ltw: CraftingLevel::new(value[4]).unwrap(),
-			wvr: CraftingLevel::new(value[5]).unwrap(),
-			alc: CraftingLevel::new(value[6]).unwrap(),
-			cul: CraftingLevel::new(value[7]).unwrap(),
+			crp: CraftingLevel::unchecked_new(value[0]),
+			bsm: CraftingLevel::unchecked_new(value[1]),
+			arm: CraftingLevel::unchecked_new(value[2]),
+			gsm: CraftingLevel::unchecked_new(value[3]),
+			ltw: CraftingLevel::unchecked_new(value[4]),
+			wvr: CraftingLevel::unchecked_new(value[5]),
+			alc: CraftingLevel::unchecked_new(value[6]),
+			cul: CraftingLevel::unchecked_new(value[7]),
 		}
 	}
 }
@@ -106,17 +106,23 @@ impl std::ops::Index<CraftingJob> for CrafterLevels {
 	}
 }
 
+const MAX_LEVEL: u8 = 100;
+
 #[derive(Clone, Copy, Default, Eq, PartialEq, PartialOrd)]
 pub struct CraftingLevel {
 	val: u8,
 }
 impl CraftingLevel {
 	pub fn new(val: u8) -> Option<CraftingLevel> {
-		if (0..=90).contains(&val) {
+		if (0..=MAX_LEVEL).contains(&val) {
 			Some(CraftingLevel { val })
 		} else {
 			None
 		}
+	}
+
+	pub fn unchecked_new(val: u8) -> CraftingLevel {
+		Self::new(val).unwrap()
 	}
 }
 impl From<CraftingLevel> for u8 {

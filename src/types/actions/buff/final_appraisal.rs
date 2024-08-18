@@ -31,12 +31,12 @@ impl CraftingAction for FinalAppraisal {
 		true
 	}
 
-	fn get_type(&self) -> ActionType {
-		ActionType::Buff
+	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
+		(CraftingJob::Any, CraftingLevel::unchecked_new(42))
 	}
 
-	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::new(42).unwrap())
+	fn get_type(&self) -> ActionType {
+		ActionType::Buff
 	}
 
 	fn _get_success_rate(&self, _simulation_state: &Simulation) -> u32 {

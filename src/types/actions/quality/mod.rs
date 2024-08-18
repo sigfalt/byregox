@@ -22,10 +22,6 @@ pub use precise_touch::*;
 mod prudent_touch;
 pub use prudent_touch::*;
 
-// level 68
-mod focused_touch;
-pub use focused_touch::*;
-
 // level 69
 mod reflect;
 pub use reflect::*;
@@ -45,3 +41,11 @@ pub use advanced_touch::*;
 // level 90
 mod trained_finesse;
 pub use trained_finesse::*;
+
+// level 92
+mod refined_touch;
+pub use refined_touch::*;
+
+// level 96
+mod daring_touch;
+pub use daring_touch::*;

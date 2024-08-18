@@ -24,7 +24,7 @@ impl GeneralAction for DelicateSynthesis {
 
 impl CraftingAction for DelicateSynthesis {
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::new(76).unwrap())
+		(CraftingJob::Any, CraftingLevel::unchecked_new(76))
 	}
 
 	fn get_type(&self) -> ActionType {

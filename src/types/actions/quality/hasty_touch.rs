@@ -1,6 +1,6 @@
 use crate::types::{
 	enums::{ActionType, Buff, CraftingActionEnum, CraftingJob, StepState},
-	structs::CraftingLevel,
+	structs::{CraftingLevel, EffectiveBuff},
 	traits::{CraftingAction, GeneralAction, QualityAction},
 	Simulation,
 };
@@ -12,7 +12,7 @@ impl QualityAction for HastyTouch {}
 
 impl CraftingAction for HastyTouch {
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::new(9).unwrap())
+		(CraftingJob::Any, CraftingLevel::unchecked_new(9))
 	}
 
 	fn get_type(&self) -> ActionType {
@@ -81,12 +81,23 @@ impl CraftingAction for HastyTouch {
 			buff_mult += 0.5;
 		}
 
-		let buff_mod = ((buff_mod * buff_mult * (100 + iq_mod * 10) as f64 / 100.0) as f32) as f64;
+		let buff_mod = buff_mod * buff_mult * (100 + iq_mod * 10) as f64 / 100.0;
 		let efficiency = ((potency * buff_mod) as f32) as f64;
 		simulation_state.quality += (quality_increase * condition_mod * efficiency / 100.0) as u32;
 
-		if !skip_stack_addition {
+		if !skip_stack_addition && simulation_state.crafter_stats.level >= 11 {
 			simulation_state.add_inner_quiet_stacks(1);
+		}
+
+		if simulation_state.crafter_stats.level >= 96 {
+			simulation_state.add_buff(EffectiveBuff {
+				duration: 1,
+				stacks: 1,
+				buff: Buff::Expedience,
+				applied_step: simulation_state.steps.len() as u32,
+				tick: None,
+				on_expire: None,
+			})
 		}
 	}
 

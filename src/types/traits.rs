@@ -204,7 +204,7 @@ pub trait GeneralAction: CraftingAction {
 // any class that implements GeneralAction should inherit the following defaults
 /*
 impl CraftingAction for Class {
-	fn get_level_requirement(&self) -> (CraftingJob, u32) {
+	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
 		todo!()
 	}
 
@@ -239,6 +239,10 @@ impl CraftingAction for Class {
 	) {
 		todo!()
 	}
+
+	fn get_enum(&self) -> CraftingActionEnum {
+		todo!()
+	}
 }
 */
 
@@ -246,7 +250,7 @@ pub trait ProgressAction: GeneralAction {}
 // any class that implements ProgressAction should inherit the following defaults
 /*
 impl CraftingAction for Class {
-	fn get_level_requirement(&self) -> (CraftingJob, u32) {
+	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
 		todo!()
 	}
 
@@ -299,6 +303,10 @@ impl CraftingAction for Class {
 			simulation_state.remove_buff(Buff::FinalAppraisal);
 		}
 	}
+
+	fn get_enum(&self) -> CraftingActionEnum {
+		todo!()
+	}
 }
 
 impl GeneralAction for Class {
@@ -320,7 +328,7 @@ pub trait QualityAction: GeneralAction {}
 // any class that implements QualityAction should inherit the following defaults
 /*
 impl CraftingAction for Class {
-	fn get_level_requirement(&self) -> (CraftingJob, u32) {
+	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
 		todo!()
 	}
 
@@ -383,13 +391,17 @@ impl CraftingAction for Class {
 			buff_mult += 0.5;
 		}
 
-		let buff_mod = ((buff_mod * buff_mult * (100 + iq_mod * 10) as f64 / 100.0) as f32) as f64;
+		let buff_mod = buff_mod * buff_mult * (100 + iq_mod * 10) as f64 / 100.0;
 		let efficiency = ((potency * buff_mod) as f32) as f64;
 		simulation_state.quality += (quality_increase * condition_mod * efficiency / 100.0) as u32;
 
-		if !skip_stack_addition {
+		if !skip_stack_addition && simulation_state.crafter_stats.level >= 11 {
 			simulation_state.add_inner_quiet_stacks(1);
 		}
+	}
+
+	fn get_enum(&self) -> CraftingActionEnum {
+		todo!()
 	}
 }
 
@@ -489,6 +501,10 @@ impl CraftingAction for Class {
 	) {
 		self.get_overrides().into_iter().for_each(|b| simulation_state.remove_buff(b));
 		simulation_state.add_buff(self.get_applied_buff(simulation_state));
+	}
+
+	fn get_enum(&self) -> CraftingActionEnum {
+		todo!()
 	}
 }
 */

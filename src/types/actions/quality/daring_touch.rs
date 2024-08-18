@@ -1,5 +1,4 @@
 use crate::types::{
-	actions,
 	enums::{ActionType, Buff, CraftingActionEnum, CraftingJob, StepState},
 	structs::CraftingLevel,
 	traits::{CraftingAction, GeneralAction, QualityAction},
@@ -7,13 +6,17 @@ use crate::types::{
 };
 
 #[derive(Clone)]
-pub struct FocusedTouch;
+pub struct DaringTouch;
 
-impl QualityAction for FocusedTouch {}
+impl QualityAction for DaringTouch {}
 
-impl CraftingAction for FocusedTouch {
+impl CraftingAction for DaringTouch {
+	fn has_combo(&self, simulation_state: &Simulation) -> bool {
+		simulation_state.has_buff(Buff::Expedience)
+	}
+
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::new(68).unwrap())
+		(CraftingJob::Any, CraftingLevel::unchecked_new(96))
 	}
 
 	fn get_type(&self) -> ActionType {
@@ -24,12 +27,12 @@ impl CraftingAction for FocusedTouch {
 		self.get_base_success_rate(simulation_state)
 	}
 
-	fn _can_be_used(&self, _simulation_state: &Simulation, _linear: Option<bool>) -> bool {
-		true
+	fn _can_be_used(&self, simulation_state: &Simulation, _linear: Option<bool>) -> bool {
+		simulation_state.has_buff(Buff::Expedience)
 	}
 
 	fn get_base_cp_cost(&self, _simulation_state: &Simulation) -> u32 {
-		18
+		0
 	}
 
 	fn get_durability_cost(&self, simulation_state: &Simulation) -> u32 {
@@ -82,21 +85,21 @@ impl CraftingAction for FocusedTouch {
 			buff_mult += 0.5;
 		}
 
-		let buff_mod = ((buff_mod * buff_mult * (100 + iq_mod * 10) as f64 / 100.0) as f32) as f64;
+		let buff_mod = buff_mod * buff_mult * (100 + iq_mod * 10) as f64 / 100.0;
 		let efficiency = ((potency * buff_mod) as f32) as f64;
 		simulation_state.quality += (quality_increase * condition_mod * efficiency / 100.0) as u32;
 
-		if !skip_stack_addition {
+		if !skip_stack_addition && simulation_state.crafter_stats.level >= 11 {
 			simulation_state.add_inner_quiet_stacks(1);
 		}
 	}
 
 	fn get_enum(&self) -> CraftingActionEnum {
-		CraftingActionEnum::FocusedTouch
+		CraftingActionEnum::DaringTouch
 	}
 }
 
-impl GeneralAction for FocusedTouch {
+impl GeneralAction for DaringTouch {
 	fn get_potency(&self, _simulation_state: &Simulation) -> u32 {
 		150
 	}
@@ -105,11 +108,7 @@ impl GeneralAction for FocusedTouch {
 		10
 	}
 
-	fn get_base_success_rate(&self, simulation_state: &Simulation) -> u32 {
-		if simulation_state.has_combo_available(&actions::Observe) {
-			100
-		} else {
-			50
-		}
+	fn get_base_success_rate(&self, _simulation_state: &Simulation) -> u32 {
+		60
 	}
 }

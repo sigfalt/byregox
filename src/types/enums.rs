@@ -39,7 +39,6 @@ pub enum CraftingActionEnum {
 	PrudentSynthesis,
 	RapidSynthesis,
 	Groundwork,
-	FocusedSynthesis,
 	MuscleMemory,
 	IntensiveSynthesis,
 
@@ -50,12 +49,13 @@ pub enum CraftingActionEnum {
 	HastyTouch,
 	ByregotsBlessing,
 	PreciseTouch,
-	FocusedTouch,
 	PrudentTouch,
 	TrainedEye,
 	PreparatoryTouch,
 	Reflect,
 	TrainedFinesse,
+	DaringTouch,
+	RefinedTouch,
 
 	// CP recovery
 	TricksOfTheTrade,
@@ -63,6 +63,7 @@ pub enum CraftingActionEnum {
 	// Repair
 	MastersMend,
 	Manipulation,
+	ImmaculateMend,
 
 	// Buffs
 	WasteNot,
@@ -71,6 +72,8 @@ pub enum CraftingActionEnum {
 	Innovation,
 	Veneration,
 	FinalAppraisal,
+	QuickInnovation,
+	TrainedPerfection,
 
 	// Other
 	Observe,
@@ -102,6 +105,10 @@ pub enum Buff {
 	FinalAppraisal,
 
 	HeartAndSoul,
+
+	Expedience,
+
+	TrainedPerfection,
 }
 
 #[derive(Clone, Copy, PartialEq)]
@@ -126,5 +133,5 @@ pub enum FailCause {
 	MissingStatsRequirement,
 	NotSpecialist,
 	NoInnerQuiet,
-	QualityTooLow
+	QualityTooLow,
 }

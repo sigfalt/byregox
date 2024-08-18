@@ -14,9 +14,10 @@ impl CraftingAction for AdvancedTouch {
 	fn has_combo(&self, simulation_state: &Simulation) -> bool {
 		// need to check not only for StandardTouch, but that it was also combo'd
 		for step in simulation_state.steps.iter().rev() {
-			if step.action.get_enum() == CraftingActionEnum::StandardTouch
-				&& step.success.is_some_and(|x| x)
-				&& step.combo.is_some_and(|x| x)
+			if step.action.get_enum() == CraftingActionEnum::Observe
+				|| (step.action.get_enum() == CraftingActionEnum::StandardTouch
+					&& step.success.is_some_and(|x| x)
+					&& step.combo.is_some_and(|x| x))
 			{
 				return true;
 			}
@@ -28,7 +29,7 @@ impl CraftingAction for AdvancedTouch {
 	}
 
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::new(84).unwrap())
+		(CraftingJob::Any, CraftingLevel::unchecked_new(84))
 	}
 
 	fn get_type(&self) -> ActionType {
@@ -101,11 +102,11 @@ impl CraftingAction for AdvancedTouch {
 			buff_mult += 0.5;
 		}
 
-		let buff_mod = ((buff_mod * buff_mult * (100 + iq_mod * 10) as f64 / 100.0) as f32) as f64;
+		let buff_mod = buff_mod * buff_mult * (100 + iq_mod * 10) as f64 / 100.0;
 		let efficiency = ((potency * buff_mod) as f32) as f64;
 		simulation_state.quality += (quality_increase * condition_mod * efficiency / 100.0) as u32;
 
-		if !skip_stack_addition {
+		if !skip_stack_addition && simulation_state.crafter_stats.level >= 11 {
 			simulation_state.add_inner_quiet_stacks(1);
 		}
 	}

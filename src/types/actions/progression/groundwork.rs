@@ -12,7 +12,7 @@ impl ProgressAction for Groundwork {}
 
 impl CraftingAction for Groundwork {
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::new(72).unwrap())
+		(CraftingJob::Any, CraftingLevel::unchecked_new(72))
 	}
 
 	fn get_type(&self) -> ActionType {
@@ -91,7 +91,9 @@ impl GeneralAction for Groundwork {
 		} else {
 			300
 		};
-		if simulation_state.durability >= self.get_durability_cost(simulation_state) as i32 {
+		if simulation_state.has_buff(Buff::TrainedPerfection)
+			|| (simulation_state.durability >= self.get_durability_cost(simulation_state) as i32)
+		{
 			base_potency
 		} else {
 			base_potency / 2

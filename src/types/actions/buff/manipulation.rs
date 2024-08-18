@@ -46,12 +46,12 @@ impl CraftingAction for Manipulation {
 		true
 	}
 
-	fn get_type(&self) -> ActionType {
-		ActionType::Repair
+	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
+		(CraftingJob::Any, CraftingLevel::unchecked_new(65))
 	}
 
-	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::new(65).unwrap())
+	fn get_type(&self) -> ActionType {
+		ActionType::Repair
 	}
 
 	fn _get_success_rate(&self, _simulation_state: &Simulation) -> u32 {

@@ -12,7 +12,7 @@ impl ProgressAction for CarefulSynthesis {}
 
 impl CraftingAction for CarefulSynthesis {
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::new(62).unwrap())
+		(CraftingJob::Any, CraftingLevel::unchecked_new(62))
 	}
 
 	fn get_type(&self) -> ActionType {

@@ -1,10 +1,9 @@
 use crate::types::{
-	enums::{ActionType, Buff, CraftingActionEnum, CraftingJob, StepState},
+	enums::{ActionType, Buff, CraftingActionEnum, CraftingJob, FailCause, StepState},
 	structs::CraftingLevel,
 	traits::{CraftingAction, GeneralAction, QualityAction},
 	Simulation,
 };
-use crate::types::enums::FailCause;
 
 #[derive(Clone)]
 pub struct ByregotsBlessing;
@@ -13,7 +12,7 @@ impl QualityAction for ByregotsBlessing {}
 
 impl CraftingAction for ByregotsBlessing {
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::new(50).unwrap())
+		(CraftingJob::Any, CraftingLevel::unchecked_new(50))
 	}
 
 	fn get_type(&self) -> ActionType {
@@ -119,11 +118,11 @@ impl CraftingAction for ByregotsBlessing {
 			buff_mult += 0.5;
 		}
 
-		let buff_mod = ((buff_mod * buff_mult * (100 + iq_mod * 10) as f64 / 100.0) as f32) as f64;
+		let buff_mod = buff_mod * buff_mult * (100 + iq_mod * 10) as f64 / 100.0;
 		let efficiency = ((potency * buff_mod) as f32) as f64;
 		simulation_state.quality += (quality_increase * condition_mod * efficiency / 100.0) as u32;
 
-		if !skip_stack_addition {
+		if !skip_stack_addition && simulation_state.crafter_stats.level >= 11 {
 			simulation_state.add_inner_quiet_stacks(1);
 		}
 

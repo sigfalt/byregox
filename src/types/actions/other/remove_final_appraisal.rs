@@ -10,7 +10,7 @@ pub struct RemoveFinalAppraisal;
 
 impl CraftingAction for RemoveFinalAppraisal {
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::new(42).unwrap())
+		(CraftingJob::Any, CraftingLevel::unchecked_new(42))
 	}
 
 	fn get_type(&self) -> ActionType {

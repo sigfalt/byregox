@@ -20,3 +20,11 @@ pub use careful_observation::*;
 // level 76
 mod delicate_synthesis;
 pub use delicate_synthesis::*;
+
+// level 98
+mod immaculate_mend;
+pub use immaculate_mend::*;
+
+// level 100
+mod trained_perfection;
+pub use trained_perfection::*;

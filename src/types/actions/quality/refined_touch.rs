@@ -1,4 +1,5 @@
 use crate::types::{
+	actions,
 	enums::{ActionType, Buff, CraftingActionEnum, CraftingJob, StepState},
 	structs::CraftingLevel,
 	traits::{CraftingAction, GeneralAction, QualityAction},
@@ -6,13 +7,17 @@ use crate::types::{
 };
 
 #[derive(Clone)]
-pub struct TrainedFinesse;
+pub struct RefinedTouch;
 
-impl QualityAction for TrainedFinesse {}
+impl QualityAction for RefinedTouch {}
 
-impl CraftingAction for TrainedFinesse {
+impl CraftingAction for RefinedTouch {
+	fn has_combo(&self, simulation_state: &Simulation) -> bool {
+		simulation_state.has_combo_available(&actions::BasicTouch)
+	}
+
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::unchecked_new(90))
+		(CraftingJob::Any, CraftingLevel::unchecked_new(92))
 	}
 
 	fn get_type(&self) -> ActionType {
@@ -23,14 +28,12 @@ impl CraftingAction for TrainedFinesse {
 		self.get_base_success_rate(simulation_state)
 	}
 
-	fn _can_be_used(&self, simulation_state: &Simulation, _linear: Option<bool>) -> bool {
-		simulation_state
-			.get_buff(Buff::InnerQuiet)
-			.is_some_and(|b| b.stacks == 10)
+	fn _can_be_used(&self, _simulation_state: &Simulation, _linear: Option<bool>) -> bool {
+		true
 	}
 
 	fn get_base_cp_cost(&self, _simulation_state: &Simulation) -> u32 {
-		32
+		24
 	}
 
 	fn get_durability_cost(&self, simulation_state: &Simulation) -> u32 {
@@ -51,6 +54,9 @@ impl CraftingAction for TrainedFinesse {
 		_safe: bool,
 		skip_stack_addition: bool,
 	) {
+		// Refined Touch specific addition to blanket `execute` impl
+		let has_combo = self.has_combo(simulation_state);
+
 		let buff_mod = self.get_base_bonus(simulation_state);
 		let potency = self.get_potency(simulation_state) as f64;
 		let quality_increase = self.get_base_quality(simulation_state) as f64;
@@ -90,20 +96,25 @@ impl CraftingAction for TrainedFinesse {
 		if !skip_stack_addition && simulation_state.crafter_stats.level >= 11 {
 			simulation_state.add_inner_quiet_stacks(1);
 		}
+
+		// Refined Touch specific addition to blanket `execute` impl
+		if has_combo {
+			simulation_state.add_inner_quiet_stacks(1);
+		}
 	}
 
 	fn get_enum(&self) -> CraftingActionEnum {
-		CraftingActionEnum::TrainedFinesse
+		CraftingActionEnum::RefinedTouch
 	}
 }
 
-impl GeneralAction for TrainedFinesse {
+impl GeneralAction for RefinedTouch {
 	fn get_potency(&self, _simulation_state: &Simulation) -> u32 {
 		100
 	}
 
 	fn get_base_durability_cost(&self, _simulation_state: &Simulation) -> u32 {
-		0
+		10
 	}
 
 	fn get_base_success_rate(&self, _simulation_state: &Simulation) -> u32 {

@@ -6,19 +6,15 @@ use crate::types::{
 };
 
 #[derive(Clone)]
-pub struct Observe;
+pub struct ImmaculateMend;
 
-impl CraftingAction for Observe {
-	fn skip_on_fail(&self) -> bool {
-		true
-	}
-
+impl CraftingAction for ImmaculateMend {
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::unchecked_new(13))
+		(CraftingJob::Any, CraftingLevel::unchecked_new(98))
 	}
 
 	fn get_type(&self) -> ActionType {
-		ActionType::Other
+		ActionType::Repair
 	}
 
 	fn _get_success_rate(&self, _simulation_state: &Simulation) -> u32 {
@@ -30,7 +26,7 @@ impl CraftingAction for Observe {
 	}
 
 	fn get_base_cp_cost(&self, _simulation_state: &Simulation) -> u32 {
-		7
+		112
 	}
 
 	fn get_durability_cost(&self, _simulation_state: &Simulation) -> u32 {
@@ -39,14 +35,14 @@ impl CraftingAction for Observe {
 
 	fn execute_with_flags(
 		&self,
-		_simulation_state: &mut Simulation,
+		simulation_state: &mut Simulation,
 		_safe: bool,
 		_skip_stack_addition: bool,
 	) {
-		// nothing
+		simulation_state.durability = simulation_state.recipe.durability as i32;
 	}
 
 	fn get_enum(&self) -> CraftingActionEnum {
-		CraftingActionEnum::Observe
+		CraftingActionEnum::ImmaculateMend
 	}
 }

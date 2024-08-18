@@ -14,7 +14,7 @@ impl CraftingAction for CarefulObservation {
 	}
 
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::new(55).unwrap())
+		(CraftingJob::Any, CraftingLevel::unchecked_new(55))
 	}
 
 	fn get_type(&self) -> ActionType {
