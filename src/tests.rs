@@ -3,7 +3,7 @@ use std::collections::{HashMap, HashSet};
 
 use crate::types::{
 	actions,
-	enums::{Buff, StepState},
+	enums::{Buff, CraftingActionEnum, StepState},
 	structs::{Craft, CrafterLevels, CrafterStats, CraftingLevel},
 	tables,
 	traits::CraftingAction,
@@ -19,9 +19,9 @@ fn test_reflect() -> Result<()> {
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
 		.actions(vec![
-			Box::new(actions::Reflect),
-			Box::new(actions::BasicTouch),
-			Box::new(actions::CarefulSynthesis),
+			actions::Reflect.into(),
+			actions::BasicTouch.into(),
+			actions::CarefulSynthesis.into(),
 		])
 		.crafter_stats(stats)
 		.build()?;
@@ -44,10 +44,10 @@ fn test_low_level() -> Result<()> {
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
 		.actions(vec![
-			Box::new(actions::Reflect),
-			Box::new(actions::BasicTouch),
-			Box::new(actions::ByregotsBlessing),
-			Box::new(actions::CarefulSynthesis),
+			actions::Reflect.into(),
+			actions::BasicTouch.into(),
+			actions::ByregotsBlessing.into(),
+			actions::CarefulSynthesis.into(),
 		])
 		.crafter_stats(stats)
 		.build()?;
@@ -71,16 +71,16 @@ fn test_innovation() -> Result<()> {
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
 		.actions(vec![
-			Box::new(actions::Reflect),
-			Box::new(actions::DelicateSynthesis),
-			Box::new(actions::DelicateSynthesis),
-			Box::new(actions::WasteNot),
-			Box::new(actions::Groundwork),
-			Box::new(actions::Innovation),
-			Box::new(actions::PreparatoryTouch),
-			Box::new(actions::PreparatoryTouch),
-			Box::new(actions::MastersMend),
-			Box::new(actions::PreparatoryTouch),
+			actions::Reflect.into(),
+			actions::DelicateSynthesis.into(),
+			actions::DelicateSynthesis.into(),
+			actions::WasteNot.into(),
+			actions::Groundwork.into(),
+			actions::Innovation.into(),
+			actions::PreparatoryTouch.into(),
+			actions::PreparatoryTouch.into(),
+			actions::MastersMend.into(),
+			actions::PreparatoryTouch.into(),
 		])
 		.crafter_stats(stats)
 		.build()?;
@@ -105,10 +105,10 @@ fn test_flooring() -> Result<()> {
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
 		.actions(vec![
-			Box::new(actions::BasicTouch),
-			Box::new(actions::BasicTouch),
-			Box::new(actions::BasicTouch),
-			Box::new(actions::BasicTouch),
+			actions::BasicTouch.into(),
+			actions::BasicTouch.into(),
+			actions::BasicTouch.into(),
+			actions::BasicTouch.into(),
 		])
 		.crafter_stats(stats)
 		.build()?;
@@ -123,13 +123,13 @@ fn test_flooring() -> Result<()> {
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
 		.actions(vec![
-			Box::new(actions::MuscleMemory),
-			Box::new(actions::Veneration),
-			Box::new(actions::Groundwork),
-			Box::new(actions::Groundwork),
-			Box::new(actions::Observe),
-			Box::new(actions::Observe),
-			Box::new(actions::CarefulSynthesis),
+			actions::MuscleMemory.into(),
+			actions::Veneration.into(),
+			actions::Groundwork.into(),
+			actions::Groundwork.into(),
+			actions::Observe.into(),
+			actions::Observe.into(),
+			actions::CarefulSynthesis.into(),
 		])
 		.crafter_stats(stats)
 		.build()?;
@@ -150,10 +150,10 @@ fn test_dawntrail_flooring() -> Result<()> {
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
 		.actions(vec![
-			Box::new(actions::Reflect),
-			Box::new(actions::Innovation),
-			Box::new(actions::PreparatoryTouch),
-			Box::new(actions::PrudentTouch),
+			actions::Reflect.into(),
+			actions::Innovation.into(),
+			actions::PreparatoryTouch.into(),
+			actions::PrudentTouch.into(),
 		])
 		.crafter_stats(stats)
 		.build()?;
@@ -169,26 +169,26 @@ fn test_dawntrail_flooring() -> Result<()> {
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
 		.actions(vec![
-			Box::new(actions::Reflect),
-			Box::new(actions::Innovation),
-			Box::new(actions::PreparatoryTouch),
-			Box::new(actions::PrudentTouch),
-			Box::new(actions::GreatStrides),
-			Box::new(actions::PreparatoryTouch),
-			Box::new(actions::GreatStrides),
-			Box::new(actions::Innovation),
-			Box::new(actions::PreparatoryTouch),
-			Box::new(actions::ImmaculateMend),
-			Box::new(actions::GreatStrides),
-			Box::new(actions::ByregotsBlessing),
-			Box::new(actions::WasteNot),
-			Box::new(actions::Veneration),
-			Box::new(actions::Groundwork),
-			Box::new(actions::Groundwork),
-			Box::new(actions::Groundwork),
-			Box::new(actions::Groundwork),
-			Box::new(actions::Veneration),
-			Box::new(actions::Groundwork),
+			actions::Reflect.into(),
+			actions::Innovation.into(),
+			actions::PreparatoryTouch.into(),
+			actions::PrudentTouch.into(),
+			actions::GreatStrides.into(),
+			actions::PreparatoryTouch.into(),
+			actions::GreatStrides.into(),
+			actions::Innovation.into(),
+			actions::PreparatoryTouch.into(),
+			actions::ImmaculateMend.into(),
+			actions::GreatStrides.into(),
+			actions::ByregotsBlessing.into(),
+			actions::WasteNot.into(),
+			actions::Veneration.into(),
+			actions::Groundwork.into(),
+			actions::Groundwork.into(),
+			actions::Groundwork.into(),
+			actions::Groundwork.into(),
+			actions::Veneration.into(),
+			actions::Groundwork.into(),
 		])
 		.crafter_stats(stats)
 		.build()?;
@@ -210,8 +210,8 @@ fn test_combo_refinedtouch_with_basictouch() -> Result<()> {
 	let sim = SimulationBuilder::default()
 		.recipe(recipe.clone())
 		.actions(vec![
-			Box::new(actions::BasicTouch),
-			Box::new(actions::RefinedTouch),
+			actions::BasicTouch.into(),
+			actions::RefinedTouch.into(),
 		])
 		.crafter_stats(stats.clone())
 		.build()?;
@@ -235,8 +235,8 @@ fn test_combo_advancedtouch_with_observe() -> Result<()> {
 	let sim = SimulationBuilder::default()
 		.recipe(recipe.clone())
 		.actions(vec![
-			Box::new(actions::Observe),
-			Box::new(actions::AdvancedTouch),
+			actions::Observe.into(),
+			actions::AdvancedTouch.into(),
 		])
 		.crafter_stats(stats.clone())
 		.build()?;
@@ -256,8 +256,8 @@ fn test_advanced_touch_combo() -> Result<()> {
 	let sim = SimulationBuilder::default()
 		.recipe(recipe.clone())
 		.actions(vec![
-			Box::new(actions::StandardTouch),
-			Box::new(actions::AdvancedTouch),
+			actions::StandardTouch.into(),
+			actions::AdvancedTouch.into(),
 		])
 		.crafter_stats(stats.clone())
 		.build()?;
@@ -268,9 +268,9 @@ fn test_advanced_touch_combo() -> Result<()> {
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
 		.actions(vec![
-			Box::new(actions::BasicTouch),
-			Box::new(actions::StandardTouch),
-			Box::new(actions::AdvancedTouch),
+			actions::BasicTouch.into(),
+			actions::StandardTouch.into(),
+			actions::AdvancedTouch.into(),
 		])
 		.crafter_stats(stats)
 		.build()?;
@@ -290,9 +290,9 @@ fn test_level_90_accuracy() -> Result<()> {
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
 		.actions(vec![
-			Box::new(actions::Reflect),
-			Box::new(actions::BasicSynthesis),
-			Box::new(actions::BasicTouch),
+			actions::Reflect.into(),
+			actions::BasicSynthesis.into(),
+			actions::BasicTouch.into(),
 		])
 		.crafter_stats(stats)
 		.build()?;
@@ -314,10 +314,10 @@ fn test_innovation_great_strides_interaction() -> Result<()> {
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
 		.actions(vec![
-			Box::new(actions::Reflect),
-			Box::new(actions::Innovation),
-			Box::new(actions::GreatStrides),
-			Box::new(actions::BasicTouch),
+			actions::Reflect.into(),
+			actions::Innovation.into(),
+			actions::GreatStrides.into(),
+			actions::BasicTouch.into(),
 		])
 		.crafter_stats(stats)
 		.build()?;
@@ -338,8 +338,8 @@ fn test_lv80_2star_craft() -> Result<()> {
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
 		.actions(vec![
-			Box::new(actions::BasicSynthesis),
-			Box::new(actions::BasicTouch),
+			actions::BasicSynthesis.into(),
+			actions::BasicTouch.into(),
 		])
 		.crafter_stats(stats)
 		.build()?;
@@ -360,19 +360,19 @@ fn test_high_byregots_stacks() -> Result<()> {
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
 		.actions(vec![
-			Box::new(actions::Reflect),
-			Box::new(actions::BasicTouch),
-			Box::new(actions::BasicTouch),
-			Box::new(actions::MastersMend),
-			Box::new(actions::BasicTouch),
-			Box::new(actions::BasicTouch),
-			Box::new(actions::BasicTouch),
-			Box::new(actions::MastersMend),
-			Box::new(actions::BasicTouch),
-			Box::new(actions::BasicTouch),
-			Box::new(actions::BasicTouch),
-			Box::new(actions::ByregotsBlessing),
-			Box::new(actions::CarefulSynthesis),
+			actions::Reflect.into(),
+			actions::BasicTouch.into(),
+			actions::BasicTouch.into(),
+			actions::MastersMend.into(),
+			actions::BasicTouch.into(),
+			actions::BasicTouch.into(),
+			actions::BasicTouch.into(),
+			actions::MastersMend.into(),
+			actions::BasicTouch.into(),
+			actions::BasicTouch.into(),
+			actions::BasicTouch.into(),
+			actions::ByregotsBlessing.into(),
+			actions::CarefulSynthesis.into(),
 		])
 		.crafter_stats(stats)
 		.build()?;
@@ -395,7 +395,7 @@ fn test_pliant_step_state_reducing_cp_cost() -> Result<()> {
 	let stats = generate_stats(80, 2800, 2500, 541);
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
-		.actions(vec![Box::new(actions::PrudentTouch)])
+		.actions(vec![actions::PrudentTouch.into()])
 		.crafter_stats(stats)
 		.step_states(vec![StepState::Pliant])
 		.build()?;
@@ -418,8 +418,8 @@ fn test_pliant_step_state_reducing_cp_cost_two() -> Result<()> {
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
 		.actions(vec![
-			Box::new(actions::MuscleMemory),
-			Box::new(actions::WasteNot),
+			actions::MuscleMemory.into(),
+			actions::WasteNot.into(),
 		])
 		.crafter_stats(stats)
 		.step_states(vec![StepState::Normal, StepState::Pliant])
@@ -442,7 +442,7 @@ fn test_sturdy_step_state_reducing_durability_cost() -> Result<()> {
 	let stats = generate_stats(80, 2800, 2500, 541);
 	let sim = SimulationBuilder::default()
 		.recipe(recipe.clone())
-		.actions(vec![Box::new(actions::PrudentTouch)])
+		.actions(vec![actions::PrudentTouch.into()])
 		.crafter_stats(stats.clone())
 		.step_states(vec![StepState::Sturdy])
 		.build()?;
@@ -453,8 +453,8 @@ fn test_sturdy_step_state_reducing_durability_cost() -> Result<()> {
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
 		.actions(vec![
-			Box::new(actions::WasteNot),
-			Box::new(actions::CarefulSynthesis),
+			actions::WasteNot.into(),
+			actions::CarefulSynthesis.into(),
 		])
 		.crafter_stats(stats)
 		.step_states(vec![StepState::Normal, StepState::Sturdy])
@@ -475,8 +475,8 @@ fn test_not_tick_buffs_if_buff_set_to_fail() -> Result<()> {
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
 		.actions(vec![
-			Box::new(actions::GreatStrides),
-			Box::new(actions::TricksOfTheTrade),
+			actions::GreatStrides.into(),
+			actions::TricksOfTheTrade.into(),
 		])
 		.crafter_stats(stats)
 		.step_states(vec![StepState::Normal])
@@ -501,10 +501,10 @@ fn test_not_ticking_buffs_with_certain_abilities() -> Result<()> {
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
 		.actions(vec![
-			Box::new(actions::GreatStrides),
-			Box::new(actions::FinalAppraisal),
-			Box::new(actions::CarefulObservation),
-			Box::new(actions::RemoveFinalAppraisal),
+			actions::GreatStrides.into(),
+			actions::FinalAppraisal.into(),
+			actions::CarefulObservation.into(),
+			actions::RemoveFinalAppraisal.into(),
 		])
 		.crafter_stats(stats)
 		.build()?;
@@ -527,8 +527,8 @@ fn test_5point4_standard_touch_combo_bonus() -> Result<()> {
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
 		.actions(vec![
-			Box::new(actions::BasicTouch),
-			Box::new(actions::StandardTouch),
+			actions::BasicTouch.into(),
+			actions::StandardTouch.into(),
 		])
 		.crafter_stats(stats)
 		.build()?;
@@ -548,16 +548,16 @@ fn test_count_buffs_properly_in_step_by_step_mode() -> Result<()> {
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
 		.actions(vec![
-			Box::new(actions::MuscleMemory),
-			Box::new(actions::Manipulation),
-			Box::new(actions::Observe),
-			Box::new(actions::Veneration),
-			Box::new(actions::Groundwork),
-			Box::new(actions::PrudentTouch),
-			Box::new(actions::PrudentTouch),
-			Box::new(actions::PrudentTouch),
-			Box::new(actions::PrudentTouch),
-			Box::new(actions::PrudentTouch),
+			actions::MuscleMemory.into(),
+			actions::Manipulation.into(),
+			actions::Observe.into(),
+			actions::Veneration.into(),
+			actions::Groundwork.into(),
+			actions::PrudentTouch.into(),
+			actions::PrudentTouch.into(),
+			actions::PrudentTouch.into(),
+			actions::PrudentTouch.into(),
+			actions::PrudentTouch.into(),
 		])
 		.crafter_stats(stats)
 		.build()?;
@@ -604,8 +604,8 @@ fn test_conditions_switch() -> Result<()> {
 	};
 	// generateStats(80, 2745, 2885, 626)
 	let stats = generate_stats(80, 2745, 2885, 626);
-	let actions: Vec<Box<dyn CraftingAction>> =
-		vec![Box::new(actions::Observe), Box::new(actions::Observe)];
+	let actions: Vec<CraftingActionEnum> =
+		vec![actions::Observe.into(), actions::Observe.into()];
 
 	let mut excellent_test = SimulationBuilder::default()
 		.recipe(recipe.clone())
@@ -745,9 +745,9 @@ fn test_heart_and_soul() -> Result<()> {
 	let sim = SimulationBuilder::default()
 		.recipe(recipe.clone())
 		.actions(vec![
-			Box::new(actions::Observe),
-			Box::new(actions::HeartAndSoul),
-			Box::new(actions::PreciseTouch),
+			actions::Observe.into(),
+			actions::HeartAndSoul.into(),
+			actions::PreciseTouch.into(),
 		])
 		.crafter_stats(stats.clone())
 		.step_states(vec![
@@ -772,7 +772,7 @@ fn test_progress_flooring() -> Result<()> {
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
 		.crafter_stats(stats)
-		.actions(vec![Box::new(actions::CarefulSynthesis)])
+		.actions(vec![actions::CarefulSynthesis.into()])
 		.build()?;
 
 	let result = sim.run();
@@ -791,10 +791,10 @@ fn test_quality_buff_flooring() -> Result<()> {
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
-			Box::new(actions::Innovation),
-			Box::new(actions::PrudentTouch),
-			Box::new(actions::PrudentTouch),
-			Box::new(actions::PrudentTouch),
+			actions::Innovation.into(),
+			actions::PrudentTouch.into(),
+			actions::PrudentTouch.into(),
+			actions::PrudentTouch.into(),
 		])
 		.build()?;
 
@@ -814,10 +814,10 @@ fn test_quality_flooring() -> Result<()> {
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
-			Box::new(actions::Innovation),
-			Box::new(actions::BasicTouch),
-			Box::new(actions::StandardTouch),
-			Box::new(actions::BasicTouch),
+			actions::Innovation.into(),
+			actions::BasicTouch.into(),
+			actions::StandardTouch.into(),
+			actions::BasicTouch.into(),
 		])
 		.build()?;
 
@@ -832,15 +832,15 @@ fn test_quality_flooring() -> Result<()> {
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
-			Box::new(actions::MuscleMemory),
-			Box::new(actions::Manipulation),
-			Box::new(actions::Veneration),
-			Box::new(actions::WasteNotII),
-			Box::new(actions::Groundwork),
-			Box::new(actions::Groundwork),
-			Box::new(actions::DelicateSynthesis),
-			Box::new(actions::PreparatoryTouch),
-			Box::new(actions::PreparatoryTouch),
+			actions::MuscleMemory.into(),
+			actions::Manipulation.into(),
+			actions::Veneration.into(),
+			actions::WasteNotII.into(),
+			actions::Groundwork.into(),
+			actions::Groundwork.into(),
+			actions::DelicateSynthesis.into(),
+			actions::PreparatoryTouch.into(),
+			actions::PreparatoryTouch.into(),
 		])
 		.build()?;
 
@@ -855,10 +855,10 @@ fn test_quality_flooring() -> Result<()> {
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
-			Box::new(actions::Reflect),
-			Box::new(actions::Innovation),
-			Box::new(actions::BasicTouch),
-			Box::new(actions::StandardTouch),
+			actions::Reflect.into(),
+			actions::Innovation.into(),
+			actions::BasicTouch.into(),
+			actions::StandardTouch.into(),
 		])
 		.build()?;
 
@@ -881,30 +881,30 @@ fn test_required_quality_unmet_fails() -> Result<()> {
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
-			Box::new(actions::MuscleMemory),
-			Box::new(actions::Manipulation),
-			Box::new(actions::Veneration),
-			Box::new(actions::WasteNotII),
-			Box::new(actions::FinalAppraisal),
-			Box::new(actions::Groundwork),
-			Box::new(actions::Groundwork),
-			Box::new(actions::CarefulSynthesis),
-			Box::new(actions::Innovation),
-			Box::new(actions::PreparatoryTouch),
-			Box::new(actions::PreparatoryTouch),
-			Box::new(actions::PreparatoryTouch),
-			Box::new(actions::PreparatoryTouch),
-			Box::new(actions::Innovation),
-			Box::new(actions::PrudentTouch),
-			Box::new(actions::PrudentTouch),
-			Box::new(actions::Observe),
-			Box::new(actions::AdvancedTouch),
-			Box::new(actions::Innovation),
-			Box::new(actions::TrainedFinesse),
-			Box::new(actions::TrainedFinesse),
-			Box::new(actions::GreatStrides),
-			Box::new(actions::ByregotsBlessing),
-			Box::new(actions::BasicSynthesis),
+			actions::MuscleMemory.into(),
+			actions::Manipulation.into(),
+			actions::Veneration.into(),
+			actions::WasteNotII.into(),
+			actions::FinalAppraisal.into(),
+			actions::Groundwork.into(),
+			actions::Groundwork.into(),
+			actions::CarefulSynthesis.into(),
+			actions::Innovation.into(),
+			actions::PreparatoryTouch.into(),
+			actions::PreparatoryTouch.into(),
+			actions::PreparatoryTouch.into(),
+			actions::PreparatoryTouch.into(),
+			actions::Innovation.into(),
+			actions::PrudentTouch.into(),
+			actions::PrudentTouch.into(),
+			actions::Observe.into(),
+			actions::AdvancedTouch.into(),
+			actions::Innovation.into(),
+			actions::TrainedFinesse.into(),
+			actions::TrainedFinesse.into(),
+			actions::GreatStrides.into(),
+			actions::ByregotsBlessing.into(),
+			actions::BasicSynthesis.into(),
 		])
 		.build()?;
 
@@ -922,30 +922,30 @@ fn test_required_quality_unmet_fails() -> Result<()> {
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
-			Box::new(actions::MuscleMemory),
-			Box::new(actions::Manipulation),
-			Box::new(actions::Veneration),
-			Box::new(actions::WasteNotII),
-			Box::new(actions::FinalAppraisal),
-			Box::new(actions::Groundwork),
-			Box::new(actions::Groundwork),
-			Box::new(actions::CarefulSynthesis),
-			Box::new(actions::Innovation),
-			Box::new(actions::PreparatoryTouch),
-			Box::new(actions::PreparatoryTouch),
-			Box::new(actions::PreparatoryTouch),
-			Box::new(actions::PreparatoryTouch),
-			Box::new(actions::Innovation),
-			Box::new(actions::PrudentTouch),
-			Box::new(actions::PrudentTouch),
-			Box::new(actions::Observe),
-			Box::new(actions::AdvancedTouch),
-			Box::new(actions::Innovation),
-			Box::new(actions::TrainedFinesse),
-			Box::new(actions::TrainedFinesse),
-			Box::new(actions::GreatStrides),
-			Box::new(actions::ByregotsBlessing),
-			Box::new(actions::BasicSynthesis),
+			actions::MuscleMemory.into(),
+			actions::Manipulation.into(),
+			actions::Veneration.into(),
+			actions::WasteNotII.into(),
+			actions::FinalAppraisal.into(),
+			actions::Groundwork.into(),
+			actions::Groundwork.into(),
+			actions::CarefulSynthesis.into(),
+			actions::Innovation.into(),
+			actions::PreparatoryTouch.into(),
+			actions::PreparatoryTouch.into(),
+			actions::PreparatoryTouch.into(),
+			actions::PreparatoryTouch.into(),
+			actions::Innovation.into(),
+			actions::PrudentTouch.into(),
+			actions::PrudentTouch.into(),
+			actions::Observe.into(),
+			actions::AdvancedTouch.into(),
+			actions::Innovation.into(),
+			actions::TrainedFinesse.into(),
+			actions::TrainedFinesse.into(),
+			actions::GreatStrides.into(),
+			actions::ByregotsBlessing.into(),
+			actions::BasicSynthesis.into(),
 		])
 		.build()?;
 
@@ -968,9 +968,9 @@ fn test_tricksofthetrade_and_heartandsoul() -> Result<()> {
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
-			Box::new(actions::HeartAndSoul),
-			Box::new(actions::PreparatoryTouch),
-			Box::new(actions::TricksOfTheTrade),
+			actions::HeartAndSoul.into(),
+			actions::PreparatoryTouch.into(),
+			actions::TricksOfTheTrade.into(),
 		])
 		.step_states(vec![StepState::None, StepState::None, StepState::Good])
 		.build()?;
@@ -986,9 +986,9 @@ fn test_tricksofthetrade_and_heartandsoul() -> Result<()> {
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
-			Box::new(actions::HeartAndSoul),
-			Box::new(actions::PreparatoryTouch),
-			Box::new(actions::TricksOfTheTrade),
+			actions::HeartAndSoul.into(),
+			actions::PreparatoryTouch.into(),
+			actions::TricksOfTheTrade.into(),
 		])
 		.build()?;
 
@@ -1063,8 +1063,8 @@ fn test_enhanced_good_modifier_with_splendorous_tools() -> Result<()> {
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
-			Box::new(actions::Observe),
-			Box::new(actions::BasicTouch),
+			actions::Observe.into(),
+			actions::BasicTouch.into(),
 		])
 		.step_states(vec![StepState::None, StepState::Good])
 		.build()?;
@@ -1085,7 +1085,7 @@ fn test_inner_quiet_below_level_11() -> Result<()> {
 	let sim = SimulationBuilder::default()
 		.recipe(recipe)
 		.crafter_stats(stats)
-		.actions(vec![Box::new(actions::BasicTouch)])
+		.actions(vec![actions::BasicTouch.into()])
 		.step_states(vec![StepState::Normal])
 		.build()?;
 
@@ -1109,9 +1109,9 @@ fn test_trained_perfection() -> Result<()> {
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
-			Box::new(actions::TrainedPerfection),
-			Box::new(actions::BasicTouch),
-			Box::new(actions::BasicTouch),
+			actions::TrainedPerfection.into(),
+			actions::BasicTouch.into(),
+			actions::BasicTouch.into(),
 		])
 		.build()?;
 
@@ -1139,9 +1139,9 @@ fn test_trained_perfection_with_moves_between() -> Result<()> {
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
-			Box::new(actions::TrainedPerfection),
-			Box::new(actions::Innovation),
-			Box::new(actions::BasicTouch),
+			actions::TrainedPerfection.into(),
+			actions::Innovation.into(),
+			actions::BasicTouch.into(),
 		])
 		.build()?;
 
@@ -1165,10 +1165,10 @@ fn test_trained_perfection_buff_consumed() -> Result<()> {
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
-			Box::new(actions::TrainedPerfection),
-			Box::new(actions::Innovation),
-			Box::new(actions::BasicTouch),
-			Box::new(actions::BasicTouch),
+			actions::TrainedPerfection.into(),
+			actions::Innovation.into(),
+			actions::BasicTouch.into(),
+			actions::BasicTouch.into(),
 		])
 		.build()?;
 
@@ -1193,9 +1193,9 @@ fn test_hasty_touch_only_after_daring_touch() -> Result<()> {
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
-			Box::new(actions::HastyTouch),
-			Box::new(actions::DaringTouch),
-			Box::new(actions::DaringTouch),
+			actions::HastyTouch.into(),
+			actions::DaringTouch.into(),
+			actions::DaringTouch.into(),
 		])
 		.build()?;
 
@@ -1224,7 +1224,7 @@ fn test_groundwork_efficiency_with_trained_perfection() -> Result<()> {
 	let sim = SimulationBuilder::default()
 		.recipe(recipe.clone())
 		.crafter_stats(stats.clone())
-		.actions(vec![Box::new(actions::Groundwork)])
+		.actions(vec![actions::Groundwork.into()])
 		.build()?;
 	let result1 = sim.run_linear(true);
 
@@ -1232,8 +1232,8 @@ fn test_groundwork_efficiency_with_trained_perfection() -> Result<()> {
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
-			Box::new(actions::TrainedPerfection),
-			Box::new(actions::Groundwork),
+			actions::TrainedPerfection.into(),
+			actions::Groundwork.into(),
 		])
 		.build()?;
 	let result2 = sim.run_linear(true);

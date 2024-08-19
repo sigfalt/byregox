@@ -1,19 +1,19 @@
 use crate::types::{
 	actions,
-	enums::{ActionType, Buff, CraftingActionEnum, CraftingJob, StepState},
+	enums::{ActionType, Buff, CraftingJob, StepState},
 	structs::CraftingLevel,
 	traits::{CraftingAction, GeneralAction, QualityAction},
 	Simulation,
 };
 
-#[derive(Clone)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct RefinedTouch;
 
 impl QualityAction for RefinedTouch {}
 
 impl CraftingAction for RefinedTouch {
 	fn has_combo(&self, simulation_state: &Simulation) -> bool {
-		simulation_state.has_combo_available(&actions::BasicTouch)
+		simulation_state.has_combo_available(&actions::BasicTouch.into())
 	}
 
 	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
@@ -101,10 +101,6 @@ impl CraftingAction for RefinedTouch {
 		if has_combo {
 			simulation_state.add_inner_quiet_stacks(1);
 		}
-	}
-
-	fn get_enum(&self) -> CraftingActionEnum {
-		CraftingActionEnum::RefinedTouch
 	}
 }
 

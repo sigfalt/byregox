@@ -1,11 +1,11 @@
 use crate::types::{
-	enums::{ActionType, CraftingActionEnum, CraftingJob},
+	enums::{ActionType, CraftingJob},
 	structs::CraftingLevel,
 	traits::CraftingAction,
 	Simulation,
 };
 
-#[derive(Clone)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct MastersMend;
 
 impl CraftingAction for MastersMend {
@@ -44,9 +44,5 @@ impl CraftingAction for MastersMend {
 		_skip_stack_addition: bool,
 	) {
 		simulation_state.repair(30);
-	}
-
-	fn get_enum(&self) -> CraftingActionEnum {
-		CraftingActionEnum::MastersMend
 	}
 }

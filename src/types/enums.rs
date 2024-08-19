@@ -1,4 +1,7 @@
+use enum_dispatch::enum_dispatch;
 use num_derive::FromPrimitive;
+
+use crate::types::actions::*;
 
 #[derive(Clone, Copy, Debug, Eq, FromPrimitive, Hash, PartialEq)]
 pub enum StepState {
@@ -31,7 +34,7 @@ pub enum ActionType {
 }
 
 #[derive(Clone, Copy, PartialEq)]
-// #[enum_dispatch]
+#[enum_dispatch]
 pub enum CraftingActionEnum {
 	// Progress actions
 	BasicSynthesis,

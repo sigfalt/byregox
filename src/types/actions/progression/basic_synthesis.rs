@@ -1,6 +1,6 @@
 use crate::types::{enums::*, structs::CraftingLevel, traits::*, Simulation};
 
-#[derive(Clone)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct BasicSynthesis;
 
 impl ProgressAction for BasicSynthesis {}
@@ -90,9 +90,5 @@ impl CraftingAction for BasicSynthesis {
 				.min(simulation_state.recipe.progress - 1);
 			simulation_state.remove_buff(Buff::FinalAppraisal);
 		}
-	}
-
-	fn get_enum(&self) -> CraftingActionEnum {
-		CraftingActionEnum::BasicSynthesis
 	}
 }

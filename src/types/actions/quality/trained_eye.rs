@@ -1,11 +1,11 @@
 use crate::types::{
-	enums::{ActionType, CraftingActionEnum, CraftingJob},
+	enums::{ActionType, CraftingJob},
 	structs::CraftingLevel,
 	traits::CraftingAction,
 	Simulation,
 };
 
-#[derive(Clone)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct TrainedEye;
 
 impl CraftingAction for TrainedEye {
@@ -42,9 +42,5 @@ impl CraftingAction for TrainedEye {
 		_skip_stack_addition: bool,
 	) {
 		simulation_state.quality = simulation_state.recipe.quality;
-	}
-
-	fn get_enum(&self) -> CraftingActionEnum {
-		CraftingActionEnum::TrainedEye
 	}
 }

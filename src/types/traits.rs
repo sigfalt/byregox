@@ -1,11 +1,13 @@
-use dyn_clone::DynClone;
-
-use super::{
+use crate::types::{
+	actions::*,
 	enums::*,
 	structs::{CraftingLevel, EffectiveBuff},
 	Simulation,
 };
+use dyn_clone::DynClone;
+use enum_dispatch::enum_dispatch;
 
+#[enum_dispatch(CraftingActionEnum)]
 pub trait CraftingAction: DynClone {
 	fn can_be_moved(&self, _current_index: u32) -> bool {
 		true
@@ -181,8 +183,6 @@ pub trait CraftingAction: DynClone {
 			base_value.floor() as u32
 		}
 	}
-
-	fn get_enum(&self) -> CraftingActionEnum;
 }
 dyn_clone::clone_trait_object!(CraftingAction);
 
@@ -237,10 +237,6 @@ impl CraftingAction for Class {
 		safe: bool,
 		skip_stack_addition: bool,
 	) {
-		todo!()
-	}
-
-	fn get_enum(&self) -> CraftingActionEnum {
 		todo!()
 	}
 }
@@ -302,10 +298,6 @@ impl CraftingAction for Class {
 			simulation_state.progression = simulation_state.progression.min(simulation_state.recipe.progress - 1);
 			simulation_state.remove_buff(Buff::FinalAppraisal);
 		}
-	}
-
-	fn get_enum(&self) -> CraftingActionEnum {
-		todo!()
 	}
 }
 
@@ -399,10 +391,6 @@ impl CraftingAction for Class {
 			simulation_state.add_inner_quiet_stacks(1);
 		}
 	}
-
-	fn get_enum(&self) -> CraftingActionEnum {
-		todo!()
-	}
 }
 
 impl GeneralAction for Class {
@@ -435,11 +423,11 @@ pub trait BuffAction: CraftingAction {
 
 	fn get_initial_stacks(&self) -> u32;
 
-	fn get_tick(&self) -> Option<fn(&mut Simulation, &dyn CraftingAction) -> ()> {
+	fn get_tick(&self) -> Option<fn(&mut Simulation, &CraftingActionEnum) -> ()> {
 		None
 	}
 
-	fn get_on_expire(&self) -> Option<fn(&mut Simulation, &dyn CraftingAction) -> ()> {
+	fn get_on_expire(&self) -> Option<fn(&mut Simulation, &CraftingActionEnum) -> ()> {
 		None
 	}
 
@@ -501,10 +489,6 @@ impl CraftingAction for Class {
 	) {
 		self.get_overrides().into_iter().for_each(|b| simulation_state.remove_buff(b));
 		simulation_state.add_buff(self.get_applied_buff(simulation_state));
-	}
-
-	fn get_enum(&self) -> CraftingActionEnum {
-		todo!()
 	}
 }
 */

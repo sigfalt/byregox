@@ -1,11 +1,12 @@
 use crate::types::{
-	enums::{ActionType, Buff, CraftingActionEnum, CraftingJob},
+	actions,
+	enums::{ActionType, Buff, CraftingJob},
 	structs::CraftingLevel,
 	traits::{BuffAction, CraftingAction},
 	Simulation,
 };
 
-#[derive(Clone)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct TrainedPerfection;
 
 impl BuffAction for TrainedPerfection {
@@ -45,7 +46,7 @@ impl CraftingAction for TrainedPerfection {
 		!simulation_state
 			.steps
 			.iter()
-			.any(|step| step.action.get_enum() == CraftingActionEnum::TrainedPerfection)
+			.any(|step| step.action == actions::TrainedPerfection.into())
 	}
 
 	fn get_base_cp_cost(&self, _simulation_state: &Simulation) -> u32 {
@@ -66,9 +67,5 @@ impl CraftingAction for TrainedPerfection {
 			.into_iter()
 			.for_each(|b| simulation_state.remove_buff(b));
 		simulation_state.add_buff(self.get_applied_buff(simulation_state));
-	}
-
-	fn get_enum(&self) -> CraftingActionEnum {
-		CraftingActionEnum::TrainedPerfection
 	}
 }

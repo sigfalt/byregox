@@ -1,11 +1,11 @@
 use crate::types::{
-	enums::{ActionType, CraftingActionEnum, CraftingJob},
+	enums::{ActionType, CraftingJob},
 	structs::CraftingLevel,
 	traits::CraftingAction,
 	Simulation,
 };
 
-#[derive(Clone)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct ImmaculateMend;
 
 impl CraftingAction for ImmaculateMend {
@@ -40,9 +40,5 @@ impl CraftingAction for ImmaculateMend {
 		_skip_stack_addition: bool,
 	) {
 		simulation_state.durability = simulation_state.recipe.durability as i32;
-	}
-
-	fn get_enum(&self) -> CraftingActionEnum {
-		CraftingActionEnum::ImmaculateMend
 	}
 }

@@ -1,11 +1,12 @@
 use crate::types::{
+	actions,
 	enums::*,
 	structs::CraftingLevel,
 	traits::{BuffAction, CraftingAction},
 	Simulation,
 };
 
-#[derive(Clone)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct HeartAndSoul;
 
 impl BuffAction for HeartAndSoul {
@@ -27,18 +28,17 @@ impl BuffAction for HeartAndSoul {
 		0
 	}
 
-	fn get_tick(&self) -> Option<fn(&mut Simulation, &dyn CraftingAction) -> ()> {
+	fn get_tick(&self) -> Option<fn(&mut Simulation, &CraftingActionEnum) -> ()> {
 		Some(|simulation_state, action| {
 			let used_on_non_good_or_excellent = simulation_state.state() != StepState::Good
 				&& simulation_state.state() != StepState::Excellent;
-			use CraftingActionEnum as CA;
 			if used_on_non_good_or_excellent
 				&& [
-					CA::PreciseTouch,
-					CA::IntensiveSynthesis,
-					CA::TricksOfTheTrade,
+					actions::PreciseTouch.into(),
+					actions::IntensiveSynthesis.into(),
+					actions::TricksOfTheTrade.into(),
 				]
-				.contains(&action.get_enum())
+				.contains(action)
 			{
 				simulation_state.remove_buff(Buff::HeartAndSoul);
 			}
@@ -68,7 +68,7 @@ impl CraftingAction for HeartAndSoul {
 			&& !simulation_state
 				.steps
 				.iter()
-				.any(|s| s.action.get_enum() == CraftingActionEnum::HeartAndSoul)
+				.any(|s| s.action == actions::HeartAndSoul.into())
 	}
 
 	fn get_base_cp_cost(&self, _simulation_state: &Simulation) -> u32 {
@@ -93,9 +93,5 @@ impl CraftingAction for HeartAndSoul {
 
 	fn skips_buff_ticks(&self) -> bool {
 		true
-	}
-
-	fn get_enum(&self) -> CraftingActionEnum {
-		CraftingActionEnum::HeartAndSoul
 	}
 }

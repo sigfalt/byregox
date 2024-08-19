@@ -5,7 +5,7 @@ use crate::types::{
 	Simulation,
 };
 
-#[derive(Clone)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct FinalAppraisal;
 
 impl BuffAction for FinalAppraisal {
@@ -73,9 +73,5 @@ impl CraftingAction for FinalAppraisal {
 
 	fn skips_buff_ticks(&self) -> bool {
 		true
-	}
-
-	fn get_enum(&self) -> CraftingActionEnum {
-		CraftingActionEnum::FinalAppraisal
 	}
 }

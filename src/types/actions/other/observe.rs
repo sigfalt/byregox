@@ -1,11 +1,11 @@
 use crate::types::{
-	enums::{ActionType, CraftingActionEnum, CraftingJob},
+	enums::{ActionType, CraftingJob},
 	structs::CraftingLevel,
 	traits::CraftingAction,
 	Simulation,
 };
 
-#[derive(Clone)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct Observe;
 
 impl CraftingAction for Observe {
@@ -44,9 +44,5 @@ impl CraftingAction for Observe {
 		_skip_stack_addition: bool,
 	) {
 		// nothing
-	}
-
-	fn get_enum(&self) -> CraftingActionEnum {
-		CraftingActionEnum::Observe
 	}
 }

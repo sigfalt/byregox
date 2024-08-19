@@ -1,12 +1,12 @@
 use crate::types::{
 	actions,
-	enums::{ActionType, Buff, CraftingActionEnum, CraftingJob, StepState},
+	enums::{ActionType, Buff, CraftingJob, StepState},
 	structs::CraftingLevel,
 	traits::{CraftingAction, GeneralAction, QualityAction},
 	Simulation,
 };
 
-#[derive(Clone)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct StandardTouch;
 
 impl QualityAction for StandardTouch {}
@@ -17,7 +17,7 @@ impl CraftingAction for StandardTouch {
 	}
 
 	fn has_combo(&self, simulation_state: &Simulation) -> bool {
-		simulation_state.has_combo_available(&actions::BasicTouch)
+		simulation_state.has_combo_available(&actions::BasicTouch.into())
 	}
 
 	fn get_type(&self) -> ActionType {
@@ -33,7 +33,7 @@ impl CraftingAction for StandardTouch {
 	}
 
 	fn get_base_cp_cost(&self, simulation_state: &Simulation) -> u32 {
-		if simulation_state.has_combo_available(&actions::BasicTouch) {
+		if simulation_state.has_combo_available(&actions::BasicTouch.into()) {
 			18
 		} else {
 			32
@@ -97,10 +97,6 @@ impl CraftingAction for StandardTouch {
 		if !skip_stack_addition && simulation_state.crafter_stats.level >= 11 {
 			simulation_state.add_inner_quiet_stacks(1);
 		}
-	}
-
-	fn get_enum(&self) -> CraftingActionEnum {
-		CraftingActionEnum::StandardTouch
 	}
 }
 
