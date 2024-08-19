@@ -1,11 +1,11 @@
 use crate::types::{
-	enums::{ActionType, CraftingActionEnum, CraftingJob},
+	enums::{ActionType, CraftingJob},
 	structs::CraftingLevel,
 	traits::CraftingAction,
 	Simulation,
 };
 
-#[derive(Clone)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct CarefulObservation;
 
 impl CraftingAction for CarefulObservation {
@@ -48,9 +48,5 @@ impl CraftingAction for CarefulObservation {
 
 	fn skips_buff_ticks(&self) -> bool {
 		true
-	}
-
-	fn get_enum(&self) -> CraftingActionEnum {
-		CraftingActionEnum::CarefulObservation
 	}
 }

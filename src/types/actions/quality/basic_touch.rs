@@ -1,6 +1,6 @@
 use crate::types::{enums::*, structs::CraftingLevel, traits::*, Simulation};
 
-#[derive(Clone)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct BasicTouch;
 
 impl QualityAction for BasicTouch {}
@@ -83,10 +83,6 @@ impl CraftingAction for BasicTouch {
 		if !skip_stack_addition && simulation_state.crafter_stats.level >= 11 {
 			simulation_state.add_inner_quiet_stacks(1);
 		}
-	}
-
-	fn get_enum(&self) -> CraftingActionEnum {
-		CraftingActionEnum::BasicTouch
 	}
 }
 

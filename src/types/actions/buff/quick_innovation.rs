@@ -5,7 +5,7 @@ use crate::types::{
 	Simulation,
 };
 
-#[derive(Clone)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct QuickInnovation;
 
 impl BuffAction for QuickInnovation {
@@ -73,9 +73,5 @@ impl CraftingAction for QuickInnovation {
 
 	fn skips_buff_ticks(&self) -> bool {
 		true
-	}
-
-	fn get_enum(&self) -> CraftingActionEnum {
-		CraftingActionEnum::QuickInnovation
 	}
 }

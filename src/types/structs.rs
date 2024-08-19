@@ -1,8 +1,8 @@
-use super::{enums::*, traits::CraftingAction, Simulation};
+use super::{enums::*, Simulation};
 
 #[derive(Clone)]
 pub struct ActionResult {
-	pub action: Box<dyn CraftingAction>,
+	pub action: CraftingActionEnum,
 	pub success: Option<bool>,
 	pub fail_cause: Option<FailCause>,
 	pub added_progression: u32,
@@ -154,17 +154,17 @@ pub struct EffectiveBuff {
 	pub stacks: u32,
 	pub buff: Buff,
 	pub applied_step: u32,
-	pub tick: Option<fn(&mut Simulation, &dyn CraftingAction) -> ()>,
-	pub on_expire: Option<fn(&mut Simulation, &dyn CraftingAction) -> ()>,
+	pub tick: Option<fn(&mut Simulation, &CraftingActionEnum) -> ()>,
+	pub on_expire: Option<fn(&mut Simulation, &CraftingActionEnum) -> ()>,
 }
 impl EffectiveBuff {
-	pub fn tick(&self, simulation_state: &mut Simulation, action: &dyn CraftingAction) {
+	pub fn tick(&self, simulation_state: &mut Simulation, action: &CraftingActionEnum) {
 		if let Some(f) = &self.tick {
 			f(simulation_state, action);
 		}
 	}
 
-	pub fn on_expire(&self, simulation_state: &mut Simulation, action: &dyn CraftingAction) {
+	pub fn on_expire(&self, simulation_state: &mut Simulation, action: &CraftingActionEnum) {
 		if let Some(f) = &self.on_expire {
 			f(simulation_state, action);
 		}

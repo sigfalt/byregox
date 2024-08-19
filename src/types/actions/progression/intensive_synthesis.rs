@@ -1,22 +1,22 @@
 use crate::types::{
-	enums::{ActionType, Buff, CraftingActionEnum, CraftingJob, StepState},
+	enums::{ActionType, Buff, CraftingJob, StepState},
 	structs::CraftingLevel,
 	traits::{CraftingAction, GeneralAction, ProgressAction},
 	Simulation,
 };
 
-#[derive(Clone)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct IntensiveSynthesis;
 
 impl ProgressAction for IntensiveSynthesis {}
 
 impl CraftingAction for IntensiveSynthesis {
-	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
-		(CraftingJob::Any, CraftingLevel::unchecked_new(78))
-	}
-
 	fn requires_good(&self) -> bool {
 		true
+	}
+
+	fn get_level_requirement(&self) -> (CraftingJob, CraftingLevel) {
+		(CraftingJob::Any, CraftingLevel::unchecked_new(78))
 	}
 
 	fn get_type(&self) -> ActionType {
@@ -89,10 +89,6 @@ impl CraftingAction for IntensiveSynthesis {
 				.min(simulation_state.recipe.progress - 1);
 			simulation_state.remove_buff(Buff::FinalAppraisal);
 		}
-	}
-
-	fn get_enum(&self) -> CraftingActionEnum {
-		CraftingActionEnum::IntensiveSynthesis
 	}
 }
 

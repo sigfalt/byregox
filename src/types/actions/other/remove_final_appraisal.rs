@@ -1,11 +1,11 @@
 use crate::types::{
-	enums::{ActionType, Buff, CraftingActionEnum, CraftingJob},
+	enums::{ActionType, Buff, CraftingJob},
 	structs::CraftingLevel,
 	traits::CraftingAction,
 	Simulation,
 };
 
-#[derive(Clone)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct RemoveFinalAppraisal;
 
 impl CraftingAction for RemoveFinalAppraisal {
@@ -44,9 +44,5 @@ impl CraftingAction for RemoveFinalAppraisal {
 
 	fn skips_buff_ticks(&self) -> bool {
 		true
-	}
-
-	fn get_enum(&self) -> CraftingActionEnum {
-		CraftingActionEnum::RemoveFinalAppraisal
 	}
 }

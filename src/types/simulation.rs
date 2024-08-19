@@ -4,17 +4,18 @@ use rand::{random, Rng};
 use std::collections::{HashMap, HashSet};
 
 use crate::types::{
+	actions,
 	enums::{Buff, CraftingActionEnum, FailCause, StepState},
 	structs::*,
 	tables,
-	traits::CraftingAction
+	traits::CraftingAction,
 };
 
 #[derive(Builder)]
 pub struct Simulation {
 	pub recipe: Craft,
 	#[builder(default = "vec![]")]
-	pub actions: Vec<Box<dyn CraftingAction>>,
+	pub actions: Vec<CraftingActionEnum>,
 	pub crafter_stats: CrafterStats,
 	// private hqIngredients: {id: number; amount: number}[] = []
 	#[builder(default = "vec![]")]
@@ -68,11 +69,11 @@ impl Simulation {
 		self.state = new_state;
 	}
 
-	pub fn has_combo_available(&self, action: &dyn CraftingAction) -> bool {
+	pub fn has_combo_available(&self, action: &CraftingActionEnum) -> bool {
 		// starting from the most recent action
 		for step in self.steps.iter().rev() {
 			// if we find the action that we're looking for and it was successful, we can combo
-			if step.action.get_enum() == action.get_enum() && step.success.is_some_and(|x| x) {
+			if step.action == *action && step.success.is_some_and(|x| x) {
 				return true;
 			}
 			// if any previous action that isn't what we're looking for wasn't skipped, combo is broken
@@ -150,7 +151,7 @@ impl Simulation {
 					self.run_action_with_flags(action, linear, safe, i)
 				} else {
 					ActionResult {
-						action: action.clone(),
+						action: *action,
 						success: None,
 						fail_cause,
 						added_progression: 0,
@@ -172,7 +173,7 @@ impl Simulation {
 					let skip_ticks_on_fail =
 						!result.success.unwrap_or(false) && action.skip_on_fail();
 					if self.success.is_none() && !action.skips_buff_ticks() && !skip_ticks_on_fail {
-						self.tick_buffs(action.as_ref());
+						self.tick_buffs(action);
 					}
 					result.after_buff_tick = Some(BuffTickResult {
 						added_progression: self.progression - progression_before,
@@ -183,8 +184,8 @@ impl Simulation {
 				}
 
 				if !linear
-					&& action.get_enum() != CraftingActionEnum::FinalAppraisal
-					&& action.get_enum() != CraftingActionEnum::RemoveFinalAppraisal
+					&& *action != actions::FinalAppraisal.into()
+					&& *action != actions::RemoveFinalAppraisal.into()
 				{
 					self.tick_state();
 				}
@@ -222,13 +223,13 @@ impl Simulation {
 		res
 	}
 
-	pub fn run_action(&mut self, action: &Box<dyn CraftingAction>, index: usize) -> ActionResult {
+	pub fn run_action(&mut self, action: &CraftingActionEnum, index: usize) -> ActionResult {
 		self.run_action_linear(action, false, index)
 	}
 
 	pub fn run_action_linear(
 		&mut self,
-		action: &Box<dyn CraftingAction>,
+		action: &CraftingActionEnum,
 		linear: bool,
 		index: usize,
 	) -> ActionResult {
@@ -237,7 +238,7 @@ impl Simulation {
 
 	pub fn run_action_with_flags(
 		&mut self,
-		action: &Box<dyn CraftingAction>,
+		action: &CraftingActionEnum,
 		linear: bool,
 		safe: bool,
 		index: usize,
@@ -287,7 +288,7 @@ impl Simulation {
 		}
 
 		ActionResult {
-			action: action.clone(),
+			action: *action,
 			success: Some(success),
 			fail_cause,
 			added_progression: self.progression - progression_before,
@@ -342,7 +343,7 @@ impl Simulation {
 		}
 	}
 
-	fn tick_buffs(&mut self, action: &dyn CraftingAction) {
+	fn tick_buffs(&mut self, action: &CraftingActionEnum) {
 		let buff_vec = self.buffs.clone();
 		buff_vec.iter().for_each(|b| {
 			if b.applied_step < self.steps.len() as u32 {

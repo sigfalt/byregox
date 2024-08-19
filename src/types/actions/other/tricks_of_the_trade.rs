@@ -1,11 +1,11 @@
 use crate::types::{
-	enums::{ActionType, Buff, CraftingActionEnum, CraftingJob, StepState},
+	enums::{ActionType, Buff, CraftingJob, StepState},
 	structs::CraftingLevel,
 	traits::CraftingAction,
 	Simulation,
 };
 
-#[derive(Clone)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct TricksOfTheTrade;
 
 impl CraftingAction for TricksOfTheTrade {
@@ -59,9 +59,5 @@ impl CraftingAction for TricksOfTheTrade {
 
 	fn skip_on_fail(&self) -> bool {
 		true
-	}
-
-	fn get_enum(&self) -> CraftingActionEnum {
-		CraftingActionEnum::TricksOfTheTrade
 	}
 }

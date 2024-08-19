@@ -1,11 +1,11 @@
 use crate::types::{
-	enums::{ActionType, Buff, CraftingActionEnum, CraftingJob, StepState},
+	enums::{ActionType, Buff, CraftingJob, StepState},
 	structs::CraftingLevel,
 	traits::{CraftingAction, GeneralAction, ProgressAction},
 	Simulation,
 };
 
-#[derive(Clone)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct CarefulSynthesis;
 
 impl ProgressAction for CarefulSynthesis {}
@@ -77,10 +77,6 @@ impl CraftingAction for CarefulSynthesis {
 				.min(simulation_state.recipe.progress - 1);
 			simulation_state.remove_buff(Buff::FinalAppraisal);
 		}
-	}
-
-	fn get_enum(&self) -> CraftingActionEnum {
-		CraftingActionEnum::CarefulSynthesis
 	}
 }
 

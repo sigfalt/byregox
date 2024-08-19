@@ -1,11 +1,12 @@
 use crate::types::{
-	enums::{ActionType, Buff, CraftingActionEnum, CraftingJob, StepState},
+	actions,
+	enums::{ActionType, Buff, CraftingJob, StepState},
 	structs::CraftingLevel,
 	traits::{CraftingAction, GeneralAction, QualityAction},
 	Simulation,
 };
 
-#[derive(Clone)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct AdvancedTouch;
 
 impl QualityAction for AdvancedTouch {}
@@ -14,8 +15,8 @@ impl CraftingAction for AdvancedTouch {
 	fn has_combo(&self, simulation_state: &Simulation) -> bool {
 		// need to check not only for StandardTouch, but that it was also combo'd
 		for step in simulation_state.steps.iter().rev() {
-			if step.action.get_enum() == CraftingActionEnum::Observe
-				|| (step.action.get_enum() == CraftingActionEnum::StandardTouch
+			if step.action == actions::Observe.into()
+				|| (step.action == actions::StandardTouch.into()
 					&& step.success.is_some_and(|x| x)
 					&& step.combo.is_some_and(|x| x))
 			{
@@ -109,10 +110,6 @@ impl CraftingAction for AdvancedTouch {
 		if !skip_stack_addition && simulation_state.crafter_stats.level >= 11 {
 			simulation_state.add_inner_quiet_stacks(1);
 		}
-	}
-
-	fn get_enum(&self) -> CraftingActionEnum {
-		CraftingActionEnum::AdvancedTouch
 	}
 }
 

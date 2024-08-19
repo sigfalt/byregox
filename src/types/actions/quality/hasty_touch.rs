@@ -1,11 +1,11 @@
 use crate::types::{
-	enums::{ActionType, Buff, CraftingActionEnum, CraftingJob, StepState},
+	enums::{ActionType, Buff, CraftingJob, StepState},
 	structs::{CraftingLevel, EffectiveBuff},
 	traits::{CraftingAction, GeneralAction, QualityAction},
 	Simulation,
 };
 
-#[derive(Clone)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct HastyTouch;
 
 impl QualityAction for HastyTouch {}
@@ -99,10 +99,6 @@ impl CraftingAction for HastyTouch {
 				on_expire: None,
 			})
 		}
-	}
-
-	fn get_enum(&self) -> CraftingActionEnum {
-		CraftingActionEnum::HastyTouch
 	}
 }
 

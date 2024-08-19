@@ -1,11 +1,11 @@
 use crate::types::{
-	enums::{ActionType, Buff, CraftingActionEnum, CraftingJob, StepState},
+	enums::{ActionType, Buff, CraftingJob, StepState},
 	structs::CraftingLevel,
 	traits::{CraftingAction, GeneralAction},
 	Simulation,
 };
 
-#[derive(Clone)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct DelicateSynthesis;
 
 impl GeneralAction for DelicateSynthesis {
@@ -133,9 +133,5 @@ impl CraftingAction for DelicateSynthesis {
 			(quality_increase * condition_mod * efficiency / 100.0).floor() as u32;
 
 		simulation_state.add_inner_quiet_stacks(1);
-	}
-
-	fn get_enum(&self) -> CraftingActionEnum {
-		CraftingActionEnum::DelicateSynthesis
 	}
 }

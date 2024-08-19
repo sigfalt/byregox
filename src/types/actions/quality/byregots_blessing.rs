@@ -1,11 +1,11 @@
 use crate::types::{
-	enums::{ActionType, Buff, CraftingActionEnum, CraftingJob, FailCause, StepState},
+	enums::{ActionType, Buff, CraftingJob, FailCause, StepState},
 	structs::CraftingLevel,
 	traits::{CraftingAction, GeneralAction, QualityAction},
 	Simulation,
 };
 
-#[derive(Clone)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct ByregotsBlessing;
 
 impl QualityAction for ByregotsBlessing {}
@@ -128,10 +128,6 @@ impl CraftingAction for ByregotsBlessing {
 
 		// Byregots Blessing specific addition to blanket `execute` impl
 		simulation_state.remove_buff(Buff::InnerQuiet);
-	}
-
-	fn get_enum(&self) -> CraftingActionEnum {
-		CraftingActionEnum::ByregotsBlessing
 	}
 }
 

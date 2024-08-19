@@ -1,11 +1,11 @@
 use crate::types::{
-	enums::{ActionType, Buff, CraftingActionEnum, CraftingJob, StepState},
+	enums::{ActionType, Buff, CraftingJob, StepState},
 	structs::CraftingLevel,
 	traits::{CraftingAction, GeneralAction, QualityAction},
 	Simulation,
 };
 
-#[derive(Clone)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct PreparatoryTouch;
 
 impl QualityAction for PreparatoryTouch {}
@@ -92,10 +92,6 @@ impl CraftingAction for PreparatoryTouch {
 		// Preparatory Touch specific addition to blanket `execute` impl
 		// TODO: any reason to do this separately in Rust? since we reimpl execute anyway
 		simulation_state.add_inner_quiet_stacks(1);
-	}
-
-	fn get_enum(&self) -> CraftingActionEnum {
-		CraftingActionEnum::PreparatoryTouch
 	}
 }
 
