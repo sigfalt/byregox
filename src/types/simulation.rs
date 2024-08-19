@@ -1,15 +1,13 @@
-use crate::types::enums::FailCause;
 use derive_builder::{Builder, UninitializedFieldError};
 use num_traits::FromPrimitive;
 use rand::{random, Rng};
 use std::collections::{HashMap, HashSet};
 
-use crate::types::tables;
-
-use super::{
-	enums::{Buff, CraftingActionEnum, StepState},
+use crate::types::{
+	enums::{Buff, CraftingActionEnum, FailCause, StepState},
 	structs::*,
-	traits::CraftingAction,
+	tables,
+	traits::CraftingAction
 };
 
 #[derive(Builder)]
