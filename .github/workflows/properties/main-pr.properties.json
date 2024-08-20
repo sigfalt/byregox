@@ -1,0 +1,5 @@
+{
+	"name": "Build and test",
+	"description": "Verify library builds successfully and passes all tests."
+	"iconName": "rust"
+}
