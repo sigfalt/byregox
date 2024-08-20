@@ -1,4 +1,4 @@
-name: CI
+name: Build and test
 
 on:
   push:
@@ -15,7 +15,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+    - run: rustup update stable && rustup default stable && cargo update --verbose
     - name: Build
       run: cargo build --verbose
     - name: Run tests
