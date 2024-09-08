@@ -1,0 +1,24 @@
+
+name: Clippy analysis
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  clippy-analyze:
+    name: Analyze with Clippy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - run: cargo update
+      - name: Run Clippy
+        run: cargo clippy
+        continue-on-error: true
