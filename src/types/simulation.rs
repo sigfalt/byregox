@@ -49,6 +49,7 @@ pub struct Simulation {
 
 #[bon]
 impl Simulation {
+
 	#[builder]
 	pub fn new(
 		recipe: Craft,
@@ -163,24 +164,17 @@ impl Simulation {
 		self.safe = false;
 	}
 
-	pub fn run(self) -> SimulationResult {
-		self.run_linear(false)
-	}
-
-	pub fn run_linear(self, linear: bool) -> SimulationResult {
-		self.run_max_steps(linear, usize::MAX)
-	}
-
-	pub fn run_max_steps(self, linear: bool, max_steps: usize) -> SimulationResult {
-		self.run_with_flags(linear, max_steps, false)
-	}
-
-	pub fn run_with_flags(
+	#[builder(finish_fn = run)]
+	pub fn start(
 		mut self,
-		linear: bool,
-		max_steps: usize,
-		safe: bool,
+		linear: Option<bool>,
+		max_steps: Option<usize>,
+		safe: Option<bool>
 	) -> SimulationResult {
+		let linear = linear.unwrap_or(false);
+		let max_steps = max_steps.unwrap_or(usize::MAX);
+		let safe = safe.unwrap_or(false);
+
 		self.last_possible_reclaim_step = None;
 		self.actions
 			.clone()
