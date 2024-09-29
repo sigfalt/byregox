@@ -1,4 +1,4 @@
-use derive_builder::{Builder, UninitializedFieldError};
+use bon::bon;
 use num_traits::FromPrimitive;
 use rand::{random, Rng};
 use std::collections::{HashMap, HashSet};
@@ -11,60 +11,107 @@ use crate::types::{
 	traits::CraftingAction,
 };
 
-#[derive(Builder)]
-#[builder(build_fn(private, name = "initialize"))]
 pub struct Simulation {
 	pub recipe: Craft,
-	#[builder(default = "vec![]")]
-	pub actions: Vec<CraftingActionEnum>,
 	pub crafter_stats: CrafterStats,
-	#[builder(default = "vec![]")]
+
+	// optional fields
+	pub actions: Vec<CraftingActionEnum>,
+	_hq_ingredients: Vec<Ingredient>,
 	step_states: Vec<StepState>,
-	#[builder(default = "vec![]")]
 	fails: Vec<usize>,
 
-	// Auto-initialized fields
-	#[builder(setter(skip), default = "0")]
+	// auto-initialized fields
 	pub progression: u32,
 
-	#[builder(default = "vec![]")]
-	_hq_ingredients: Vec<Ingredient>,
-	#[builder(private)]
 	starting_quality: u32,
-	#[builder(private)]
 	pub quality: u32,
 
-	#[builder(setter(skip), default = "self.build_durability()?")]
 	pub durability: i32,
 
-	#[builder(setter(skip), default = "StepState::Normal")]
 	state: StepState,
 
-	#[builder(setter(skip), default = "self.build_available_cp()?")]
-	pub available_cp: u32,
-	#[builder(setter(skip), default = "self.build_max_cp()?")]
 	pub max_cp: u32,
+	pub available_cp: u32,
 
-	#[builder(setter(skip), default = "vec![]")]
 	buffs: Vec<EffectiveBuff>,
-	#[builder(setter(skip), default = "None")]
 	pub success: Option<bool>,
-	#[builder(setter(skip), default = "vec![]")]
 	pub steps: Vec<ActionResult>,
 
 	// the index of the last step where you have CP/durability for Reclaim,
 	// or None if Reclaim is uncastable (i.e. not enough CP)
-	#[builder(setter(skip), default = "None")]
 	last_possible_reclaim_step: Option<u32>,
 
-	#[builder(setter(skip), default = "false")]
 	pub safe: bool,
 
-	#[builder(setter(skip), default = "self.build_possible_conditions()?")]
 	possible_conditions: HashSet<StepState>,
 }
 
+#[bon]
 impl Simulation {
+	#[builder]
+	pub fn new(
+		recipe: Craft,
+		crafter_stats: CrafterStats,
+		actions: Option<Vec<CraftingActionEnum>>,
+		hq_ingredients: Option<Vec<Ingredient>>,
+		step_states: Option<Vec<StepState>>,
+		fails: Option<Vec<usize>>,
+	) -> Self {
+		let mut starting_quality = 0;
+		if let Some(hq_ingredients) = &hq_ingredients {
+			for ingredient in hq_ingredients {
+				if let Some(ingredient_details) = &recipe
+					.ingredients
+					.iter()
+					.find(|recipe_ingredient| recipe_ingredient.id == ingredient.id)
+				{
+					starting_quality += ingredient_details.quality.unwrap_or(0) * ingredient.amount;
+				}
+			}
+		}
+
+		let conditions_flag = recipe.conditions_flag;
+		let binary_string = format!("{:b}", conditions_flag);
+		let possible_conditions = binary_string
+			.chars()
+			.rev()
+			.enumerate()
+			.filter_map(|(ix, chr)| {
+				if chr == '1' {
+					StepState::from_usize(ix + 1)
+				} else {
+					None
+				}
+			})
+			.collect();
+
+		let durability = recipe.durability as i32;
+		let max_cp = crafter_stats.cp;
+
+		Self {
+			recipe,
+			crafter_stats,
+			actions: actions.unwrap_or(vec![]),
+			_hq_ingredients: hq_ingredients.unwrap_or(vec![]),
+			step_states: step_states.unwrap_or(vec![]),
+			fails: fails.unwrap_or(vec![]),
+			progression: 0,
+			starting_quality,
+			quality: starting_quality,
+			durability,
+			state: StepState::Normal,
+			max_cp,
+			available_cp: max_cp,
+			buffs: vec![],
+			success: None,
+			steps: vec![],
+			last_possible_reclaim_step: None,
+			safe: false,
+			possible_conditions,
+		}
+	}
+
 	pub fn state(&self) -> StepState {
 		self.state
 	}
@@ -162,7 +209,8 @@ impl Simulation {
 				}
 				// we can use the action
 				let mut result = if self.success.is_none()
-					&& has_enough_cp && self.steps.len() < max_steps
+					&& has_enough_cp
+					&& self.steps.len() < max_steps
 					&& can_use_action
 				{
 					self.run_action_with_flags(action, linear, safe, i)
@@ -446,75 +494,5 @@ impl Simulation {
 			}
 		}
 		None
-	}
-}
-
-impl SimulationBuilder {
-	fn process_hq_ingredients(&self) -> u32 {
-		let mut hq_ingredient_quality_bonus = 0;
-		if let Some(hq_ingredients) = &self._hq_ingredients {
-			for ingredient in hq_ingredients {
-				if let Some(ingredient_details) = &self.recipe.as_ref().unwrap().ingredients.iter().find(|recipe_ingredient| recipe_ingredient.id == ingredient.id) {
-					hq_ingredient_quality_bonus += ingredient_details.quality.unwrap_or(0) * ingredient.amount;
-				}
-			}
-		}
-		hq_ingredient_quality_bonus
-	}
-
-	fn build_durability(&self) -> Result<i32, SimulationBuilderError> {
-		match &self.recipe {
-			Some(craft) => Ok(craft.durability as i32),
-			_ => Err(SimulationBuilderError::from(UninitializedFieldError::new(
-				"durability",
-			))),
-		}
-	}
-
-	fn build_available_cp(&self) -> Result<u32, SimulationBuilderError> {
-		match &self.crafter_stats {
-			Some(stats) => Ok(stats.cp),
-			_ => Err(SimulationBuilderError::from(UninitializedFieldError::new(
-				"available_cp",
-			))),
-		}
-	}
-
-	fn build_max_cp(&self) -> Result<u32, SimulationBuilderError> {
-		match &self.crafter_stats {
-			Some(s) => Ok(s.cp),
-			_ => Err(SimulationBuilderError::from(UninitializedFieldError::new(
-				"max_cp",
-			))),
-		}
-	}
-
-	fn build_possible_conditions(&self) -> Result<HashSet<StepState>, SimulationBuilderError> {
-		let conditions_flag = match &self.recipe {
-			Some(r) => Ok(r.conditions_flag),
-			_ => Err(SimulationBuilderError::from(UninitializedFieldError::new(
-				"conditions_flag",
-			))),
-		}?;
-		let binary_string = format!("{:b}", conditions_flag);
-		Ok(binary_string
-			.chars()
-			.rev()
-			.enumerate()
-			.filter_map(|(ix, chr)| {
-				if chr == '1' {
-					StepState::from_usize(ix + 1)
-				} else {
-					None
-				}
-			})
-			.collect())
-	}
-
-	pub fn build(&self) -> Result<Simulation, SimulationBuilderError> {
-		let hq_ingredient_quality_bonus = self.process_hq_ingredients();
-		self.clone().starting_quality(hq_ingredient_quality_bonus)
-			.quality(hq_ingredient_quality_bonus)
-			.initialize()
 	}
 }
