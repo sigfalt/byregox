@@ -1286,7 +1286,6 @@ fn generate_recipe_rlvl(
 		quality_divider,
 		hq: Some(true),
 		quick_synth: Some(true),
-		ingredients: vec![],
 		conditions_flag: 15,
 		..Default::default()
 	}
@@ -1311,7 +1310,6 @@ fn generate_star_recipe(
 		progress,
 		hq: Some(true),
 		quick_synth: Some(false),
-		ingredients: vec![],
 		expert: Some(false),
 		conditions_flag: 15,
 		progress_divider,

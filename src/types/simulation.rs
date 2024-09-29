@@ -12,12 +12,12 @@ use crate::types::{
 };
 
 #[derive(Builder)]
+#[builder(build_fn(private, name = "initialize"))]
 pub struct Simulation {
 	pub recipe: Craft,
 	#[builder(default = "vec![]")]
 	pub actions: Vec<CraftingActionEnum>,
 	pub crafter_stats: CrafterStats,
-	// private hqIngredients: {id: number; amount: number}[] = []
 	#[builder(default = "vec![]")]
 	step_states: Vec<StepState>,
 	#[builder(default = "vec![]")]
@@ -26,10 +26,14 @@ pub struct Simulation {
 	// Auto-initialized fields
 	#[builder(setter(skip), default = "0")]
 	pub progression: u32,
-	#[builder(setter(skip), default = "0")]
-	pub quality: u32,
-	#[builder(setter(skip), default = "self.build_starting_quality()?")]
+
+	#[builder(default = "vec![]")]
+	_hq_ingredients: Vec<Ingredient>,
+	#[builder(private)]
 	starting_quality: u32,
+	#[builder(private)]
+	pub quality: u32,
+
 	#[builder(setter(skip), default = "self.build_durability()?")]
 	pub durability: i32,
 
@@ -97,6 +101,19 @@ impl Simulation {
 				on_expire: None,
 			});
 		}
+	}
+
+	pub fn reset(&mut self) {
+		self.success = None;
+		self.progression = 0;
+		self.durability = self.recipe.durability as i32;
+		self.quality = self.starting_quality;
+		self.buffs = vec![];
+		self.steps = vec![];
+		self.max_cp = self.crafter_stats.cp;
+		self.available_cp = self.max_cp;
+		self.state = StepState::Normal;
+		self.safe = false;
 	}
 
 	pub fn run(self) -> SimulationResult {
@@ -433,9 +450,16 @@ impl Simulation {
 }
 
 impl SimulationBuilder {
-	fn build_starting_quality(&self) -> Result<u32, SimulationBuilderError> {
-		// TODO: Incorporate HQ ingredients calculation
-		Ok(0)
+	fn process_hq_ingredients(&self) -> u32 {
+		let mut hq_ingredient_quality_bonus = 0;
+		if let Some(hq_ingredients) = &self._hq_ingredients {
+			for ingredient in hq_ingredients {
+				if let Some(ingredient_details) = &self.recipe.as_ref().unwrap().ingredients.iter().find(|recipe_ingredient| recipe_ingredient.id == ingredient.id) {
+					hq_ingredient_quality_bonus += ingredient_details.quality.unwrap_or(0) * ingredient.amount;
+				}
+			}
+		}
+		hq_ingredient_quality_bonus
 	}
 
 	fn build_durability(&self) -> Result<i32, SimulationBuilderError> {
@@ -485,5 +509,12 @@ impl SimulationBuilder {
 				}
 			})
 			.collect())
+	}
+
+	pub fn build(&self) -> Result<Simulation, SimulationBuilderError> {
+		let hq_ingredient_quality_bonus = self.process_hq_ingredients();
+		self.clone().starting_quality(hq_ingredient_quality_bonus)
+			.quality(hq_ingredient_quality_bonus)
+			.initialize()
 	}
 }
