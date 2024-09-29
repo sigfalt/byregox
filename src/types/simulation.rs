@@ -17,7 +17,6 @@ pub struct Simulation {
 
 	// optional fields
 	pub actions: Vec<CraftingActionEnum>,
-	_hq_ingredients: Vec<Ingredient>,
 	step_states: Vec<StepState>,
 	fails: Vec<usize>,
 
@@ -94,7 +93,6 @@ impl Simulation {
 			recipe,
 			crafter_stats,
 			actions: actions.unwrap_or(vec![]),
-			_hq_ingredients: hq_ingredients.unwrap_or(vec![]),
 			step_states: step_states.unwrap_or(vec![]),
 			fails: fails.unwrap_or(vec![]),
 			progression: 0,
