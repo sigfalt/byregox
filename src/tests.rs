@@ -7,7 +7,7 @@ use crate::types::{
 	structs::{Craft, CrafterLevels, CrafterStats, CraftingLevel},
 	tables,
 	traits::CraftingAction,
-	SimulationBuilder,
+	Simulation,
 };
 
 #[test]
@@ -16,7 +16,7 @@ fn test_reflect() -> Result<()> {
 	let recipe = generate_recipe_lvl(3864, 16, 80, 31, 866, 50, 30);
 	// generateStats(80, 2278, 2348, 532)
 	let stats = generate_stats(80, 2278, 2348, 532);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.actions(vec![
 			actions::Reflect.into(),
@@ -24,9 +24,9 @@ fn test_reflect() -> Result<()> {
 			actions::CarefulSynthesis.into(),
 		])
 		.crafter_stats(stats)
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert!(result
 		.simulation
 		.get_buff(Buff::InnerQuiet)
@@ -41,7 +41,7 @@ fn test_low_level() -> Result<()> {
 	let recipe = generate_recipe_lvl(3864, 16, 80, 31, 866, 50, 30);
 	// generateStats(80, 2278, 2348, 532)
 	let stats = generate_stats(80, 2278, 2348, 532);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.actions(vec![
 			actions::Reflect.into(),
@@ -50,9 +50,9 @@ fn test_low_level() -> Result<()> {
 			actions::CarefulSynthesis.into(),
 		])
 		.crafter_stats(stats)
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert!(result.simulation.success.is_some_and(|x| x));
 	assert_eq!(result.simulation.steps[3].added_progression, 685);
 	assert_eq!(result.simulation.steps[0].added_quality, 2451);
@@ -68,7 +68,7 @@ fn test_innovation() -> Result<()> {
 	let recipe = generate_recipe_rlvl(3864, 80, 517, 80, 2000, 5200, 121, 105);
 	// generateStats(80, 2763, 2780, 545)
 	let stats = generate_stats(80, 2763, 2780, 545);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.actions(vec![
 			actions::Reflect.into(),
@@ -83,9 +83,9 @@ fn test_innovation() -> Result<()> {
 			actions::PreparatoryTouch.into(),
 		])
 		.crafter_stats(stats)
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert_eq!(result.simulation.steps[0].added_quality, 897);
 	assert_eq!(result.simulation.steps[1].added_quality, 358);
 	assert_eq!(result.simulation.steps[2].added_quality, 388);
@@ -102,7 +102,7 @@ fn test_flooring() -> Result<()> {
 	let recipe = generate_recipe_rlvl(3864, 80, 517, 80, 2000, 5200, 121, 105);
 	// generateStats(80, 1645, 1532, 400)
 	let stats = generate_stats(80, 1645, 1532, 400);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.actions(vec![
 			actions::BasicTouch.into(),
@@ -111,16 +111,16 @@ fn test_flooring() -> Result<()> {
 			actions::BasicTouch.into(),
 		])
 		.crafter_stats(stats)
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert_eq!(result.simulation.quality, 828);
 
 	// generateStarRecipe(580, 3900, 10920, 130, 115, 80, 70)
 	let recipe = generate_star_recipe(580, 3900, 10920, 130, 115, 80, 70);
 	// generateStats(90, 3289, 3420, 400)
 	let stats = generate_stats(90, 3289, 3420, 400);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.actions(vec![
 			actions::MuscleMemory.into(),
@@ -132,9 +132,9 @@ fn test_flooring() -> Result<()> {
 			actions::CarefulSynthesis.into(),
 		])
 		.crafter_stats(stats)
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert_eq!(result.simulation.steps[0].added_progression, 609);
 	assert_eq!(result.simulation.progression, 3897);
 
@@ -147,7 +147,7 @@ fn test_dawntrail_flooring() -> Result<()> {
 	let recipe = generate_recipe_rlvl(3864, 80, 685, 80, 6300, 11400, 167, 147);
 	// generateStats(94, 3957, 3896, 563)
 	let stats = generate_stats(94, 3957, 3896, 563);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.actions(vec![
 			actions::Reflect.into(),
@@ -156,9 +156,9 @@ fn test_dawntrail_flooring() -> Result<()> {
 			actions::PrudentTouch.into(),
 		])
 		.crafter_stats(stats)
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert_eq!(result.simulation.quality, 2610);
 
 	// generateRecipe(685, 6300, 11400, 167, 147),
@@ -166,7 +166,7 @@ fn test_dawntrail_flooring() -> Result<()> {
 
 	// generateStats(100, 4045, 3902, 601)
 	let stats = generate_stats(100, 4045, 3902, 601);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.actions(vec![
 			actions::Reflect.into(),
@@ -191,9 +191,9 @@ fn test_dawntrail_flooring() -> Result<()> {
 			actions::Groundwork.into(),
 		])
 		.crafter_stats(stats)
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert_eq!(result.simulation.quality, 11400);
 	assert_eq!(result.simulation.progression, 6585);
 
@@ -207,16 +207,16 @@ fn test_combo_refinedtouch_with_basictouch() -> Result<()> {
 	// generateStats(100, 2763, 2780, 545)
 	let stats = generate_stats(100, 2763, 2780, 545);
 
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe.clone())
 		.actions(vec![
 			actions::BasicTouch.into(),
 			actions::RefinedTouch.into(),
 		])
 		.crafter_stats(stats.clone())
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert!(result
 		.simulation
 		.get_buff(Buff::InnerQuiet)
@@ -232,16 +232,13 @@ fn test_combo_advancedtouch_with_observe() -> Result<()> {
 	// generateStats(90, 2763, 2780, 545)
 	let stats = generate_stats(90, 2763, 2780, 545);
 
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe.clone())
-		.actions(vec![
-			actions::Observe.into(),
-			actions::AdvancedTouch.into(),
-		])
+		.actions(vec![actions::Observe.into(), actions::AdvancedTouch.into()])
 		.crafter_stats(stats.clone())
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert_eq!(result.simulation.steps[1].cp_difference, -18);
 
 	Ok(())
@@ -253,19 +250,19 @@ fn test_advanced_touch_combo() -> Result<()> {
 	let recipe = generate_recipe_lvl(3864, 81, 80, 1000, 5200, 121, 105);
 	// generateStats(90, 2763, 2780, 545)
 	let stats = generate_stats(90, 2763, 2780, 545);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe.clone())
 		.actions(vec![
 			actions::StandardTouch.into(),
 			actions::AdvancedTouch.into(),
 		])
 		.crafter_stats(stats.clone())
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert_eq!(result.simulation.steps[1].cp_difference, -46);
 
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.actions(vec![
 			actions::BasicTouch.into(),
@@ -273,9 +270,9 @@ fn test_advanced_touch_combo() -> Result<()> {
 			actions::AdvancedTouch.into(),
 		])
 		.crafter_stats(stats)
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert_eq!(result.simulation.steps[1].cp_difference, -18);
 
 	Ok(())
@@ -287,7 +284,7 @@ fn test_level_90_accuracy() -> Result<()> {
 	let recipe = generate_star_recipe(560, 1000, 5200, 130, 115, 90, 80);
 	// generateStats(90, 2659, 2803, 548)
 	let stats = generate_stats(90, 2659, 2803, 548);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.actions(vec![
 			actions::Reflect.into(),
@@ -295,9 +292,9 @@ fn test_level_90_accuracy() -> Result<()> {
 			actions::BasicTouch.into(),
 		])
 		.crafter_stats(stats)
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert_eq!(result.simulation.steps[0].added_quality, 666);
 	assert_eq!(result.simulation.steps[1].added_progression, 222);
 	assert_eq!(result.simulation.steps[2].added_quality, 266);
@@ -311,7 +308,7 @@ fn test_innovation_great_strides_interaction() -> Result<()> {
 	let recipe = generate_recipe_lvl(3864, 16, 80, 31, 866, 50, 30);
 	// generateStats(80, 2278, 2348, 532)
 	let stats = generate_stats(80, 2278, 2348, 532);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.actions(vec![
 			actions::Reflect.into(),
@@ -320,9 +317,9 @@ fn test_innovation_great_strides_interaction() -> Result<()> {
 			actions::BasicTouch.into(),
 		])
 		.crafter_stats(stats)
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert_eq!(result.simulation.steps[0].added_quality, 2451);
 	assert_eq!(result.simulation.steps[3].added_quality, 2451);
 
@@ -335,16 +332,16 @@ fn test_lv80_2star_craft() -> Result<()> {
 	let recipe = generate_star_recipe(56450, 2050, 9000, 110, 90, 80, 70);
 	// generateStats(80, 2626, 2477, 522)
 	let stats = generate_stats(80, 2626, 2477, 522);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.actions(vec![
 			actions::BasicSynthesis.into(),
 			actions::BasicTouch.into(),
 		])
 		.crafter_stats(stats)
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert_eq!(result.simulation.steps[0].added_progression, 230);
 	assert_eq!(result.simulation.steps[1].added_quality, 217);
 
@@ -357,7 +354,7 @@ fn test_high_byregots_stacks() -> Result<()> {
 	let recipe = generate_recipe_lvl(3864, 16, 80, 31, 866, 50, 30);
 	// generateStats(80, 2278, 2348, 10000)
 	let stats = generate_stats(80, 2278, 2348, 10000);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.actions(vec![
 			actions::Reflect.into(),
@@ -375,9 +372,9 @@ fn test_high_byregots_stacks() -> Result<()> {
 			actions::CarefulSynthesis.into(),
 		])
 		.crafter_stats(stats)
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert!(result.simulation.success.is_some_and(|x| x));
 	assert_eq!(result.simulation.steps[11].added_quality, 4902);
 
@@ -393,14 +390,14 @@ fn test_pliant_step_state_reducing_cp_cost() -> Result<()> {
 	};
 	// generateStats(80, 2800, 2500, 541)
 	let stats = generate_stats(80, 2800, 2500, 541);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.actions(vec![actions::PrudentTouch.into()])
 		.crafter_stats(stats)
 		.step_states(vec![StepState::Pliant])
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert_eq!(result.simulation.available_cp, 541 - 13);
 
 	Ok(())
@@ -415,17 +412,14 @@ fn test_pliant_step_state_reducing_cp_cost_two() -> Result<()> {
 	};
 	// generateStats(80, 2800, 2500, 541)
 	let stats = generate_stats(80, 2800, 2500, 541);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
-		.actions(vec![
-			actions::MuscleMemory.into(),
-			actions::WasteNot.into(),
-		])
+		.actions(vec![actions::MuscleMemory.into(), actions::WasteNot.into()])
 		.crafter_stats(stats)
 		.step_states(vec![StepState::Normal, StepState::Pliant])
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert_eq!(result.simulation.available_cp, 541 - 6 - (56 / 2));
 
 	Ok(())
@@ -440,17 +434,17 @@ fn test_sturdy_step_state_reducing_durability_cost() -> Result<()> {
 	};
 	// generateStats(80, 2800, 2500, 541)
 	let stats = generate_stats(80, 2800, 2500, 541);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe.clone())
 		.actions(vec![actions::PrudentTouch.into()])
 		.crafter_stats(stats.clone())
 		.step_states(vec![StepState::Sturdy])
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert_eq!(result.simulation.durability, 70 - 3);
 
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.actions(vec![
 			actions::WasteNot.into(),
@@ -458,9 +452,9 @@ fn test_sturdy_step_state_reducing_durability_cost() -> Result<()> {
 		])
 		.crafter_stats(stats)
 		.step_states(vec![StepState::Normal, StepState::Sturdy])
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert_eq!(result.simulation.durability, 70 - 3);
 
 	Ok(())
@@ -472,7 +466,7 @@ fn test_not_tick_buffs_if_buff_set_to_fail() -> Result<()> {
 	let recipe = generate_recipe_rlvl(3864, 80, 480, 80, 6178, 36208, 110, 90);
 	// generateStats(80, 2800, 2500, 541)
 	let stats = generate_stats(80, 2800, 2500, 541);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.actions(vec![
 			actions::GreatStrides.into(),
@@ -481,9 +475,9 @@ fn test_not_tick_buffs_if_buff_set_to_fail() -> Result<()> {
 		.crafter_stats(stats)
 		.step_states(vec![StepState::Normal])
 		.fails(vec![1])
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert!(result
 		.simulation
 		.get_buff(Buff::GreatStrides)
@@ -498,7 +492,7 @@ fn test_not_ticking_buffs_with_certain_abilities() -> Result<()> {
 	let recipe = generate_recipe_rlvl(3864, 80, 480, 80, 6178, 36208, 110, 90);
 	// generateStats(80, 2486, 2318, 613)
 	let stats = generate_stats(80, 2486, 2318, 613);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.actions(vec![
 			actions::GreatStrides.into(),
@@ -507,9 +501,9 @@ fn test_not_ticking_buffs_with_certain_abilities() -> Result<()> {
 			actions::RemoveFinalAppraisal.into(),
 		])
 		.crafter_stats(stats)
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert!(result
 		.simulation
 		.get_buff(Buff::GreatStrides)
@@ -524,16 +518,16 @@ fn test_5point4_standard_touch_combo_bonus() -> Result<()> {
 	let recipe = generate_recipe_rlvl(3864, 80, 480, 80, 6178, 36208, 110, 90);
 	// generateStats(80, 2486, 2318, 613)
 	let stats = generate_stats(80, 2486, 2318, 613);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.actions(vec![
 			actions::BasicTouch.into(),
 			actions::StandardTouch.into(),
 		])
 		.crafter_stats(stats)
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert_eq!(result.simulation.steps[1].cp_difference, -18);
 
 	Ok(())
@@ -545,7 +539,7 @@ fn test_count_buffs_properly_in_step_by_step_mode() -> Result<()> {
 	let recipe = generate_recipe_rlvl(3864, 80, 480, 80, 6178, 36208, 110, 90);
 	// generateStats(80, 2745, 2885, 626)
 	let stats = generate_stats(80, 2745, 2885, 626);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.actions(vec![
 			actions::MuscleMemory.into(),
@@ -560,9 +554,9 @@ fn test_count_buffs_properly_in_step_by_step_mode() -> Result<()> {
 			actions::PrudentTouch.into(),
 		])
 		.crafter_stats(stats)
-		.build()?;
+		.build();
 
-	let result = sim.run_max_steps(true, 4);
+	let result = sim.start().linear(true).max_steps(4).run();
 	assert!(result
 		.simulation
 		.get_buff(Buff::Manipulation)
@@ -577,10 +571,10 @@ fn test_conditions_for_normal_recipe() -> Result<()> {
 	let recipe = generate_recipe_rlvl(3864, 80, 480, 80, 6178, 36208, 110, 90);
 	// generateStats(80, 2745, 2885, 626)
 	let stats = generate_stats(80, 2745, 2885, 626);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.crafter_stats(stats)
-		.build()?;
+		.build();
 
 	assert_eq!(
 		sim.possible_conditions(),
@@ -604,23 +598,22 @@ fn test_conditions_switch() -> Result<()> {
 	};
 	// generateStats(80, 2745, 2885, 626)
 	let stats = generate_stats(80, 2745, 2885, 626);
-	let actions: Vec<CraftingActionEnum> =
-		vec![actions::Observe.into(), actions::Observe.into()];
+	let actions: Vec<CraftingActionEnum> = vec![actions::Observe.into(), actions::Observe.into()];
 
-	let mut excellent_test = SimulationBuilder::default()
+	let mut excellent_test = Simulation::builder()
 		.recipe(recipe.clone())
 		.crafter_stats(stats.clone())
 		.actions(actions.clone())
-		.build()?;
+		.build();
 	excellent_test.override_state(StepState::Excellent);
 	excellent_test.tick_state();
 	assert_eq!(excellent_test.state(), StepState::Poor);
 
-	let mut good_omen_test = SimulationBuilder::default()
+	let mut good_omen_test = Simulation::builder()
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(actions)
-		.build()?;
+		.build();
 	good_omen_test.override_state(StepState::GoodOmen);
 	good_omen_test.tick_state();
 	assert_eq!(good_omen_test.state(), StepState::Good);
@@ -637,10 +630,10 @@ fn test_expert_one_conditions() -> Result<()> {
 	};
 	// generateStats(80, 2745, 2885, 626)
 	let stats = generate_stats(80, 2745, 2885, 626);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.crafter_stats(stats)
-		.build()?;
+		.build();
 
 	assert_eq!(
 		sim.possible_conditions(),
@@ -665,10 +658,10 @@ fn test_expert_two_conditions() -> Result<()> {
 	};
 	// generateStats(80, 2745, 2885, 626)
 	let stats = generate_stats(80, 2745, 2885, 626);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.crafter_stats(stats)
-		.build()?;
+		.build();
 
 	assert_eq!(
 		sim.possible_conditions(),
@@ -696,10 +689,10 @@ fn test_expert_two_condition_rates() -> Result<()> {
 	};
 	// generateStats(80, 2745, 2885, 626)
 	let stats = generate_stats(80, 2745, 2885, 626);
-	let mut sim = SimulationBuilder::default()
+	let mut sim = Simulation::builder()
 		.recipe(recipe)
 		.crafter_stats(stats)
-		.build()?;
+		.build();
 
 	let mut condition_rates: HashMap<_, _> =
 		HashMap::from_iter(sim.possible_conditions().iter().map(|&cond| (cond, 0)));
@@ -742,7 +735,7 @@ fn test_heart_and_soul() -> Result<()> {
 		specialist: true,
 		..generate_stats(90, 2745, 2885, 500)
 	};
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe.clone())
 		.actions(vec![
 			actions::Observe.into(),
@@ -755,9 +748,9 @@ fn test_heart_and_soul() -> Result<()> {
 			StepState::Normal,
 			StepState::Normal,
 		])
-		.build()?;
+		.build();
 
-	let result = sim.run();
+	let result = sim.start().run();
 	assert!(result.simulation.quality > 0);
 
 	Ok(())
@@ -769,13 +762,13 @@ fn test_progress_flooring() -> Result<()> {
 	let recipe = generate_recipe_rlvl(3864, 80, 535, 80, 3000, 6700, 125, 109);
 	// generateStats(90, 2606, 2457, 507)
 	let stats = generate_stats(90, 2606, 2457, 507);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![actions::CarefulSynthesis.into()])
-		.build()?;
+		.build();
 
-	let result = sim.run();
+	let result = sim.start().run();
 	assert_eq!(result.simulation.progression, 378);
 
 	Ok(())
@@ -787,7 +780,7 @@ fn test_quality_buff_flooring() -> Result<()> {
 	let recipe = generate_recipe_rlvl(3864, 80, 285, 80, 980, 3420, 88, 68);
 	// generateStats(66, 813, 683, 283)
 	let stats = generate_stats(66, 813, 683, 283);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
@@ -796,9 +789,9 @@ fn test_quality_buff_flooring() -> Result<()> {
 			actions::PrudentTouch.into(),
 			actions::PrudentTouch.into(),
 		])
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert_eq!(result.simulation.quality, 667);
 
 	Ok(())
@@ -810,7 +803,7 @@ fn test_quality_flooring() -> Result<()> {
 	let recipe = generate_recipe_rlvl(3864, 80, 145, 80, 3000, 6700, 68, 48);
 	// generateStats(58, 2606, 434, 507)
 	let stats = generate_stats(58, 2606, 434, 507);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
@@ -819,16 +812,16 @@ fn test_quality_flooring() -> Result<()> {
 			actions::StandardTouch.into(),
 			actions::BasicTouch.into(),
 		])
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert_eq!(result.simulation.steps[3].added_quality, 225);
 
 	// generateStarRecipe(610, 5060, 12628, 130, 115, 80, 70)
 	let recipe = generate_star_recipe(610, 5060, 12628, 130, 115, 80, 70);
 	// generateStats(90, 3702, 3792, 588)
 	let stats = generate_stats(90, 3702, 3792, 588);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
@@ -842,16 +835,16 @@ fn test_quality_flooring() -> Result<()> {
 			actions::PreparatoryTouch.into(),
 			actions::PreparatoryTouch.into(),
 		])
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert_eq!(result.simulation.steps[8].added_quality, 663);
 
 	// generateStarRecipe(625, 5280, 13050, 130, 115, 80, 70)
 	let recipe = generate_star_recipe(625, 5280, 13050, 130, 115, 80, 70);
 	// generateStats(90, 3702, 4073, 588)
 	let stats = generate_stats(90, 3702, 4073, 588);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
@@ -860,9 +853,9 @@ fn test_quality_flooring() -> Result<()> {
 			actions::BasicTouch.into(),
 			actions::StandardTouch.into(),
 		])
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert_eq!(result.simulation.steps[3].added_quality, 663);
 
 	Ok(())
@@ -877,7 +870,7 @@ fn test_required_quality_unmet_fails() -> Result<()> {
 	};
 	// generateStats(90, 3392, 3338, 675)
 	let stats = generate_stats(90, 3392, 3338, 675);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
@@ -906,9 +899,9 @@ fn test_required_quality_unmet_fails() -> Result<()> {
 			actions::ByregotsBlessing.into(),
 			actions::BasicSynthesis.into(),
 		])
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert!(!result.success);
 
 	// generateStarRecipe(590, 4300, 12800, 130, 115, 80, 70, false, 15, { requiredQuality: 6400 })
@@ -918,7 +911,7 @@ fn test_required_quality_unmet_fails() -> Result<()> {
 	};
 	// generateStats(90, 3392, 3338, 675)
 	let stats = generate_stats(90, 3392, 3338, 675);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
@@ -947,9 +940,9 @@ fn test_required_quality_unmet_fails() -> Result<()> {
 			actions::ByregotsBlessing.into(),
 			actions::BasicSynthesis.into(),
 		])
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert!(!result.success);
 
 	Ok(())
@@ -964,7 +957,7 @@ fn test_tricksofthetrade_and_heartandsoul() -> Result<()> {
 		specialist: true,
 		..generate_stats(90, 3392, 3338, 675)
 	};
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
@@ -973,16 +966,16 @@ fn test_tricksofthetrade_and_heartandsoul() -> Result<()> {
 			actions::TricksOfTheTrade.into(),
 		])
 		.step_states(vec![StepState::None, StepState::None, StepState::Good])
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert!(result.simulation.get_buff(Buff::HeartAndSoul).is_some());
 
 	// generateStarRecipe(590, 4300, 12800, 130, 115, 80, 70, false, 15)
 	let recipe = generate_star_recipe(590, 4300, 12800, 130, 115, 80, 15);
 	// generateStats(90, 500, 500, 675)
 	let stats = generate_stats(90, 3392, 3338, 675);
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
@@ -990,9 +983,9 @@ fn test_tricksofthetrade_and_heartandsoul() -> Result<()> {
 			actions::PreparatoryTouch.into(),
 			actions::TricksOfTheTrade.into(),
 		])
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert!(result.simulation.get_buff(Buff::HeartAndSoul).is_none());
 
 	Ok(())
@@ -1059,17 +1052,14 @@ fn test_enhanced_good_modifier_with_splendorous_tools() -> Result<()> {
 		splendorous: true,
 		..generate_stats(90, 4041, 3987, 616)
 	};
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.crafter_stats(stats)
-		.actions(vec![
-			actions::Observe.into(),
-			actions::BasicTouch.into(),
-		])
+		.actions(vec![actions::Observe.into(), actions::BasicTouch.into()])
 		.step_states(vec![StepState::None, StepState::Good])
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert_eq!(result.simulation.quality, 2387);
 
 	Ok(())
@@ -1082,14 +1072,14 @@ fn test_inner_quiet_below_level_11() -> Result<()> {
 	// generateStats(10, 10, 10, 20),
 	let stats = generate_stats(10, 10, 10, 20);
 
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![actions::BasicTouch.into()])
 		.step_states(vec![StepState::Normal])
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert!(result.simulation.get_buff(Buff::InnerQuiet).is_none());
 
 	Ok(())
@@ -1105,7 +1095,7 @@ fn test_trained_perfection() -> Result<()> {
 		..generate_stats(100, 4041, 3987, 616)
 	};
 
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
@@ -1113,9 +1103,9 @@ fn test_trained_perfection() -> Result<()> {
 			actions::BasicTouch.into(),
 			actions::BasicTouch.into(),
 		])
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert_eq!(result.steps[1].solidity_difference, 0);
 	assert_eq!(
 		result.steps[2].solidity_difference,
@@ -1135,7 +1125,7 @@ fn test_trained_perfection_with_moves_between() -> Result<()> {
 		..generate_stats(100, 4041, 3987, 616)
 	};
 
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
@@ -1143,9 +1133,9 @@ fn test_trained_perfection_with_moves_between() -> Result<()> {
 			actions::Innovation.into(),
 			actions::BasicTouch.into(),
 		])
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert_eq!(result.steps[2].solidity_difference, 0);
 
 	Ok(())
@@ -1161,7 +1151,7 @@ fn test_trained_perfection_buff_consumed() -> Result<()> {
 		..generate_stats(100, 4041, 3987, 616)
 	};
 
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
@@ -1170,9 +1160,9 @@ fn test_trained_perfection_buff_consumed() -> Result<()> {
 			actions::BasicTouch.into(),
 			actions::BasicTouch.into(),
 		])
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert_eq!(result.steps[2].solidity_difference, 0);
 	assert!(!result.simulation.has_buff(Buff::TrainedPerfection));
 
@@ -1189,7 +1179,7 @@ fn test_hasty_touch_only_after_daring_touch() -> Result<()> {
 		..generate_stats(100, 4041, 3987, 616)
 	};
 
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
@@ -1197,9 +1187,9 @@ fn test_hasty_touch_only_after_daring_touch() -> Result<()> {
 			actions::DaringTouch.into(),
 			actions::DaringTouch.into(),
 		])
-		.build()?;
+		.build();
 
-	let result = sim.run_linear(true);
+	let result = sim.start().linear(true).run();
 	assert!(result.steps[1]
 		.success
 		.is_some_and(|step_success| step_success));
@@ -1221,22 +1211,22 @@ fn test_groundwork_efficiency_with_trained_perfection() -> Result<()> {
 		..generate_stats(100, 4041, 3987, 616)
 	};
 
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe.clone())
 		.crafter_stats(stats.clone())
 		.actions(vec![actions::Groundwork.into()])
-		.build()?;
-	let result1 = sim.run_linear(true);
+		.build();
+	let result1 = sim.start().linear(true).run();
 
-	let sim = SimulationBuilder::default()
+	let sim = Simulation::builder()
 		.recipe(recipe)
 		.crafter_stats(stats)
 		.actions(vec![
 			actions::TrainedPerfection.into(),
 			actions::Groundwork.into(),
 		])
-		.build()?;
-	let result2 = sim.run_linear(true);
+		.build();
+	let result2 = sim.start().linear(true).run();
 
 	assert!(result1.steps[0].added_progression < result2.steps[1].added_progression);
 
@@ -1286,7 +1276,6 @@ fn generate_recipe_rlvl(
 		quality_divider,
 		hq: Some(true),
 		quick_synth: Some(true),
-		ingredients: vec![],
 		conditions_flag: 15,
 		..Default::default()
 	}
@@ -1311,7 +1300,6 @@ fn generate_star_recipe(
 		progress,
 		hq: Some(true),
 		quick_synth: Some(false),
-		ingredients: vec![],
 		expert: Some(false),
 		conditions_flag: 15,
 		progress_divider,
