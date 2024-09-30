@@ -60,19 +60,18 @@ impl Simulation {
 	) -> Self {
 		let mut starting_quality = 0;
 		if let Some(hq_ingredients) = &hq_ingredients {
-			for ingredient in hq_ingredients {
-				if let Some(ingredient_details) = &recipe
+			for hq_ingredient in hq_ingredients {
+				if let Some(ingredient) = recipe
 					.ingredients
 					.iter()
-					.find(|recipe_ingredient| recipe_ingredient.id == ingredient.id)
+					.find(|&recipe_ingredient| recipe_ingredient.id == hq_ingredient.id)
 				{
-					starting_quality += ingredient_details.quality.unwrap_or(0) * ingredient.amount;
+					starting_quality += ingredient.quality.unwrap_or(0) * hq_ingredient.amount;
 				}
 			}
 		}
 
-		let conditions_flag = recipe.conditions_flag;
-		let binary_string = format!("{:b}", conditions_flag);
+		let binary_string = format!("{:b}", recipe.conditions_flag);
 		let possible_conditions = binary_string
 			.chars()
 			.rev()
