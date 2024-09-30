@@ -92,9 +92,9 @@ impl Simulation {
 		Self {
 			recipe,
 			crafter_stats,
-			actions: actions.unwrap_or(vec![]),
-			step_states: step_states.unwrap_or(vec![]),
-			fails: fails.unwrap_or(vec![]),
+			actions: actions.unwrap_or_default(),
+			step_states: step_states.unwrap_or_default(),
+			fails: fails.unwrap_or_default(),
 			progression: 0,
 			starting_quality,
 			quality: starting_quality,
@@ -122,7 +122,7 @@ impl Simulation {
 	pub fn has_combo_available(&self, action: &CraftingActionEnum) -> bool {
 		// starting from the most recent action
 		for step in self.steps.iter().rev() {
-			// if we find the action that we're looking for and it was successful, we can combo
+			// if we find the action that we're looking for, and it was successful, we can combo
 			if step.action == *action && step.success.is_some_and(|x| x) {
 				return true;
 			}
