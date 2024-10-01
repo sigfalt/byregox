@@ -1319,15 +1319,15 @@ fn generate_stats(level: u8, craftsmanship: u32, control: u32, cp: u32) -> Craft
 		specialist: false,
 		splendorous: false,
 		level: CraftingLevel::unchecked_new(level),
-		levels: CrafterLevels {
-			crp: CraftingLevel::unchecked_new(level),
-			bsm: CraftingLevel::unchecked_new(level),
-			arm: CraftingLevel::unchecked_new(level),
-			gsm: CraftingLevel::unchecked_new(level),
-			ltw: CraftingLevel::unchecked_new(level),
-			wvr: CraftingLevel::unchecked_new(level),
-			alc: CraftingLevel::unchecked_new(level),
-			cul: CraftingLevel::unchecked_new(level),
-		},
+		levels: CrafterLevels::from([
+			CraftingLevel::unchecked_new(level),
+			CraftingLevel::unchecked_new(level),
+			CraftingLevel::unchecked_new(level),
+			CraftingLevel::unchecked_new(level),
+			CraftingLevel::unchecked_new(level),
+			CraftingLevel::unchecked_new(level),
+			CraftingLevel::unchecked_new(level),
+			CraftingLevel::unchecked_new(level),
+		]),
 	}
 }
