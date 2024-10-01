@@ -154,7 +154,7 @@ pub struct CraftingLevel {
 }
 impl CraftingLevel {
 	pub fn new(val: u8) -> Option<CraftingLevel> {
-		if (0..=MAX_LEVEL).contains(&val) {
+		if val <= MAX_LEVEL {
 			Some(CraftingLevel { val })
 		} else {
 			None
