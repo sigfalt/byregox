@@ -9,7 +9,7 @@ rust-version = "1.70.0"
 
 [dependencies]
 anyhow = "1.0"
-bon = "2.3"
+bon = "3.0"
 dotenvy = "0.15"
 dyn-clone = "1.0"
 enum_dispatch = "0.3"
