@@ -93,9 +93,9 @@ impl TryFrom<[u8; 8]> for CrafterLevels {
 	type Error = &'static str;
 
 	fn try_from(value: [u8; 8]) -> Result<Self, Self::Error> {
-		let converted_value_vec = value.into_iter().map(
-			|n| CraftingLevel::try_from(n)
-		).collect::<Result<Vec<_>, _>>()?;
+		let converted_value_vec = value.into_iter()
+			.map(CraftingLevel::try_from)
+			.collect::<Result<Vec<_>, _>>()?;
 		let converted_value_array: [_; 8] = converted_value_vec.as_slice().try_into().unwrap();
 		Ok(Self::from(converted_value_array))
 	}
