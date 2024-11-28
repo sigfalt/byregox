@@ -1,3 +1,4 @@
+use std::ops::{Index, IndexMut};
 use super::{enums::*, Simulation};
 
 #[derive(Clone)]
@@ -51,7 +52,7 @@ pub struct Craft {
 	pub required_quality: Option<u32>,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct CrafterStats {
 	pub job_id: u32,
 	pub craftsmanship: u32,
@@ -63,33 +64,57 @@ pub struct CrafterStats {
 	pub levels: CrafterLevels,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct CrafterLevels {
-	pub crp: CraftingLevel,
-	pub bsm: CraftingLevel,
-	pub arm: CraftingLevel,
-	pub gsm: CraftingLevel,
-	pub ltw: CraftingLevel,
-	pub wvr: CraftingLevel,
-	pub alc: CraftingLevel,
-	pub cul: CraftingLevel,
+	crp: CraftingLevel,
+	bsm: CraftingLevel,
+	arm: CraftingLevel,
+	gsm: CraftingLevel,
+	ltw: CraftingLevel,
+	wvr: CraftingLevel,
+	alc: CraftingLevel,
+	cul: CraftingLevel,
 }
-
-impl From<[u8; 8]> for CrafterLevels {
-	fn from(value: [u8; 8]) -> Self {
-		CrafterLevels {
-			crp: CraftingLevel::unchecked_new(value[0]),
-			bsm: CraftingLevel::unchecked_new(value[1]),
-			arm: CraftingLevel::unchecked_new(value[2]),
-			gsm: CraftingLevel::unchecked_new(value[3]),
-			ltw: CraftingLevel::unchecked_new(value[4]),
-			wvr: CraftingLevel::unchecked_new(value[5]),
-			alc: CraftingLevel::unchecked_new(value[6]),
-			cul: CraftingLevel::unchecked_new(value[7]),
+impl CrafterLevels {
+	pub fn max() -> Self {
+		Self {
+			crp: CraftingLevel::max(),
+			bsm: CraftingLevel::max(),
+			arm: CraftingLevel::max(),
+			gsm: CraftingLevel::max(),
+			ltw: CraftingLevel::max(),
+			wvr: CraftingLevel::max(),
+			alc: CraftingLevel::max(),
+			cul: CraftingLevel::max(),
 		}
 	}
 }
-impl std::ops::Index<CraftingJob> for CrafterLevels {
+impl TryFrom<[u8; 8]> for CrafterLevels {
+	type Error = &'static str;
+
+	fn try_from(value: [u8; 8]) -> Result<Self, Self::Error> {
+		let converted_value_vec = value.into_iter()
+			.map(CraftingLevel::try_from)
+			.collect::<Result<Vec<_>, _>>()?;
+		let converted_value_array: [_; 8] = converted_value_vec.as_slice().try_into().unwrap();
+		Ok(Self::from(converted_value_array))
+	}
+}
+impl From<[CraftingLevel; 8]> for CrafterLevels {
+	fn from(value: [CraftingLevel; 8]) -> Self {
+		Self {
+			crp: value[0],
+			bsm: value[1],
+			arm: value[2],
+			gsm: value[3],
+			ltw: value[4],
+			wvr: value[5],
+			alc: value[6],
+			cul: value[7],
+		}
+	}
+}
+impl Index<CraftingJob> for CrafterLevels {
 	type Output = CraftingLevel;
 	fn index(&self, index: CraftingJob) -> &Self::Output {
 		match index {
@@ -105,6 +130,21 @@ impl std::ops::Index<CraftingJob> for CrafterLevels {
 		}
 	}
 }
+impl IndexMut<CraftingJob> for CrafterLevels {
+	fn index_mut(&mut self, index: CraftingJob) -> &mut Self::Output {
+		match index {
+			CraftingJob::Any => panic!("Crafting job 'ANY' specified as index argument"),
+			CraftingJob::Carpenter => &mut self.crp,
+			CraftingJob::Blacksmith => &mut self.bsm,
+			CraftingJob::Armorer => &mut self.arm,
+			CraftingJob::Goldsmith => &mut self.gsm,
+			CraftingJob::Leatherworker => &mut self.ltw,
+			CraftingJob::Weaver => &mut self.wvr,
+			CraftingJob::Alchemist => &mut self.alc,
+			CraftingJob::Culinarian => &mut self.cul,
+		}
+	}
+}
 
 const MAX_LEVEL: u8 = 100;
 
@@ -114,7 +154,7 @@ pub struct CraftingLevel {
 }
 impl CraftingLevel {
 	pub fn new(val: u8) -> Option<CraftingLevel> {
-		if (0..=MAX_LEVEL).contains(&val) {
+		if val <= MAX_LEVEL {
 			Some(CraftingLevel { val })
 		} else {
 			None
@@ -123,6 +163,17 @@ impl CraftingLevel {
 
 	pub fn unchecked_new(val: u8) -> CraftingLevel {
 		Self::new(val).unwrap()
+	}
+
+	pub fn max() -> CraftingLevel {
+		Self::unchecked_new(MAX_LEVEL)
+	}
+}
+impl TryFrom<u8> for CraftingLevel {
+	type Error = &'static str;
+
+	fn try_from(value: u8) -> Result<Self, Self::Error> {
+		CraftingLevel::new(value).ok_or("")
 	}
 }
 impl From<CraftingLevel> for u8 {
