@@ -1,5 +1,4 @@
-
-//! # FFXIV Tangocraft
+//! # Byregox
 //!
 //! A simulation library for the crafting system of FINAL FANTASY XIV.
 //! Heavily inspired by (mostly just a Rust rewrite of) the simulator created by the
@@ -7,8 +6,8 @@
 //!
 //! ## Basic Usage
 //! ```rust
-//! use ffxiv_tangocraft::types::{actions, Simulation};
-//! use ffxiv_tangocraft::types::structs::{Craft, CrafterLevels, CrafterStats, CraftingLevel};
+//! use byregox::types::{actions, Simulation};
+//! use byregox::types::structs::{Craft, CrafterLevels, CrafterStats, CraftingLevel};
 //!
 //! let recipe = Craft {
 //!     ..Default::default()
