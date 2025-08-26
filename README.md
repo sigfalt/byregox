@@ -1,3 +1,3 @@
 # byregox
 
-A project to simulate crafting in FFXIV, with heavy inspiration from ffxiv-teamcraft, written in Rust. 🦀
+Archived as this has already been basically completed by the [Raphael](https://github.com/KonaeAkira/raphael-rs) project.
